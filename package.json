@@ -1,0 +1,9 @@
+{
+  "name": "TransferrableValidatorSet",
+  "version": "0.0.1",
+  "description": "A transferable validator set is a set of n validators sharing the same smart contract for their withdrawal credentials, whose ownership can be transferred to a new owner.",
+  "main": "index.js",
+  "repository": "git@github.com:liquid-collective/tvs.git",
+  "author": "Alluvial Finance",
+  "license": "MIT"
+}
