@@ -1,0 +1,26 @@
+//SPDX-License-Identifier: Proprietary
+pragma solidity 0.8.20;
+
+import "openzeppelin-contracts/contracts/utils/StorageSlot.sol";
+
+/// @title Beneficiary
+/// @author Alluvial Finance Inc.
+/// @notice This library manages the beneficiary address for the proxy contract
+/// @dev The beneficiary address is the address to which funds are swept
+/// @dev The proxy contract is expected to have a `BENEFICIARY_SLOT` slot that stores the beneficiary address
+library Beneficiary {
+    /// @dev Slot for the beneficiary address
+    bytes32 internal constant BENEFICIARY_SLOT = bytes32(uint256(keccak256("tvs.state.beneficiary")) - 1);
+
+    /// @notice Get the beneficiary address
+    /// @return The beneficiary address
+    function get() internal view returns (address) {
+        return StorageSlot.getAddressSlot(BENEFICIARY_SLOT).value;
+    }
+
+    /// @notice Set the beneficiary address
+    /// @param newValue The new beneficiary address
+    function set(address newValue) internal {
+        StorageSlot.getAddressSlot(BENEFICIARY_SLOT).value = newValue;
+    }
+}
