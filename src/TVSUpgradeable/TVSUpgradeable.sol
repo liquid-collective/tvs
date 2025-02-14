@@ -7,11 +7,12 @@ import "../TVS.sol";
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 import "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
+import "../interfaces/IProtocolVersion.sol";
 
 /// @title Upgradeable TVS (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Upgradeable implementation of the TVS
-contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
+contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable, IProtocolVersion {
     using Address for address payable;
     using Address for address;
 
@@ -28,12 +29,12 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
         Beacon.set(_beacon);
     }
 
-    function setBeacon(address _beacon) external onlyOwner {
+    function setBeacon(address _beacon) external _onlyOwner {
         address implementation = IBeacon(_beacon).implementation();
         implementation.functionDelegateCall(abi.encodeWithSignature("unsafeSetBeacon(address)", _beacon));
     }
 
-    function unsafeSetBeacon(address _beacon) external onlyOwner {
+    function unsafeSetBeacon(address _beacon) external _onlyOwner {
         address oldBeacon = Beacon.get();
         Beacon.set(_beacon);
         emit BeaconUpdated(oldBeacon, _beacon);
@@ -43,11 +44,11 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
         return Beacon.get();
     }
 
-    function renounceOwnership() public view override onlyOwner {
-        revert("Ownership cannot be renounced");
+    function renounceOwnership() public view override _onlyOwner {
+        revert OwnershipCannotBeRenounced();
     }
 
-    function setBeneficiary(address _beneficiary) external override onlyOwner {
+    function setBeneficiary(address _beneficiary) external override _onlyOwner {
         if (_beneficiary == address(0)) revert InvalidAddress();
         Beneficiary.set(_beneficiary);
         emit BeneficiaryUpdated(_beneficiary);
@@ -60,5 +61,9 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
 
     function owner() public view override(OwnableUpgradeable, TVS) returns (address) {
         return OwnableUpgradeable.owner();
+    }
+
+    function version() external pure returns (string memory) {
+        return "1.0.0";
     }
 } 

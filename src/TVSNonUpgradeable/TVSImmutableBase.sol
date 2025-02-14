@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: Proprietary
+pragma solidity 0.8.20;
+
+import "./TVS.sol";
+
+/// @title Base for Immutable TVS Contract
+/// @author Alluvial Finance Inc.
+/// @notice Base contract for TVS Immutable implementations
+abstract contract TVSImmutableBase is TVS {
+    address internal beneficiary; 
+
+    function setBeneficiary(address _beneficiary) override external _onlyOwner {
+        _setBeneficiary(_beneficiary);
+    }
+
+    function getBeneficiary() public override view returns (address) {
+        return beneficiary;
+    }
+
+    function _setBeneficiary(address _beneficiary) override internal {
+        if (_beneficiary == address(0)) revert InvalidAddress();
+        beneficiary = _beneficiary;
+        emit BeneficiaryUpdated(_beneficiary);
+    }
+} 
