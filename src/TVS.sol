@@ -40,8 +40,8 @@ abstract contract TVS is ITVS {
 
     /// @inheritdoc ITVS
     function sweep(address beneficiary, uint256 _amount) external {
-        // Only require owner for custom beneficiary or amount
-        if (beneficiary != address(0) || _amount != 0) {
+        // Only require owner for custom beneficiary
+        if (beneficiary != address(0)) {
             _assertOwner();
         }
         
@@ -83,30 +83,31 @@ abstract contract TVS is ITVS {
     }
 
     /// @inheritdoc ITVS
-    function consolidate(bytes[] memory srcPubkeys, bytes[] memory targetPubkeys, uint256 maxFeePerConsolidation) external _onlyOwner {
-        if (srcPubkeys.length != targetPubkeys.length) {
-            revert LengthMismatch(srcPubkeys.length, targetPubkeys.length);
-        }
-        
-        for (uint256 i = 0; i < srcPubkeys.length; i++) {
-            // Read current fee from the contract
-            (bool readOK, bytes memory feeData) = CONSOLIDATION_CONTRACT_ADDRESS.staticcall("");
-            if (!readOK) {
-                revert FeeReadFailed();
-            }
-            uint256 fee = uint256(bytes32(feeData));
+    function consolidate(ConsolidationRequest[] calldata requests, uint256 maxFeePerConsolidation) external _onlyOwner {
+        for (uint256 i = 0; i < requests.length; i++) {
             
-            // Check if fee exceeds maximum allowed
-            if (fee > maxFeePerConsolidation) {
-                revert FeeTooHigh(fee, maxFeePerConsolidation);
-            }
+            for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
+                
+                // Read current fee from the contract
+                (bool readOK, bytes memory feeData) = CONSOLIDATION_CONTRACT_ADDRESS.staticcall("");
+                if (!readOK) {
+                    revert FeeReadFailed();
+                }
+                uint256 fee = uint256(bytes32(feeData));   
 
-            // Add the consolidation request
-            bytes memory callData = bytes.concat(srcPubkeys[i], targetPubkeys[i]);
-            (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{value: fee}(callData);
-            if (!writeOK) {
-                revert RequestFailed();
+                // Check if fee exceeds maximum allowed
+                if (fee > maxFeePerConsolidation) {
+                    revert FeeTooHigh(fee, maxFeePerConsolidation);
+                }
+
+                // Add the consolidation request
+                bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
+                (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{value: fee}(callData);
+                if (!writeOK) {
+                    revert RequestFailed();
+                }
             }
         }
     }
+
 } 
