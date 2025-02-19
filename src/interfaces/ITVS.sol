@@ -7,6 +7,13 @@ pragma solidity 0.8.20;
 /// @dev This interface is used to interact with the TVS contract.
 /// @dev The TVS contract is the withdrawal credential of a set of validators in the system.
 interface ITVS {
+    
+    /// @notice Struct to represent a consolidation request.
+    struct ConsolidationRequest {
+        bytes[] srcPubkeys; 
+        bytes targetPubkey; 
+    }
+
     /// --------------------- Events ---------------------
 
     /// @notice Emitted when funds are swept to the beneficiary.
@@ -78,11 +85,9 @@ interface ITVS {
 
     /// @notice Adds a consolidation request to CL for the given source TVS.
     /// @dev Only the owner can call this function.
-    /// @dev Both source and target TVS must belong to this TVS.
-    /// @param srcPubkeys The public keys of the source validators making the request.
-    /// @param targetPubkeys The public keys of the target validators to consolidate to.
+    /// @param requests An array of consolidation requests.
     /// @param maxFeePerConsolidation The maximum fee allowed for the consolidation.
-    function consolidate(bytes[] memory srcPubkeys, bytes[] memory targetPubkeys, uint256 maxFeePerConsolidation) external;
+    function consolidate(ConsolidationRequest[] memory requests, uint256 maxFeePerConsolidation) external;
 
     /// @notice Sets a new beneficiary address for fund sweeping.
     /// @dev Only the owner can call this function.
@@ -99,4 +104,8 @@ interface ITVS {
     /// @notice Retrieves the current beneficiary address.
     /// @return The address of the beneficiary.
     function getBeneficiary() external view returns (address);
+
+    /// @notice Retrieves the version of the contract
+    /// @return Version of the contract
+    function version() external pure returns (string memory);
 }

@@ -7,12 +7,11 @@ import "../TVS.sol";
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 import "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
-import "../interfaces/IProtocolVersion.sol";
 
 /// @title Upgradeable TVS (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Upgradeable implementation of the TVS
-contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable, IProtocolVersion {
+contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
     using Address for address payable;
     using Address for address;
 
@@ -64,6 +63,6 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable, IProtocolVers
     }
 
     function version() external pure returns (string memory) {
-        return "1.0.0";
+        return "v1.0.0 U";
     }
 } 

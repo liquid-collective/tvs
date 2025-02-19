@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Proprietary
 pragma solidity 0.8.20;
 
-import "./TVS.sol";
+import "../TVS.sol";
 
 /// @title Base for Immutable TVS Contract
 /// @author Alluvial Finance Inc.
@@ -17,9 +17,13 @@ abstract contract TVSImmutableBase is TVS {
         return beneficiary;
     }
 
-    function _setBeneficiary(address _beneficiary) override internal {
+    function _setBeneficiary(address _beneficiary) internal {
         if (_beneficiary == address(0)) revert InvalidAddress();
         beneficiary = _beneficiary;
         emit BeneficiaryUpdated(_beneficiary);
+    }
+
+    function version() external pure returns (string memory) {
+        return "v1.0.0 I";
     }
 } 
