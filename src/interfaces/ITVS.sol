@@ -40,9 +40,9 @@ interface ITVS {
     error InsufficientBalance(uint256 available, uint256 required);
 
     /// @notice Error thrown when a fee exceeds the maximum allowed.
-    /// @param fee The fee that was attempted to be paid.
-    /// @param maxAllowed The maximum allowed fee that can be paid.
-    error FeeTooHigh(uint256 fee, uint256 maxAllowed);
+    /// @param currentFee The current fee for the operation.
+    /// @param maxAllowedFee The maximum allowed fee that can be paid.
+    error FeeTooHigh(uint256 currentFee, uint256 maxAllowedFee);
 
     /// @notice Error thrown when the length of input arrays does not match.
     /// @param expected The expected length of the input arrays.
@@ -56,7 +56,7 @@ interface ITVS {
     /// @notice Error thrown when reading the fee fails.
     error FeeReadFailed();
 
-    /// @notice Error thrown when adding a consolidation or withdrwa request fails.
+    /// @notice Error thrown when adding a consolidation or withdraw request fails.
     error RequestFailed();
 
     /// @notice Error thrown when ownership cannot be renounced.
@@ -73,20 +73,21 @@ interface ITVS {
     /// @dev Only the owner can specify a custom beneficiary or amount to sweep
     /// @dev Emits {Swept} event.
     /// @param beneficiary Address to which funds will be swept, if zero address, sweeps to the beneficiary address set on the contract
-    /// @param _amount Amount of funds to sweep, if zero, sweeps all funds on contract
-    function sweep(address beneficiary, uint256 _amount) external;
+    /// @param amount Amount of funds to sweep, if zero, sweeps all funds on contract
+    function sweep(address beneficiary, uint256 amount) external;
 
     /// @notice Adds a withdrawal request to CL for a specific TVS.
     /// @dev Only the owner can call this function.
     /// @param pubkeys The public keys of the validators to withdraw from.
     /// @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
-    /// @param maxFeePerWithdrawal The maximum fee allowed for the withdrawal.
+    /// @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
     function withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal) external;
 
     /// @notice Adds a consolidation request to CL for the given source TVS.
     /// @dev Only the owner can call this function.
+    /// @dev Both source and target validators (pubKeys) must be from the same TVS (this TVS).
     /// @param requests An array of consolidation requests.
-    /// @param maxFeePerConsolidation The maximum fee allowed for the consolidation.
+    /// @param maxFeePerConsolidation The maximum fee allowed per consolidation request.
     function consolidate(ConsolidationRequest[] memory requests, uint256 maxFeePerConsolidation) external;
 
     /// @notice Sets a new beneficiary address for fund sweeping.
