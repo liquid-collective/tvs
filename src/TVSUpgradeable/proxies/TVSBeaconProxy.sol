@@ -3,12 +3,12 @@ pragma solidity 0.8.20;
 
 import "../state/proxy/Beacon.sol";
 
-/// @title ModifiedERC1967Proxy
+/// @title TVSBeaconProxy
 /// @author Alluvial Finance Inc.
 /// @notice This is an EIP-1167 minimal proxy that interacts with an upgradable beacon contract.
 /// @dev It uses the beacon contract to fetch the implementation address and delegate the call.
 /// @dev The beacon contract is expected to have an `implementation()` function that returns the address of the implementation.
-contract ModifiedERC1967Proxy {
+contract TVSBeaconProxy {
     error InitializationFailed();
     error InvalidBeacon();
 

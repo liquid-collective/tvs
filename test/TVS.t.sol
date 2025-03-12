@@ -5,7 +5,7 @@ pragma solidity 0.8.20;
 import "forge-std/Test.sol";
 import {TVSUpgradeable as TVSV1} from "../src/TVSUpgradeable/TVSUpgradeable.sol";
 import {TVSImmutable} from "../src/TVSNonUpgradeable/TVSImmutable.sol";
-import "../src/TVSUpgradeable/proxies/ModifiedERC1967Proxy.sol";
+import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
 import {UpgradeableBeacon} from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import {TVS} from "../src/TVS.sol";
 import "../src/interfaces/ITVS.sol";
@@ -43,7 +43,7 @@ contract TVSUpgradeableInitializationTest is Test {
         // Deploy the contract with the given valid arguments
         bytes memory initData =
             abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon); 
-        TVSV1 tvsProxy = TVSV1(payable(new ModifiedERC1967Proxy(beacon, initData)));
+        TVSV1 tvsProxy = TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
 
         // Ensure that the contract was deployed and initialized successfully
         assertEq(tvsProxy.beacon(), beacon, "Beacon address not correct");
@@ -62,7 +62,7 @@ contract TVSUpgradeableInitializationTest is Test {
             abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, address(0)); 
 
         vm.expectRevert(abi.encodeWithSignature("InvalidBeacon()"));
-        TVSV1(payable(new ModifiedERC1967Proxy(address(0), initData)));
+        TVSV1(payable(new TVSBeaconProxy(address(0), initData)));
         
     }
 
@@ -74,7 +74,7 @@ contract TVSUpgradeableInitializationTest is Test {
             abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, nonContractBeacon); 
 
         vm.expectRevert(abi.encodeWithSignature("InvalidBeacon()"));
-        TVSV1(payable(new ModifiedERC1967Proxy(nonContractBeacon, initData)));
+        TVSV1(payable(new TVSBeaconProxy(nonContractBeacon, initData)));
     }
 
     /// @notice Tests deployment of `TVSProxy` with a beacon that returns a non-`TVS` contract as implementation.
@@ -90,7 +90,7 @@ contract TVSUpgradeableInitializationTest is Test {
 
         // Expect the transaction to revert with InitializationFailed() error due to non-TVS implementation
         vm.expectRevert(abi.encodeWithSignature("InitializationFailed()"));
-        TVSV1(payable(new ModifiedERC1967Proxy(_beacon, initData)));
+        TVSV1(payable(new TVSBeaconProxy(_beacon, initData)));
     }
 
     /// @notice Tests deployment of `TVSProxy` with a zero address as the owner.
@@ -100,7 +100,7 @@ contract TVSUpgradeableInitializationTest is Test {
             abi.encodeWithSignature("initialize(address,address,address)", beneficiary, address(0), beacon); 
 
         vm.expectRevert(abi.encodeWithSignature("InitializationFailed()"));
-        TVSV1(payable(new ModifiedERC1967Proxy(beacon, initData)));
+        TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
     }
 
     /// @notice Tests deployment of `TVSProxy` with a zero address as the beneficiary. 
@@ -110,7 +110,7 @@ contract TVSUpgradeableInitializationTest is Test {
             abi.encodeWithSignature("initialize(address,address,address)", address(0), owner, beacon); 
 
         vm.expectRevert(abi.encodeWithSignature("InitializationFailed()"));
-        TVSV1(payable(new ModifiedERC1967Proxy(beacon, initData)));
+        TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
     }
 }
 
@@ -507,7 +507,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
             owner,
             beacon
         );
-        return TVS(payable(new ModifiedERC1967Proxy(beacon, initData)));
+        return TVS(payable(new TVSBeaconProxy(beacon, initData)));
     }
 
     /// @notice Tests setting a new beacon address by the owner using the `setBeacon` function.
