@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.20;
+pragma solidity 0.8.28;
 
 import "./state/tvs/Beneficiary.sol";
 import "./state/proxy/Beacon.sol";
@@ -47,7 +47,11 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
         revert OwnershipCannotBeRenounced();
     }
 
-    function setBeneficiary(address _beneficiary) external override _onlyOwner {
+    function _transferTVSOwnership(address newOwner) internal override {
+        _transferOwnership(newOwner);
+    }
+
+    function _setBeneficiary(address _beneficiary) internal override {
         if (_beneficiary == address(0)) revert InvalidAddress();
         Beneficiary.set(_beneficiary);
         emit BeneficiaryUpdated(_beneficiary);
@@ -58,11 +62,11 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
         return Beneficiary.get();
     }
 
-    function owner() public view override(OwnableUpgradeable, TVS) returns (address) {
+    function _owner() internal view override returns (address) {
         return OwnableUpgradeable.owner();
     }
 
     function version() external pure returns (string memory) {
         return "v1.0.0 U";
     }
-} 
+}

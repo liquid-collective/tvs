@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.20;
+pragma solidity 0.8.28;
 
 import "./TVSImmutableBase.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
@@ -12,11 +12,16 @@ contract TVSImmutable is TVSImmutableBase, Ownable {
         _setBeneficiary(_beneficiary);
     }
 
-    function owner() public view override(Ownable, TVS) returns (address) {
+    function _owner() internal view override returns (address) {
         return Ownable.owner();
     }
 
     function renounceOwnership() public view override(Ownable) _onlyOwner {
         revert OwnershipCannotBeRenounced();
     }
-} 
+
+    function _transferTVSOwnership(address newOwner) internal override {
+        _transferOwnership(newOwner);
+    }
+
+}

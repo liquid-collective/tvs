@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.20;
+pragma solidity 0.8.28;
 
 import "./interfaces/ITVS.sol";
 import "openzeppelin-contracts/contracts/utils/Address.sol";
@@ -16,7 +16,7 @@ abstract contract TVS is ITVS {
 
     /// @dev Internal function to assert caller is the owner
     function _assertOwner() internal view {
-        if (msg.sender != owner()) {
+        if (msg.sender != _owner()) {
             revert NotOwner(msg.sender);
         }
     }
@@ -30,10 +30,16 @@ abstract contract TVS is ITVS {
     /// @inheritdoc ITVS
     receive() external payable {}
 
-    function owner() public view virtual returns (address);
+    function _owner() internal view virtual returns (address);
 
     /// @inheritdoc ITVS
-    function setBeneficiary(address _beneficiary) virtual external;
+    function setBeneficiary(address _beneficiary) external _onlyOwner {
+        _setBeneficiary(_beneficiary);
+    }
+
+    function _setBeneficiary(address _beneficiary) internal virtual;
+
+    function _transferTVSOwnership(address newOwner) internal virtual;
 
     /// @inheritdoc ITVS
     function getBeneficiary() public view virtual override returns (address);
@@ -52,6 +58,13 @@ abstract contract TVS is ITVS {
         }
         payable(dest).sendValue(amountToSweep);
         emit Swept(dest, amountToSweep);
+    }
+
+    /// @inheritdoc ITVS
+    function transfer(address newBeneficiary, address newOwner) external _onlyOwner {
+        _setBeneficiary(newBeneficiary);
+        _transferTVSOwnership(newOwner);
+        emit Transferred(newBeneficiary, newOwner);
     }
 
     /// @inheritdoc ITVS

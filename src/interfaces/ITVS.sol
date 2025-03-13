@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.20;
+pragma solidity 0.8.28;
 
 /// @title TVS Interface (v1)
 /// @author Alluvial Finance Inc.
@@ -24,6 +24,13 @@ interface ITVS {
     /// @notice Emitted when the beneficiary address is updated.
     /// @param newBeneficiary The new beneficiary address.
     event BeneficiaryUpdated(address indexed newBeneficiary);
+
+    /**
+     * @dev Emitted when the ownership is transferred to a new owner.
+     * @param newBeneficiary The address of the new beneficiary.
+     * @param newOwner The address of the new owner.
+     */
+    event Transferred(address indexed newBeneficiary, address indexed newOwner);
 
     /// ----------------------- Errors -----------------------
 
@@ -97,14 +104,16 @@ interface ITVS {
     function setBeneficiary(address beneficiary) external;
 
     // Getters
-
-    /// @notice Retrieves the owner of the TVS.
-    /// @return The address of the owner.
-    function owner() external view returns (address);
-
+    
     /// @notice Retrieves the current beneficiary address.
     /// @return The address of the beneficiary.
     function getBeneficiary() external view returns (address);
+
+    /// @notice Transfers the ownership the TVS.
+    /// @dev This function sets a new beneficiary and transfers ownership to a new owner.
+    /// @param newBeneficiary The new beneficiary address.
+    /// @param newOwner The new owner address.
+    function transfer(address newBeneficiary, address newOwner) external;
 
     /// @notice Retrieves the version of the contract
     /// @return Version of the contract
