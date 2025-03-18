@@ -39,7 +39,7 @@ abstract contract TVS is ITVS {
 
     function _setBeneficiary(address _beneficiary) internal virtual;
 
-    function _transferTVSOwnership(address newOwner) internal virtual;
+    function _transferTVSOwnership(address _newOwner) internal virtual;
 
     /// @inheritdoc ITVS
     function getBeneficiary() public view virtual override returns (address);
