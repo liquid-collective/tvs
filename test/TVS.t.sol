@@ -465,30 +465,6 @@ abstract contract BaseTVSTest is Test {
         tvs.withdrawFrom(pubkeys, amounts, maxFeePerWithdrawal);
     }
 
-    /// @notice Tests the transfer function.
-    /// @dev Ensures that the state changes took effect and that the owner is the new owner.
-    function testTransfer() public {
-        address newBeneficiary = makeAddr("newBeneficiary");
-        address newOwner = makeAddr("newOwner");
-
-        vm.prank(owner);
-        tvs.transfer(newBeneficiary, newOwner);
-
-        assertEq(tvs.getBeneficiary(), newBeneficiary, "Beneficiary address not updated");
-        assertEq(Ownable(address(tvs)).owner(), newOwner, "Owner address not updated");
-    }
-
-    /// @notice Tests that the transfer function fails if called by a non-owner.
-    function testTransferFailsIfNotOwner() public {
-        address newBeneficiary = makeAddr("newBeneficiary");
-        address newOwner = makeAddr("newOwner");
-        address nonOwner = makeAddr("nonOwner");
-
-        vm.prank(nonOwner);
-        vm.expectRevert(abi.encodeWithSignature("NotOwner(address)", nonOwner));
-        tvs.transfer(newBeneficiary, newOwner);
-    }
-
 }
 
 // Tests specific to TVSImmutable
@@ -505,6 +481,30 @@ contract TVSImmutableTest is BaseTVSTest {
     function testConstructorWithZeroAddressBeneficiary() public {
         vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
         new TVSImmutable(address(0), owner);
+    }
+
+    /// @notice Tests the transfer function.
+    /// @dev Ensures that the state changes took effect and that the owner is the new owner.
+    function testTransfer() public {
+        address newBeneficiary = makeAddr("newBeneficiary");
+        address newOwner = makeAddr("newOwner");
+
+        vm.prank(owner);
+        TVSImmutable(payable(tvs)).transfer(newBeneficiary, newOwner);
+
+        assertEq(tvs.getBeneficiary(), newBeneficiary, "Beneficiary address not updated");
+        assertEq(Ownable(address(tvs)).owner(), newOwner, "Owner address not updated");
+    }
+
+    /// @notice Tests that the transfer function fails if called by a non-owner.
+    function testTransferFailsIfNotOwner() public {
+        address newBeneficiary = makeAddr("newBeneficiary");
+        address newOwner = makeAddr("newOwner");
+        address nonOwner = makeAddr("nonOwner");
+
+        vm.prank(nonOwner);
+        vm.expectRevert(abi.encodeWithSignature("NotOwner(address)", nonOwner));
+        TVSImmutable(payable(tvs)).transfer(newBeneficiary, newOwner);
     }
 }
 
@@ -608,6 +608,44 @@ contract TVSUpgradeableTest is BaseTVSTest {
 
         address newBeacon = makeAddr("newBeacon");
         tvsV1.setBeacon(newBeacon);
+    }
+
+    /// @notice Tests the transfer function.
+    /// @dev Ensures that the state changes took effect and that the owner is the new owner.
+    function testTransfer() public {
+        address newBeneficiary = makeAddr("newBeneficiary");
+        address newOwner = makeAddr("newOwner");
+        address newBeacon = address(new UpgradeableBeacon(owner, tvsImplementation));
+
+        vm.prank(owner);
+        tvsV1.transfer(newBeneficiary, newOwner, newBeacon);
+
+        assertEq(tvsV1.getBeneficiary(), newBeneficiary, "Beneficiary address not updated");
+        assertEq(tvsV1.beacon(), newBeacon, "Beacon address not updated");
+        assertEq(tvsV1.owner(), newOwner, "Owner address not updated");
+    }
+
+    /// @notice Tests that the transfer function fails if called by a non-owner.
+    function testTransferFailsIfNotOwner() public {
+        address newBeneficiary = makeAddr("newBeneficiary");
+        address newBeacon = address(new UpgradeableBeacon(owner, tvsImplementation));
+        address newOwner = makeAddr("newOwner");
+        address nonOwner = makeAddr("nonOwner");
+
+        vm.prank(nonOwner);
+        vm.expectRevert(abi.encodeWithSignature("NotOwner(address)", nonOwner));
+        tvsV1.transfer(newBeneficiary, newOwner, newBeacon);
+    }
+
+    /// @notice Tests that the transfer function fails if an invalid beacon is provided.
+    function testTransferFailsWithInvalidBeacon() public {
+        address newBeneficiary = makeAddr("newBeneficiary");
+        address newOwner = makeAddr("newOwner");
+        address invalidBeacon = address(new MockInvalidBeacon(tvsImplementation));
+
+        vm.prank(owner);
+        vm.expectRevert();
+        tvsV1.transfer(newBeneficiary, newOwner, invalidBeacon);
     }
 
 }

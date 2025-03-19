@@ -5,11 +5,11 @@ import "./TVSImmutableBase.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 
-/// @title SudoMutable TVS (v1)
+/// @title TVS Clone Implementation (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Non-upgradeable implementation of the TVS with initializer
-/// @dev The TVSPseudoMutable contract is designed with the idea of providing an immutable version that is compatible with EIP-1167 proxy, offering users a way to minimize gas costs during deployment.
-contract TVSPseudoMutable is TVSImmutableBase, Initializable, OwnableUpgradeable {
+/// @dev The TVSClone contract is designed with the idea of providing an immutable version that is compatible with EIP-1167 clone proxy, offering users a way to minimize gas costs during deployment.
+contract TVSClone is TVSImmutableBase, Initializable, OwnableUpgradeable {
 
     function initialize(address _beneficiary, address _owner) external initializer {
         __Ownable_init(_owner); 

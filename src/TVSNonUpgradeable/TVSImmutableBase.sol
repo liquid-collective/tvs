@@ -9,6 +9,14 @@ import "../TVS.sol";
 abstract contract TVSImmutableBase is TVS {
     address internal beneficiary; 
 
+    /**
+     * @dev Emitted when the ownership is transferred to a new owner.
+     * @param newBeneficiary The address of the new beneficiary.
+     * @param newOwner The address of the new owner.
+     */
+    event Transferred(address indexed newBeneficiary, address indexed newOwner);
+
+
     function getBeneficiary() public override view returns (address) {
         return beneficiary;
     }
@@ -22,4 +30,16 @@ abstract contract TVSImmutableBase is TVS {
     function version() external pure returns (string memory) {
         return "v1.0.0 I";
     }
+
+    /// @notice Transfers the ownership of the TVS.
+    /// @dev This function sets a new beneficiary, transfers ownership to a new owner.
+    /// @param newBeneficiary The new beneficiary address.
+    /// @param newOwner The new owner address.
+    function transfer(address newBeneficiary, address newOwner) external _onlyOwner {
+        _transferTVSOwnership(newOwner);
+        _setBeneficiary(newBeneficiary);
+        emit Transferred(newBeneficiary, newOwner);
+    }
+
+    function _transferTVSOwnership(address newOwner) internal virtual;
 }

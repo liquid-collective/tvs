@@ -25,13 +25,6 @@ interface ITVS {
     /// @param newBeneficiary The new beneficiary address.
     event BeneficiaryUpdated(address indexed newBeneficiary);
 
-    /**
-     * @dev Emitted when the ownership is transferred to a new owner.
-     * @param newBeneficiary The address of the new beneficiary.
-     * @param newOwner The address of the new owner.
-     */
-    event Transferred(address indexed newBeneficiary, address indexed newOwner);
-
     /// ----------------------- Errors -----------------------
 
     /// @notice Error thrown when an invalid address is provided for any reason.
@@ -108,13 +101,7 @@ interface ITVS {
     /// @notice Retrieves the current beneficiary address.
     /// @return The address of the beneficiary.
     function getBeneficiary() external view returns (address);
-
-    /// @notice Transfers the ownership the TVS.
-    /// @dev This function sets a new beneficiary and transfers ownership to a new owner.
-    /// @param newBeneficiary The new beneficiary address.
-    /// @param newOwner The new owner address.
-    function transfer(address newBeneficiary, address newOwner) external;
-
+    
     /// @notice Retrieves the version of the contract
     /// @return Version of the contract
     function version() external pure returns (string memory);

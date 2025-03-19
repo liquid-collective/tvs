@@ -20,6 +20,12 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
     /// @param newBeacon The new beacon address.
     event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
 
+    /// @notice Emitted when the ownership is transferred to a new owner.
+    /// @param newBeneficiary The address of the new beneficiary.
+    /// @param newOwner The address of the new owner.
+    /// @param newBeacon The address of the new beacon.
+    event Transferred(address indexed newBeneficiary, address indexed newOwner, address indexed newBeacon);
+
     function initialize(address _destination, address _owner, address _beacon) external initializer {
         if (_destination == address(0) || _owner == address(0) || _beacon == address(0)) revert InvalidAddress();
 
@@ -29,14 +35,13 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
     }
 
     function setBeacon(address _beacon) external _onlyOwner {
-        address implementation = IBeacon(_beacon).implementation();
-        implementation.functionDelegateCall(abi.encodeWithSignature("unsafeSetBeacon(address)", _beacon));
+        _setBeacon(_beacon);
     }
 
     function unsafeSetBeacon(address _beacon) external _onlyOwner {
         address oldBeacon = Beacon.get();
         Beacon.set(_beacon);
-        emit BeaconUpdated(oldBeacon, _beacon);
+        emit BeaconUpdated(oldBeacon, _beacon);   
     }
 
     function beacon() external view returns (address) {
@@ -47,8 +52,31 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
         revert OwnershipCannotBeRenounced();
     }
 
-    function _transferTVSOwnership(address newOwner) internal override {
+    /// @inheritdoc ITVS
+    function getBeneficiary() public view override returns (address) {
+        return Beneficiary.get();
+    }
+
+    /// @notice Transfers the ownership of the TVS.
+    /// @dev This function sets a new beneficiary, transfers ownership to a new owner, and sets a new beacon.
+    /// @param newBeneficiary The new beneficiary address.
+    /// @param newOwner The new owner address.
+    /// @param newBeacon The new beacon address.
+    function transfer(address newBeneficiary, address newOwner, address newBeacon) external _onlyOwner {
+        _setBeacon(newBeacon);
         _transferOwnership(newOwner);
+        _setBeneficiary(newBeneficiary);
+        emit Transferred(newBeneficiary, newOwner, newBeacon);
+    }
+
+
+    function _setBeacon(address _beacon) internal {
+        address implementation = IBeacon(_beacon).implementation();
+        implementation.functionDelegateCall(abi.encodeWithSignature("unsafeSetBeacon(address)", _beacon));
+    }
+
+    function _owner() internal view override returns (address) {
+        return OwnableUpgradeable.owner();
     }
 
     function _setBeneficiary(address _beneficiary) internal override {
@@ -56,16 +84,7 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
         Beneficiary.set(_beneficiary);
         emit BeneficiaryUpdated(_beneficiary);
     }
-
-    /// @inheritdoc ITVS
-    function getBeneficiary() public view override returns (address) {
-        return Beneficiary.get();
-    }
-
-    function _owner() internal view override returns (address) {
-        return OwnableUpgradeable.owner();
-    }
-
+    
     function version() external pure returns (string memory) {
         return "v1.0.0 U";
     }

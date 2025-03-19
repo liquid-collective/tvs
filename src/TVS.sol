@@ -14,13 +14,6 @@ abstract contract TVS is ITVS {
     address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
     address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
 
-    /// @dev Internal function to assert caller is the owner
-    function _assertOwner() internal view {
-        if (msg.sender != _owner()) {
-            revert NotOwner(msg.sender);
-        }
-    }
-
     ///@dev Modifier to restrict functions to the contract owner only.
     modifier _onlyOwner() {
         _assertOwner();
@@ -36,10 +29,6 @@ abstract contract TVS is ITVS {
     function setBeneficiary(address _beneficiary) external _onlyOwner {
         _setBeneficiary(_beneficiary);
     }
-
-    function _setBeneficiary(address _beneficiary) internal virtual;
-
-    function _transferTVSOwnership(address _newOwner) internal virtual;
 
     /// @inheritdoc ITVS
     function getBeneficiary() public view virtual override returns (address);
@@ -58,13 +47,6 @@ abstract contract TVS is ITVS {
         }
         payable(dest).sendValue(amountToSweep);
         emit Swept(dest, amountToSweep);
-    }
-
-    /// @inheritdoc ITVS
-    function transfer(address newBeneficiary, address newOwner) external _onlyOwner {
-        _setBeneficiary(newBeneficiary);
-        _transferTVSOwnership(newOwner);
-        emit Transferred(newBeneficiary, newOwner);
     }
 
     /// @inheritdoc ITVS
@@ -120,6 +102,15 @@ abstract contract TVS is ITVS {
                     revert RequestFailed();
                 }
             }
+        }
+    }
+
+    function _setBeneficiary(address _beneficiary) internal virtual;
+
+    /// @dev Internal function to assert caller is the owner
+    function _assertOwner() internal view {
+        if (msg.sender != _owner()) {
+            revert NotOwner(msg.sender);
         }
     }
 
