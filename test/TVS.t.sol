@@ -9,6 +9,7 @@ import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
 import {UpgradeableBeacon} from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import {TVS} from "../src/TVS.sol";
 import "../src/interfaces/ITVS.sol";
+import "../src/interfaces/ISweepToContract.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 
@@ -22,6 +23,9 @@ contract MockInvalidBeacon {
 }
 
 contract MockInvalidTVSImplementation {}
+contract MockBeneficiaryContract is ISweepToContract {
+    function receiveETHFromTVS() external payable override {}
+}
 
 contract TVSUpgradeableInitializationTest is Test {
     address beacon;
@@ -153,6 +157,44 @@ abstract contract BaseTVSTest is Test {
         tvs.sweep(address(0), 0);
 
         assertEq(beneficiary.balance, amount, "Beneficiary balance should be equal to the amount swept");
+        assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
+    }
+
+    function testSweepToContractWithNoSweepToContractInterface() public {
+        uint256 amount = 1 ether;
+        vm.deal(address(tvs), amount);
+
+        vm.expectRevert();
+        tvs.sweepToContract(address(0), 0);
+    }
+
+    function testSweepToContractWithSweepToContractInterfaceWorks() public {
+        uint256 amount = 1 ether;
+        vm.deal(address(tvs), 2 ether);
+
+        MockBeneficiaryContract sweepToContract = new MockBeneficiaryContract();
+        address sweepToContractAddress = address(sweepToContract);
+
+        vm.expectEmit(true, true, true, true);
+        emit Swept(sweepToContractAddress, amount);
+
+        vm.prank(owner);
+        tvs.sweepToContract(sweepToContractAddress, amount);
+
+        assertEq(address(sweepToContract).balance, amount, "SweepToContract balance should be equal to the amount swept");
+        assertEq(address(tvs).balance, amount, "Contract balance should be zero after sweep");
+
+        // test the default beneficiary contract can receive funds
+        vm.prank(owner);
+        tvs.setBeneficiary(sweepToContractAddress); 
+        
+        vm.expectEmit(true, true, true, true);
+        emit Swept(sweepToContractAddress, amount);
+
+        vm.prank(owner);
+        tvs.sweepToContract(address(0), 0);
+
+        assertEq(address(sweepToContract).balance, amount + amount, "SweepToContract balance should be equal to the cumulative amount swept");
         assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
     }
 

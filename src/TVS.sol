@@ -4,6 +4,8 @@ pragma solidity 0.8.28;
 import "openzeppelin-contracts/contracts/utils/Address.sol";
 import "./interfaces/ITVSBase.sol";
 
+import "./interfaces/ISweepToContract.sol";
+
 /// @title TVS (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Abstract base contract for TVS implementations
@@ -34,18 +36,31 @@ abstract contract TVS is ITVSBase  {
     function getBeneficiary() public view virtual override returns (address);
 
     /// @inheritdoc ITVSBase
-    function sweep(address beneficiary, uint256 _amount) external {
+    function sweep(address _beneficiary, uint256 _amount) external {
+        (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
+        payable(dest).sendValue(amountToSweep);
+    }
+
+    /// @inheritdoc ITVSBase
+    // TODO: Add reentrancy guard
+    function sweepToContract(address _beneficiary, uint256 _amount) external {
+        (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
+        ISweepToContract(dest).receiveETHFromTVS{value: amountToSweep}();
+    }
+
+    function _sweep(address _beneficiary, uint256 _amount) private returns (address dest, uint256 amountToSweep) {
+
         // Only require owner for custom beneficiary
-        if (beneficiary != address(0)) {
+        if (_beneficiary != address(0)) {
             _assertOwner();
         }
         
-        address dest = beneficiary == address(0) ? getBeneficiary() : beneficiary;
-        uint256 amountToSweep = _amount == 0 ? address(this).balance : _amount;
+        dest = _beneficiary == address(0) ? getBeneficiary() : _beneficiary;
+        amountToSweep = _amount == 0 ? address(this).balance : _amount;
         if (amountToSweep > address(this).balance) {
             revert InsufficientBalance(address(this).balance, amountToSweep);
         }
-        payable(dest).sendValue(amountToSweep);
+
         emit Swept(dest, amountToSweep);
     }
 
