@@ -12,6 +12,7 @@ interface ITVS is ITVSBase {
     
     /// @notice Adds a withdrawal request to CL for a specific TVS.
     /// @dev Only the owner can call this function.
+    /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.
     /// @param pubkeys The public keys of the validators to withdraw from.
     /// @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
     /// @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
@@ -20,6 +21,7 @@ interface ITVS is ITVSBase {
     /// @notice Adds a consolidation request to CL for the given source TVS.
     /// @dev Only the owner can call this function.
     /// @dev Both source and target validators (pubKeys) must be from the same TVS (this TVS).
+    /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.
     /// @param requests An array of consolidation requests.
     /// @param maxFeePerConsolidation The maximum fee allowed per consolidation request.
     function consolidate(ConsolidationRequest[] memory requests, uint256 maxFeePerConsolidation, address excessFeeRecipient) payable external;
