@@ -366,7 +366,7 @@ abstract contract BaseTVSTest is Test {
 
     }
 
-    function testWithdrawFromFailsIfFeeReadFails() public {
+    function testwithdrawFailsIfFeeReadFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -390,10 +390,10 @@ abstract contract BaseTVSTest is Test {
 
         // Expect the transaction to revert due to the call to WITHDRAWAL_CONTRACT_ADDRESS reverting
         vm.expectRevert(abi.encodeWithSignature("FeeReadFailed()"));
-        tvs.withdrawFrom{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromFailsIfFeeExceedsMax() public {
+    function testwithdrawFailsIfFeeExceedsMax() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -420,10 +420,10 @@ abstract contract BaseTVSTest is Test {
 
         // Expect the transaction to revert due to fee exceeding maxFeePerWithdrawal
         vm.expectRevert(abi.encodeWithSignature("FeeTooHigh(uint256,uint256)", fee, maxFeePerWithdrawal));
-        tvs.withdrawFrom{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromFailsIfRequestFails() public {
+    function testwithdrawFailsIfRequestFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -456,10 +456,10 @@ abstract contract BaseTVSTest is Test {
 
         // Expect the transaction to revert due to the call to WITHDRAWAL_CONTRACT_ADDRESS failing
         vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));
-        tvs.withdrawFrom{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromWorksIfAllIsFine() public {
+    function testwithdrawWorksIfAllIsFine() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -496,8 +496,8 @@ abstract contract BaseTVSTest is Test {
             maxFeePerWithdrawal,
             callData
         );
-        // Call the withdrawFrom function
-        tvs.withdrawFrom{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        // Call the withdraw function
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
 }

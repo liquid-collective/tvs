@@ -11,14 +11,16 @@ import "./ITVSBase.sol";
 interface ITVS is ITVSBase {
     
     /// @notice Adds a withdrawal request to CL for a specific TVS.
+    /// @dev This is a pectra-compatible function, which allows the owner to withdraw given amount from the specified validator's stake or reward.
     /// @dev Only the owner can call this function.
     /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.
     /// @param pubkeys The public keys of the validators to withdraw from.
     /// @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
     /// @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
-    function withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external;
+    function withdraw(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external;
 
     /// @notice Adds a consolidation request to CL for the given source TVS.
+    /// @dev This is a pectra-compatible function, which allows the owner to consolidate one or more validators to another.
     /// @dev Only the owner can call this function.
     /// @dev Both source and target validators (pubKeys) must be from the same TVS (this TVS).
     /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.

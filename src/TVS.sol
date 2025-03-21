@@ -54,7 +54,7 @@ abstract contract TVS is ITVSBase  {
         _setBeneficiary(newBeneficiary);
     }
 
-    function _withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient)  internal   {
+    function _withdraw(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient)  internal   {
         if (pubkeys.length != amount.length) {
             revert LengthMismatch(pubkeys.length, amount.length);
         }

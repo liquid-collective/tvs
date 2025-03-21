@@ -73,8 +73,8 @@ contract TVSUpgradeable is TVS, ITVS, Initializable, OwnableUpgradeable, Reentra
     }
 
     /// @inheritdoc ITVS
-    function withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external nonReentrant _onlyOwner {
-        _withdrawFrom(pubkeys, amount, maxFeePerWithdrawal, excessFeeRecipient);
+    function withdraw(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external nonReentrant _onlyOwner {
+        _withdraw(pubkeys, amount, maxFeePerWithdrawal, excessFeeRecipient);
     }
 
     /// @inheritdoc ITVS
