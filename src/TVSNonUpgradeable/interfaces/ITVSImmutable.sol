@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Proprietary
 pragma solidity 0.8.28;
 
-/// @title TVS Base Interface (v1)
+/// @title TVS Interface (Immutable)
 /// @author Alluvial Finance Inc.
-/// @notice Base interface for the TVS contract.
-/// @dev This is the base interface used to interact with the TVS contract.
+/// @notice Interface for the TVS contract.
+/// @dev This interface is used to interact with the TVS contract.
 /// @dev The TVS contract is the withdrawal credential of a set of validators in the system.
-interface ITVSBase {
+interface ITVSImmutable {
     
     /// @notice Struct to represent a consolidation request.
     struct ConsolidationRequest {
@@ -30,6 +30,13 @@ interface ITVSBase {
     /// @param excessFee The amount of excess fee sent.
     event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
 
+    /**
+     * @dev Emitted when the ownership is transferred to a new owner.
+     * @param newBeneficiary The address of the new beneficiary.
+     * @param newOwner The address of the new owner.
+     */
+    event Transferred(address indexed newBeneficiary, address indexed newOwner);
+    
     /// ----------------------- Errors -----------------------
 
     /// @notice Error thrown when an invalid address is provided for any reason.
@@ -99,12 +106,26 @@ interface ITVSBase {
     /// @param beneficiary New beneficiary address.
     function setBeneficiary(address beneficiary) external;
 
+    /// @notice Adds a withdrawal request to CL for a specific TVS.
+    /// @dev Only the owner can call this function.
+    /// @param pubkeys The public keys of the validators to withdraw from.
+    /// @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
+    /// @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
+    function withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external;
+
+    /// @notice Adds a consolidation request to CL for the given source TVS.
+    /// @dev Only the owner can call this function.
+    /// @dev Both source and target validators (pubKeys) must be from the same TVS (this TVS).
+    /// @param requests An array of consolidation requests.
+    /// @param maxFeePerConsolidation The maximum fee allowed per consolidation request.
+    function consolidate(ConsolidationRequest[] memory requests, uint256 maxFeePerConsolidation, address excessFeeRecipient) payable external;
+
     // Getters
     
     /// @notice Retrieves the current beneficiary address.
     /// @return The address of the beneficiary.
     function getBeneficiary() external view returns (address);
-    
+
     /// @notice Retrieves the version of the contract
     /// @return Version of the contract
     function version() external pure returns (string memory);
