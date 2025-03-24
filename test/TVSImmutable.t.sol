@@ -18,25 +18,25 @@ import {BaseTVSTest, ITVS} from "./TVS.t.sol";
 // Tests specific to TVSImmutable
 contract TVSImmutableTest is BaseTVSTest {
 
-    ITVSImmutable TVS;
+    ITVSImmutable tvsImmutable;
 
-     function setUp() public override {
-        tvs = deployTVS();
-        TVS = ITVSImmutable(payable(tvs)); // Cast the TVS address to TVSV1
+    function setUp() public override {
+        super.setUp();
+        tvsImmutable = ITVSImmutable(payable(tvs)); // Cast the TVS address to TVSV1
     }
 
     function deployTVS() internal override returns (ITVS) {
-        return ITVS(payable(address(new TVSImmutable(beneficiary, owner))));
+        return ITVS(payable(address(new TVSImmutable(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS))));
     }
 
     function testConstructorWithZeroAddressOwner() public {
         vm.expectRevert(abi.encodeWithSignature("OwnableInvalidOwner(address)", address(0)));
-        new TVSImmutable(beneficiary, address(0));
+        new TVSImmutable(beneficiary, address(0), WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS);
     }
 
     function testConstructorWithZeroAddressBeneficiary() public {
         vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
-        new TVSImmutable(address(0), owner);
+        new TVSImmutable(address(0), owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS);
     }
 
     /// @notice Tests the transfer function.
@@ -46,7 +46,7 @@ contract TVSImmutableTest is BaseTVSTest {
         address newOwner = makeAddr("newOwner");
 
         vm.prank(owner);
-        TVSImmutable(payable(tvs)).transfer(newBeneficiary, newOwner);
+        tvsImmutable.transfer(newBeneficiary, newOwner);
 
         assertEq(tvs.getBeneficiary(), newBeneficiary, "Beneficiary address not updated");
         assertEq(Ownable(address(tvs)).owner(), newOwner, "Owner address not updated");
@@ -59,7 +59,7 @@ contract TVSImmutableTest is BaseTVSTest {
         address nonOwner = makeAddr("nonOwner");
 
         vm.prank(nonOwner);
-        vm.expectRevert(abi.encodeWithSignature("NotOwner(address)", nonOwner));
-        TVSImmutable(payable(tvs)).transfer(newBeneficiary, newOwner);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
+        tvsImmutable.transfer(newBeneficiary, newOwner);
     }
 }

@@ -9,33 +9,25 @@ import "openzeppelin-contracts/contracts/utils/Address.sol";
 /// @notice Base contract for TVS Immutable implementations
 abstract contract TVSImmutableBase is ITVSImmutable {
     address internal beneficiary; 
-
+    
     using Address for address payable;
     using Address for address;
+    address public immutable WITHDRAWAL_CONTRACT_ADDRESS;
+    address public immutable CONSOLIDATION_CONTRACT_ADDRESS;
 
-    address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
-    address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
-
-    ///@dev Modifier to restrict functions to the contract owner only.
-    modifier _onlyOwner() {
-        _assertOwner();
-        _;
+    constructor(address _withdrawalContractAddress, address _consolidationContractAddress) {
+        if (_withdrawalContractAddress == address(0) || _consolidationContractAddress == address(0)) {
+            revert InvalidAddress();
+        }
+        WITHDRAWAL_CONTRACT_ADDRESS = _withdrawalContractAddress;
+        CONSOLIDATION_CONTRACT_ADDRESS = _consolidationContractAddress;
     }
 
     receive() external payable {}
 
-    function transfer(address newBeneficiary, address newOwner) external _onlyOwner {
-        _transfer(newBeneficiary, newOwner);
-        emit Transferred(newBeneficiary, newOwner);
-    }
-
     function sweep(address _beneficiary, uint256 _amount) external {
         (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
         payable(dest).sendValue(amountToSweep);
-    }
-
-    function setBeneficiary(address _beneficiary) external _onlyOwner {
-        _setBeneficiary(_beneficiary);
     }
 
     function getBeneficiary() public view returns (address) {
@@ -55,6 +47,7 @@ abstract contract TVSImmutableBase is ITVSImmutable {
     function _transfer(address newBeneficiary, address newOwner) internal {
         _transferTVSOwnership(newOwner);
         _setBeneficiary(newBeneficiary);
+        emit Transferred(newBeneficiary, newOwner);
     }
 
     function _withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient)  internal   {
@@ -139,11 +132,7 @@ abstract contract TVSImmutableBase is ITVSImmutable {
     }
 
     /// @dev Internal function to assert caller is the owner
-    function _assertOwner() internal view {
-        if (msg.sender != _owner()) {
-            revert NotOwner(msg.sender);
-        }
-    }
+    function _assertOwner() internal virtual;
 
     function _refundExcessFee(uint256 totalValueReceived, uint256 totalFeePaid, address excessFeeRecipient) internal {
         // send excess value  back to excessFeeRecipient

@@ -19,9 +19,17 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
     using Address for address payable;
     using Address for address;
 
-    address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
-    address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+    address public immutable WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
+    address public immutable CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
 
+    constructor(address _withdrawalContractAddress, address _consolidationContractAddress) {
+        if (_withdrawalContractAddress == address(0) || _consolidationContractAddress == address(0)) {
+            revert InvalidAddress();
+        }
+        WITHDRAWAL_CONTRACT_ADDRESS = _withdrawalContractAddress;
+        CONSOLIDATION_CONTRACT_ADDRESS = _consolidationContractAddress;
+    }
+    
     receive() external payable {}
 
     function initialize(address _destination, address _owner, address _beacon) external initializer {
@@ -192,7 +200,7 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
     /// @dev Internal function to assert caller is the owner
     function _assertOwner() internal view {
         if (msg.sender != owner()) {
-            revert NotOwner(msg.sender);
+            revert OwnableUnauthorizedAccount(msg.sender);
         }
     }
 

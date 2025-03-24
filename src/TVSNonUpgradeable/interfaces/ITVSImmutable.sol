@@ -13,7 +13,7 @@ interface ITVSImmutable {
         bytes[] srcPubkeys; 
         bytes targetPubkey; 
     }
-
+    
     /// --------------------- Events ---------------------
 
     /// @notice Emitted when funds are swept to the beneficiary.
@@ -61,10 +61,6 @@ interface ITVSImmutable {
     /// @param actual The actual length of the input arrays provided.
     error LengthMismatch(uint256 expected, uint256 actual);
 
-    /// @notice Error thrown when an unauthorized access attempt is made.
-    /// @param caller The address of the caller attempting unauthorized access.
-    error NotOwner(address caller);
-
     /// @notice Error thrown when reading the fee fails.
     error FeeReadFailed();
 
@@ -105,6 +101,12 @@ interface ITVSImmutable {
     /// @dev Emits a {BeneficiaryUpdated} event.
     /// @param beneficiary New beneficiary address.
     function setBeneficiary(address beneficiary) external;
+
+    // @notice Transfers the ownership of the TVS.
+    /// @dev This function sets a new beneficiary, transfers ownership to a new owner.
+    /// @param newBeneficiary The new beneficiary address.
+    /// @param newOwner The new owner address.
+    function transfer(address newBeneficiary, address newOwner) external;
 
     /// @notice Adds a withdrawal request to CL for a specific TVS.
     /// @dev Only the owner can call this function.

@@ -65,10 +65,6 @@ interface ITVSUpgradeable {
     /// @param actual The actual length of the input arrays provided.
     error LengthMismatch(uint256 expected, uint256 actual);
 
-    /// @notice Error thrown when an unauthorized access attempt is made.
-    /// @param caller The address of the caller attempting unauthorized access.
-    error NotOwner(address caller);
-
     /// @notice Error thrown when reading the fee fails.
     error FeeReadFailed();
 

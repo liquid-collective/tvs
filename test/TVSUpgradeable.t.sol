@@ -10,7 +10,7 @@ import {UpgradeableBeacon} from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import "../src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol";
 import "../src/TVSNonUpgradeable/interfaces/ITVSImmutable.sol";
 import "../src/shared/interfaces/ISweepToContract.sol";
-import {BaseTVSTest, ITVS} from "./TVS.t.sol";
+import {BaseTVSTest, ITVS, PectraAddress} from "./TVS.t.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 
@@ -24,14 +24,14 @@ contract MockInvalidBeacon {
     }
 }
 
-contract TVSUpgradeableInitializationTest is Test {
+contract TVSUpgradeableInitializationTest is Test, PectraAddress {
     address beacon;
     address beneficiary; 
     address owner;
     address tvsImplementation;
 
     function setUp() public {
-        tvsImplementation = address(new TVSV1());
+        tvsImplementation = address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS));
         beneficiary = makeAddr("beneficiary"); 
         owner = makeAddr("owner");
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
@@ -128,11 +128,9 @@ contract TVSUpgradeableTest is BaseTVSTest {
     event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
 
     function setUp() public override {
-        owner = makeAddr("owner");
-        beneficiary = makeAddr("beneficiary");
-        tvsImplementation = address(new TVSV1());
+        tvsImplementation = address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS));
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
-        tvs = deployTVS();
+        super.setUp();
         tvsV1 = TVSV1(payable(tvs)); // Cast the TVS address to TVSV1
     }
 
@@ -215,7 +213,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
         address randomCaller = makeAddr("randomCaller");
         vm.prank(randomCaller);
 
-        vm.expectRevert(abi.encodeWithSignature("NotOwner(address)", randomCaller));
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", randomCaller));
 
         address newBeacon = makeAddr("newBeacon");
         tvsV1.setBeacon(newBeacon);
@@ -244,7 +242,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
         address nonOwner = makeAddr("nonOwner");
 
         vm.prank(nonOwner);
-        vm.expectRevert(abi.encodeWithSignature("NotOwner(address)", nonOwner));
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
         tvsV1.transfer(newBeneficiary, newOwner, newBeacon);
     }
 

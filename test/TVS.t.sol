@@ -33,7 +33,7 @@ interface ITVS {
 
     error LengthMismatch(uint256 expected, uint256 actual);
 
-    error NotOwner(address caller);
+    error OwnableUnauthorizedAccount(address caller);
 
     error FeeReadFailed();
 
@@ -60,12 +60,19 @@ interface ITVS {
     function version() external pure returns (string memory);
 }
 
+
 contract MockBeneficiaryContract is ISweepToContract {
     function receiveETHFromTVS() external payable override {}
 }
 
+
+abstract contract PectraAddress {
+    address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
+    address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+}
+
 // Base test contract for common TVS functionality
-abstract contract BaseTVSTest is Test {
+abstract contract BaseTVSTest is Test, PectraAddress {
     ITVS tvs;
     address beneficiary;
     address owner;
@@ -169,7 +176,7 @@ abstract contract BaseTVSTest is Test {
         address newBeneficiary = makeAddr("newBeneficiary");
         vm.prank(randomCaller);
 
-        vm.expectRevert(abi.encodeWithSignature("NotOwner(address)", randomCaller));
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", randomCaller));
 
         tvs.setBeneficiary(newBeneficiary);
     }
