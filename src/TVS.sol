@@ -48,7 +48,19 @@ abstract contract TVS is ITVS  {
         ISweepToContract(dest).receiveETHFromTVS{value: amountToSweep}();
     }
 
-    function _sweep(address _beneficiary, uint256 _amount) private returns (address dest, uint256 amountToSweep) {
+    /**
+     * @dev Prepares sweep details by determining the destination and amount to sweep
+     * Emits a {Swept} event with the destination and amount to sweep
+     * Requirements:
+     * - If a custom beneficiary is provided, the caller must be the owner
+     * - The beneficiary must not be the zero address
+     * - The amount to sweep must not exceed the contract balance
+     * @param _beneficiary  The address to sweep to. If zero address, the contract beneficiary is used
+     * @param _amount The amount to sweep. If zero, the entire balance is swept
+     * @return dest The destination address
+     * @return amountToSweep The amount to sweep
+     */
+    function _prepareSweep(address _beneficiary, uint256 _amount) private returns (address dest, uint256 amountToSweep) {
 
         // Only require owner for custom beneficiary
         if (_beneficiary != address(0)) {
