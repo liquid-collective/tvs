@@ -2,12 +2,12 @@
 pragma solidity 0.8.28;
 
 import "openzeppelin-contracts/contracts/utils/Address.sol";
-import "./interfaces/ITVSBase.sol";
+import "./interfaces/ITVS.sol";
 
 /// @title TVS (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Abstract base contract for TVS implementations
-abstract contract TVS is ITVSBase  {
+abstract contract TVS is ITVS  {
     using Address for address payable;
     using Address for address;
 
@@ -20,20 +20,20 @@ abstract contract TVS is ITVSBase  {
         _;
     }
 
-    /// @inheritdoc ITVSBase
+    /// @inheritdoc ITVS
     receive() external payable {}
 
     function _owner() internal view virtual returns (address);
 
-    /// @inheritdoc ITVSBase
+    /// @inheritdoc ITVS
     function setBeneficiary(address _beneficiary) external _onlyOwner {
         _setBeneficiary(_beneficiary);
     }
 
-    /// @inheritdoc ITVSBase
+    /// @inheritdoc ITVS
     function getBeneficiary() public view virtual override returns (address);
 
-    /// @inheritdoc ITVSBase
+    /// @inheritdoc ITVS
     function sweep(address beneficiary, uint256 _amount) external {
         // Only require owner for custom beneficiary
         if (beneficiary != address(0)) {

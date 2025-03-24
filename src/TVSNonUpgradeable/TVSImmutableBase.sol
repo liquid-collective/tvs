@@ -2,8 +2,6 @@
 pragma solidity 0.8.28;
 
 import "../TVS.sol";
-import "../interfaces/ITVS.sol";
-
 
 /// @title Base for Immutable TVS Contract
 /// @author Alluvial Finance Inc.
@@ -19,7 +17,7 @@ abstract contract TVSImmutableBase is TVS {
     event Transferred(address indexed newBeneficiary, address indexed newOwner);
 
 
-    function getBeneficiary() public override(TVS) view returns (address) {
+    function getBeneficiary() public override view returns (address) {
         return beneficiary;
     }
 

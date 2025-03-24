@@ -10,7 +10,7 @@ import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgrad
 /// @author Alluvial Finance Inc.
 /// @notice Non-upgradeable implementation of the TVS with initializer
 /// @dev The TVSClone contract is designed with the idea of providing an immutable version that is compatible with EIP-1167 clone proxy, offering users a way to minimize gas costs during deployment.
-contract TVSClone is ITVS, TVSImmutableBase, Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+contract TVSClone is TVSImmutableBase, Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
     function initialize(address _beneficiary, address _owner) external initializer {
         __Ownable_init(_owner); 

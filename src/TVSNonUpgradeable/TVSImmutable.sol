@@ -9,7 +9,7 @@ import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
 /// @title Immutable TVS (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Non-upgradeable implementation of the TVS
-contract TVSImmutable is ITVS, TVSImmutableBase, Ownable, ReentrancyGuard {
+contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
     constructor(address _beneficiary, address _owner) Ownable(_owner) ReentrancyGuard() {
         _setBeneficiary(_beneficiary);
     }

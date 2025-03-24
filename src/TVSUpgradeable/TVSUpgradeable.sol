@@ -7,14 +7,12 @@ import "../TVS.sol";
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 import "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
-
-import "../interfaces/ITVS.sol";
 import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
 
 /// @title Upgradeable TVS (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Upgradeable implementation of the TVS
-contract TVSUpgradeable is TVS, ITVS, Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     using Address for address payable;
     using Address for address;
 
@@ -56,8 +54,8 @@ contract TVSUpgradeable is TVS, ITVS, Initializable, OwnableUpgradeable, Reentra
         revert OwnershipCannotBeRenounced();
     }
 
-    /// @inheritdoc ITVSBase
-    function getBeneficiary() public view override(ITVSBase, TVS) returns (address) {
+    /// @inheritdoc ITVS
+    function getBeneficiary() public view override returns (address) {
         return Beneficiary.get();
     }
 
