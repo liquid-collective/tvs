@@ -15,12 +15,12 @@ contract TVSBeaconProxy {
     /// @notice Constructor that initializes the proxy with the beacon address and initialization data.
     /// @dev The constructor will get the implementation address from the beacon, and delegate the initialization call to the implementation.
     /// @dev This function will revert if the implementation on the beacon is not a contract, or the input data to initialize has invalid addresses.
-    /// @param _beacon The address of the beacon contract.
-    /// @param _initData The initialization data to be passed to the implementation contract.
-    constructor(address _beacon, bytes memory _initData) {
-        address implementation = _getImplementation(_beacon);
+    /// @param beacon The address of the beacon contract.
+    /// @param initData The initialization data to be passed to the implementation contract.
+    constructor(address beacon, bytes memory initData) {
+        address implementation = _getImplementation(beacon);
         if (implementation.code.length == 0) revert InvalidBeacon();
-        (bool success,) = implementation.delegatecall(_initData);
+        (bool success,) = implementation.delegatecall(initData);
         if (!success) {
             revert InitializationFailed();
         }
@@ -50,9 +50,9 @@ contract TVSBeaconProxy {
     }
 
     /// @notice Internal function to fetch the implementation address from the beacon
-    /// @param beacon The address of the beacon contract
+    /// @param _beacon The address of the beacon contract
     /// @return implementation The address of the implementation contract
-    function _getImplementation(address beacon) internal view returns (address implementation) {
+    function _getImplementation(address _beacon) internal view returns (address implementation) {
         assembly ("memory-safe") {
             let ptr := mload(0x40)
 
@@ -63,7 +63,7 @@ contract TVSBeaconProxy {
             let success :=
                 staticcall(
                     gas(), // forward all remaining gas
-                    beacon, // address of the beacon
+                    _beacon, // address of the beacon
                     ptr, // input starts at ptr
                     0x04, // size of the function selector (4 bytes)
                     ptr, // store output at ptr (reuse memory)

@@ -13,9 +13,9 @@ import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
 /// @notice Non-upgradeable implementation of the TVS
 contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
 
-    constructor(address _beneficiary, address _owner, address _withdrawalContractAddress, address _consolidationContractAddress) 
-    Ownable(_owner) TVSImmutableBase(_withdrawalContractAddress, _consolidationContractAddress) ReentrancyGuard() {
-        _setBeneficiary(_beneficiary);
+    constructor(address newBeneficiary, address newOwner, address withdrawalContractAddress, address consolidationContractAddress) 
+    Ownable(newOwner) TVSImmutableBase(withdrawalContractAddress, consolidationContractAddress) ReentrancyGuard() {
+        _setBeneficiary(newBeneficiary);
     }
 
     function renounceOwnership() public view override(Ownable) onlyOwner {
@@ -23,8 +23,8 @@ contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
     }
 
     /// @inheritdoc ITVSImmutable
-    function sweepToContract(address _beneficiary, uint256 _amount) external override nonReentrant {
-        (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
+    function sweepToContract(address beneficiary, uint256 amount) external override nonReentrant {
+        (address dest, uint256 amountToSweep) = _sweep(beneficiary, amount);
         ISweepToContract(dest).receiveETHFromTVS{value: amountToSweep}();
     }
 
@@ -34,8 +34,8 @@ contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
     }
 
     /// @inheritdoc ITVSImmutable
-    function setBeneficiary(address _beneficiary) external onlyOwner {
-        _setBeneficiary(_beneficiary);
+    function setBeneficiary(address newBeneficiary) external onlyOwner {
+        _setBeneficiary(newBeneficiary);
     }
 
     /// @inheritdoc ITVSImmutable

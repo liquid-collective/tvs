@@ -15,18 +15,18 @@ abstract contract TVSImmutableBase is ITVSImmutable {
     address public immutable WITHDRAWAL_CONTRACT_ADDRESS;
     address public immutable CONSOLIDATION_CONTRACT_ADDRESS;
 
-    constructor(address _withdrawalContractAddress, address _consolidationContractAddress) {
-        if (_withdrawalContractAddress == address(0) || _consolidationContractAddress == address(0)) {
+    constructor(address withdrawalContractAddress, address consolidationContractAddress) {
+        if (withdrawalContractAddress == address(0) || consolidationContractAddress == address(0)) {
             revert InvalidAddress();
         }
-        WITHDRAWAL_CONTRACT_ADDRESS = _withdrawalContractAddress;
-        CONSOLIDATION_CONTRACT_ADDRESS = _consolidationContractAddress;
+        WITHDRAWAL_CONTRACT_ADDRESS = withdrawalContractAddress;
+        CONSOLIDATION_CONTRACT_ADDRESS = consolidationContractAddress;
     }
 
     receive() external payable {}
 
-    function sweep(address _beneficiary, uint256 _amount) external {
-        (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
+    function sweep(address recipient, uint256 amount) external {
+        (address dest, uint256 amountToSweep) = _sweep(recipient, amount);
         payable(dest).sendValue(amountToSweep);
     }
 
@@ -42,25 +42,25 @@ abstract contract TVSImmutableBase is ITVSImmutable {
         emit BeneficiaryUpdated(_beneficiary);
     }
 
-    function _transferTVSOwnership(address newOwner) internal virtual;
+    function _transferTVSOwnership(address _newOwner) internal virtual;
 
-    function _transfer(address newBeneficiary, address newOwner) internal {
-        _transferTVSOwnership(newOwner);
-        _setBeneficiary(newBeneficiary);
-        emit Transferred(newBeneficiary, newOwner);
+    function _transfer(address _newBeneficiary, address _newOwner) internal {
+        _transferTVSOwnership(_newOwner);
+        _setBeneficiary(_newBeneficiary);
+        emit Transferred(_newBeneficiary, _newOwner);
     }
 
-    function _withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient)  internal   {
-        if (pubkeys.length != amount.length) {
-            revert LengthMismatch(pubkeys.length, amount.length);
+    function _withdrawFrom(bytes[] memory _pubkeys, uint64[] calldata _amount, uint256 _maxFeePerWithdrawal, address _excessFeeRecipient)  internal   {
+        if (_pubkeys.length != _amount.length) {
+            revert LengthMismatch(_pubkeys.length, _amount.length);
         }
 
         // check if the value sent is enough to cover the fees
-        uint256 maxFeePayable = maxFeePerWithdrawal * pubkeys.length;
+        uint256 maxFeePayable = _maxFeePerWithdrawal * _pubkeys.length;
         _validateSufficientValueForFee(msg.value, maxFeePayable);
         
         uint256 totalFeePaid = 0;
-        for (uint256 i = 0; i < pubkeys.length; i++) {
+        for (uint256 i = 0; i < _pubkeys.length; i++) {
             // Read current fee from the contract
             (bool readOK, bytes memory feeData) = WITHDRAWAL_CONTRACT_ADDRESS.staticcall("");
             if (!readOK) {
@@ -69,10 +69,10 @@ abstract contract TVSImmutableBase is ITVSImmutable {
             uint256 fee = uint256(bytes32(feeData));
             
             // Check if fee exceeds maximum allowed
-            _validateFee(fee, maxFeePerWithdrawal);
+            _validateFee(fee, _maxFeePerWithdrawal);
 
             // Add the withdrawal request
-            bytes memory callData = abi.encodePacked(pubkeys[i], amount[i]);
+            bytes memory callData = abi.encodePacked(_pubkeys[i], _amount[i]);
             (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{value: fee}(callData);
             if (!writeOK) {
                 revert RequestFailed();
@@ -81,14 +81,14 @@ abstract contract TVSImmutableBase is ITVSImmutable {
         }
 
         // Refund any access value back to the excessFeeRecipient
-        _refundExcessFee(msg.value, totalFeePaid, excessFeeRecipient);
+        _refundExcessFee(msg.value, totalFeePaid, _excessFeeRecipient);
     }
 
-    function _consolidate(ConsolidationRequest[] calldata requests, uint256 maxFeePerConsolidation, address excessFeeRecipient)  internal  {
+    function _consolidate(ConsolidationRequest[] calldata _requests, uint256 _maxFeePerConsolidation, address _excessFeeRecipient)  internal  {
 
         uint256 totalFeePaid = 0;
-        for (uint256 i = 0; i < requests.length; i++) {
-            for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
+        for (uint256 i = 0; i < _requests.length; i++) {
+            for (uint256 j = 0; j < _requests[i].srcPubkeys.length; j++) {
                 
                 // Read current fee from the contract
                 (bool readOK, bytes memory feeData) = CONSOLIDATION_CONTRACT_ADDRESS.staticcall("");
@@ -98,10 +98,10 @@ abstract contract TVSImmutableBase is ITVSImmutable {
                 uint256 fee = uint256(bytes32(feeData));   
 
                 // Check if fee exceeds maximum allowed
-                _validateFee(fee, maxFeePerConsolidation);
+                _validateFee(fee, _maxFeePerConsolidation);
 
                 // Add the consolidation request
-                bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
+                bytes memory callData = bytes.concat(_requests[i].srcPubkeys[j], _requests[i].targetPubkey);
                 (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{value: fee}(callData);
                 if (!writeOK) {
                     revert RequestFailed();
@@ -112,7 +112,7 @@ abstract contract TVSImmutableBase is ITVSImmutable {
         }
 
         // Refund any access value back to the excessFeeRecipient
-        _refundExcessFee(msg.value, totalFeePaid, excessFeeRecipient);
+        _refundExcessFee(msg.value, totalFeePaid, _excessFeeRecipient);
     }
 
     function _sweep(address _beneficiary, uint256 _amount) internal returns (address dest, uint256 amountToSweep) {
@@ -134,25 +134,25 @@ abstract contract TVSImmutableBase is ITVSImmutable {
     /// @dev Internal function to assert caller is the owner
     function _assertOwner() internal virtual;
 
-    function _refundExcessFee(uint256 totalValueReceived, uint256 totalFeePaid, address excessFeeRecipient) internal {
-        // send excess value  back to excessFeeRecipient
-        if (totalValueReceived > totalFeePaid) {
-            (bool success, ) = payable(excessFeeRecipient).call{value: totalValueReceived - totalFeePaid}("");
+    function _refundExcessFee(uint256 _totalValueReceived, uint256 _totalFeePaid, address _excessFeeRecipient) internal {
+        // send excess value  back to _excessFeeRecipient
+        if (_totalValueReceived > _totalFeePaid) {
+            (bool success, ) = payable(_excessFeeRecipient).call{value: _totalValueReceived - _totalFeePaid}("");
             if (!success) {
-                emit UnsentExcessFee(excessFeeRecipient, totalValueReceived - totalFeePaid);
+                emit UnsentExcessFee(_excessFeeRecipient, _totalValueReceived - _totalFeePaid);
             }
         }
     }
 
-    function _validateFee(uint256 currentFee, uint256 maxAllowedFee) internal pure {
-        if (currentFee > maxAllowedFee) {
-            revert FeeTooHigh(currentFee, maxAllowedFee);
+    function _validateFee(uint256 _currentFee, uint256 _maxAllowedFee) internal pure {
+        if (_currentFee > _maxAllowedFee) {
+            revert FeeTooHigh(_currentFee, _maxAllowedFee);
         }
     }
 
-    function _validateSufficientValueForFee(uint256 value, uint256 totalFee) internal pure {
-        if (value < totalFee) {
-            revert InsufficientvalueForFee(value, totalFee);
+    function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure {
+        if (_value < _totalFee) {
+            revert InsufficientvalueForFee(_value, _totalFee);
         }
     }
 

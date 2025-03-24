@@ -13,11 +13,11 @@ import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgrad
 /// @notice Non-upgradeable implementation of the TVS with initializer
 /// @dev The TVSClone contract is designed with the idea of providing an immutable version that is compatible with EIP-1167 clone proxy, offering users a way to minimize gas costs during deployment.
 contract TVSClone is ITVSImmutable, TVSImmutableBase, Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
-    constructor(address _withdrawalContractAddress, address _consolidationContractAddress)  TVSImmutableBase(_withdrawalContractAddress, _consolidationContractAddress) {}
-    
-    function initialize(address _beneficiary, address _owner) external initializer {
-        __Ownable_init(_owner); 
-        _setBeneficiary(_beneficiary);
+    constructor(address withdrawalContractAddress, address consolidationContractAddress)  TVSImmutableBase(withdrawalContractAddress, consolidationContractAddress) {}
+
+    function initialize(address beneficiary, address owner) external initializer {
+        __Ownable_init(owner); 
+        _setBeneficiary(beneficiary);
         ReentrancyGuardUpgradeable.__ReentrancyGuard_init();
     }
     
@@ -26,8 +26,8 @@ contract TVSClone is ITVSImmutable, TVSImmutableBase, Initializable, OwnableUpgr
     }
 
     /// @inheritdoc ITVSImmutable
-    function sweepToContract(address _beneficiary, uint256 _amount) external override nonReentrant {
-        (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
+    function sweepToContract(address beneficiary, uint256 amount) external override nonReentrant {
+        (address dest, uint256 amountToSweep) = _sweep(beneficiary, amount);
         ISweepToContract(dest).receiveETHFromTVS{value: amountToSweep}();
     }
 
@@ -37,8 +37,8 @@ contract TVSClone is ITVSImmutable, TVSImmutableBase, Initializable, OwnableUpgr
     }
 
     /// @inheritdoc ITVSImmutable
-    function setBeneficiary(address _beneficiary) external onlyOwner() {
-        _setBeneficiary(_beneficiary);
+    function setBeneficiary(address beneficiary) external onlyOwner() {
+        _setBeneficiary(beneficiary);
     }
 
     /// @inheritdoc ITVSImmutable
@@ -55,8 +55,8 @@ contract TVSClone is ITVSImmutable, TVSImmutableBase, Initializable, OwnableUpgr
         return OwnableUpgradeable.owner();
     }
 
-    function _transferTVSOwnership(address newOwner) internal override {
-        _transferOwnership(newOwner);
+    function _transferTVSOwnership(address _newOwner) internal override {
+        _transferOwnership(_newOwner);
     }
 
     /// @dev Internal function to assert caller is the owner

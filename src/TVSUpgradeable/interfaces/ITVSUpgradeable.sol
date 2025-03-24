@@ -109,8 +109,8 @@ interface ITVSUpgradeable {
     /// @notice Sets a new beacon address for the TVS.
     /// @dev Only the owner can call this function.
     /// @dev Emits a {BeaconUpdated} event.
-    /// @param _beacon The new beacon address.
-    function setBeacon(address _beacon) external;
+    /// @param beacon The new beacon address.
+    function setBeacon(address beacon) external;
 
     /// @notice Transfers the ownership of the TVS.
     /// @dev This function sets a new beneficiary, transfers ownership to a new owner, and sets a new beacon.
