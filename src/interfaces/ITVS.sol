@@ -87,11 +87,12 @@ interface ITVS {
     function sweep(address beneficiary, uint256 amount) external;
     
     /// @notice Sweeps all funds on the contract to a contract acting as the beneficiary address.
+    /// @dev the beneficiary contract MUST implement the {ISweepBeneficiary} interface
     /// @dev Only the owner can call this function.
     /// @dev Emits a {Swept} event.
     /// @param beneficiary Address of the contract to which funds will be swept.
     /// @param amount Amount of funds to sweep.
-    function sweepToContract(address beneficiary, uint256 amount) external;
+    function sweepToBeneficiaryContract(address beneficiary, uint256 amount) external;
 
     /// @notice Sets a new beneficiary address for fund sweeping.
     /// @dev Only the owner can call this function.

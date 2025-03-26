@@ -37,14 +37,14 @@ abstract contract TVS is ITVS  {
 
     /// @inheritdoc ITVS
     function sweep(address _beneficiary, uint256 _amount) external {
-        (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
+        (address dest, uint256 amountToSweep) = _prepareSweep(_beneficiary, _amount);
         payable(dest).sendValue(amountToSweep);
     }
 
     /// @inheritdoc ITVS
     // TODO: Add reentrancy guard
-    function sweepToContract(address _beneficiary, uint256 _amount) external {
-        (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
+    function sweepToBeneficiaryContract(address _beneficiary, uint256 _amount) external {
+        (address dest, uint256 amountToSweep) = _prepareSweep(_beneficiary, _amount);
         ISweepBeneficiary(dest).receiveETHFromTVS{value: amountToSweep}();
     }
 
@@ -57,23 +57,23 @@ abstract contract TVS is ITVS  {
      * - The amount to sweep must not exceed the contract balance
      * @param _beneficiary  The address to sweep to. If zero address, the contract beneficiary is used
      * @param _amount The amount to sweep. If zero, the entire balance is swept
-     * @return dest The destination address
-     * @return amountToSweep The amount to sweep
+     * @return _destination The destination address
+     * @return _amountToSweep The amount to sweep
      */
-    function _prepareSweep(address _beneficiary, uint256 _amount) private returns (address dest, uint256 amountToSweep) {
+    function _prepareSweep(address _beneficiary, uint256 _amount) private returns (address _destination, uint256 _amountToSweep) {
 
         // Only require owner for custom beneficiary
         if (_beneficiary != address(0)) {
             _assertOwner();
         }
         
-        dest = _beneficiary == address(0) ? getBeneficiary() : _beneficiary;
-        amountToSweep = _amount == 0 ? address(this).balance : _amount;
-        if (amountToSweep > address(this).balance) {
-            revert InsufficientBalance(address(this).balance, amountToSweep);
+        _destination = _beneficiary == address(0) ? getBeneficiary() : _beneficiary;
+        _amountToSweep = _amount == 0 ? address(this).balance : _amount;
+        if (_amountToSweep > address(this).balance) {
+            revert InsufficientBalance(address(this).balance, _amountToSweep);
         }
 
-        emit Swept(dest, amountToSweep);
+        emit Swept(_destination, _amountToSweep);
     }
 
     function _transfer(address newBeneficiary, address newOwner) internal {
