@@ -4,7 +4,7 @@ pragma solidity 0.8.28;
 import "openzeppelin-contracts/contracts/utils/Address.sol";
 import "./interfaces/ITVS.sol";
 
-import "./interfaces/ISweepToContract.sol";
+import "./interfaces/ISweepBeneficiary.sol";
 
 /// @title TVS (v1)
 /// @author Alluvial Finance Inc.
@@ -45,7 +45,7 @@ abstract contract TVS is ITVS  {
     // TODO: Add reentrancy guard
     function sweepToContract(address _beneficiary, uint256 _amount) external {
         (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
-        ISweepToContract(dest).receiveETHFromTVS{value: amountToSweep}();
+        ISweepBeneficiary(dest).receiveETHFromTVS{value: amountToSweep}();
     }
 
     /**
