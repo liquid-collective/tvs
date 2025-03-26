@@ -35,13 +35,13 @@ abstract contract TVS is ITVS  {
     /// @inheritdoc ITVS
     function getBeneficiary() public view virtual override returns (address);
 
-    /// @inheritdoc ITVSBase
+    /// @inheritdoc ITVS
     function sweep(address _beneficiary, uint256 _amount) external {
         (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
         payable(dest).sendValue(amountToSweep);
     }
 
-    /// @inheritdoc ITVSBase
+    /// @inheritdoc ITVS
     // TODO: Add reentrancy guard
     function sweepToContract(address _beneficiary, uint256 _amount) external {
         (address dest, uint256 amountToSweep) = _sweep(_beneficiary, _amount);
