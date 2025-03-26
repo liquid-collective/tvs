@@ -20,9 +20,9 @@ contract TVSImmutableTest is BaseTVSTest {
 
     ITVSImmutable tvsImmutable;
 
-    function setUp() public override {
+    function setUp() public override virtual {
         super.setUp();
-        tvsImmutable = ITVSImmutable(payable(tvs)); // Cast the TVS address to TVSV1
+        tvsImmutable = ITVSImmutable(payable(tvs)); // Cast the TVS address to TVSImmutable
     }
 
     function deployTVS() internal override returns (ITVS) {
