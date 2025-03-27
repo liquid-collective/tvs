@@ -25,7 +25,7 @@ contract TVSImmutableTest is BaseTVSTest {
         tvsImmutable = ITVSImmutable(payable(tvs)); // Cast the TVS address to TVSImmutable
     }
 
-    function deployTVS() internal override returns (ITVS) {
+    function deployTVS() internal virtual override returns (ITVS) {
         return ITVS(payable(address(new TVSImmutable(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS))));
     }
 
