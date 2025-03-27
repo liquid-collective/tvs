@@ -29,7 +29,7 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
     function initialize(address _destination, address _owner, address _beacon) external initializer {
         if (_destination == address(0) || _owner == address(0) || _beacon == address(0)) revert InvalidAddress();
 
-        __Ownable_init(_owner); 
+        __Ownable_init(_owner);
         Beneficiary.set(_destination);
         Beacon.set(_beacon);
     }
@@ -41,7 +41,7 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
     function unsafeSetBeacon(address _beacon) external _onlyOwner {
         address oldBeacon = Beacon.get();
         Beacon.set(_beacon);
-        emit BeaconUpdated(oldBeacon, _beacon);   
+        emit BeaconUpdated(oldBeacon, _beacon);
     }
 
     function beacon() external view returns (address) {
@@ -69,7 +69,6 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
         emit Transferred(newBeneficiary, newOwner, newBeacon);
     }
 
-
     function _setBeacon(address _beacon) internal {
         address implementation = IBeacon(_beacon).implementation();
         implementation.functionDelegateCall(abi.encodeWithSignature("unsafeSetBeacon(address)", _beacon));
@@ -84,7 +83,7 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
         Beneficiary.set(_beneficiary);
         emit BeneficiaryUpdated(_beneficiary);
     }
-    
+
     function version() external pure returns (string memory) {
         return "v1.0.0 U";
     }

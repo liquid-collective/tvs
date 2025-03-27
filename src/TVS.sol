@@ -21,7 +21,7 @@ abstract contract TVS is ITVS {
     }
 
     /// @inheritdoc ITVS
-    receive() external payable {}
+    receive() external payable { }
 
     function _owner() internal view virtual returns (address);
 
@@ -39,7 +39,7 @@ abstract contract TVS is ITVS {
         if (beneficiary != address(0)) {
             _assertOwner();
         }
-        
+
         address dest = beneficiary == address(0) ? getBeneficiary() : beneficiary;
         uint256 amountToSweep = _amount == 0 ? address(this).balance : _amount;
         if (amountToSweep > address(this).balance) {
@@ -50,11 +50,18 @@ abstract contract TVS is ITVS {
     }
 
     /// @inheritdoc ITVS
-    function withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal) external _onlyOwner {
+    function withdrawFrom(
+        bytes[] memory pubkeys,
+        uint64[] calldata amount,
+        uint256 maxFeePerWithdrawal
+    )
+        external
+        _onlyOwner
+    {
         if (pubkeys.length != amount.length) {
             revert LengthMismatch(pubkeys.length, amount.length);
         }
-        
+
         for (uint256 i = 0; i < pubkeys.length; i++) {
             // Read current fee from the contract
             (bool readOK, bytes memory feeData) = WITHDRAWAL_CONTRACT_ADDRESS.staticcall("");
@@ -62,7 +69,7 @@ abstract contract TVS is ITVS {
                 revert FeeReadFailed();
             }
             uint256 fee = uint256(bytes32(feeData));
-            
+
             // Check if fee exceeds maximum allowed
             if (fee > maxFeePerWithdrawal) {
                 revert FeeTooHigh(fee, maxFeePerWithdrawal);
@@ -70,7 +77,7 @@ abstract contract TVS is ITVS {
 
             // Add the withdrawal request
             bytes memory callData = abi.encodePacked(pubkeys[i], amount[i]);
-            (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{value: fee}(callData);
+            (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{ value: fee }(callData);
             if (!writeOK) {
                 revert RequestFailed();
             }
@@ -78,17 +85,21 @@ abstract contract TVS is ITVS {
     }
 
     /// @inheritdoc ITVS
-    function consolidate(ConsolidationRequest[] calldata requests, uint256 maxFeePerConsolidation) external _onlyOwner {
+    function consolidate(
+        ConsolidationRequest[] calldata requests,
+        uint256 maxFeePerConsolidation
+    )
+        external
+        _onlyOwner
+    {
         for (uint256 i = 0; i < requests.length; i++) {
-            
             for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
-                
                 // Read current fee from the contract
                 (bool readOK, bytes memory feeData) = CONSOLIDATION_CONTRACT_ADDRESS.staticcall("");
                 if (!readOK) {
                     revert FeeReadFailed();
                 }
-                uint256 fee = uint256(bytes32(feeData));   
+                uint256 fee = uint256(bytes32(feeData));
 
                 // Check if fee exceeds maximum allowed
                 if (fee > maxFeePerConsolidation) {
@@ -97,7 +108,7 @@ abstract contract TVS is ITVS {
 
                 // Add the consolidation request
                 bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
-                (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{value: fee}(callData);
+                (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{ value: fee }(callData);
                 if (!writeOK) {
                     revert RequestFailed();
                 }
@@ -113,5 +124,4 @@ abstract contract TVS is ITVS {
             revert NotOwner(msg.sender);
         }
     }
-
-} 
+}

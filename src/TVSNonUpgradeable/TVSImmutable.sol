@@ -23,5 +23,4 @@ contract TVSImmutable is TVSImmutableBase, Ownable {
     function _transferTVSOwnership(address newOwner) internal override {
         _transferOwnership(newOwner);
     }
-
 }
