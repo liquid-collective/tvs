@@ -31,14 +31,11 @@ abstract contract TVSImmutableBase is TVS {
     }
 
     /// @notice Transfers the ownership of the TVS.
-    /// @dev This function sets a new beneficiary, transfers ownership to a new owner.
+    /// @dev This function sets a new beneficiary, and transfers ownership to a new owner.
     /// @param newBeneficiary The new beneficiary address.
     /// @param newOwner The new owner address.
     function transfer(address newBeneficiary, address newOwner) external _onlyOwner {
-        _transferTVSOwnership(newOwner);
-        _setBeneficiary(newBeneficiary);
+        _transfer(newBeneficiary, newOwner);
         emit Transferred(newBeneficiary, newOwner);
     }
-
-    function _transferTVSOwnership(address newOwner) internal virtual;
 }

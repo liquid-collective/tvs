@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Proprietary
 pragma solidity 0.8.28;
 
-import "./interfaces/ITVS.sol";
 import "openzeppelin-contracts/contracts/utils/Address.sol";
+import "./interfaces/ITVS.sol";
 
 /// @title TVS (v1)
 /// @author Alluvial Finance Inc.
@@ -49,19 +49,28 @@ abstract contract TVS is ITVS {
         emit Swept(dest, amountToSweep);
     }
 
-    /// @inheritdoc ITVS
-    function withdrawFrom(
+    function _transfer(address newBeneficiary, address newOwner) internal {
+        _transferTVSOwnership(newOwner);
+        _setBeneficiary(newBeneficiary);
+    }
+
+    function _withdraw(
         bytes[] memory pubkeys,
         uint64[] calldata amount,
-        uint256 maxFeePerWithdrawal
+        uint256 maxFeePerWithdrawal,
+        address excessFeeRecipient
     )
-        external
-        _onlyOwner
+        internal
     {
         if (pubkeys.length != amount.length) {
             revert LengthMismatch(pubkeys.length, amount.length);
         }
 
+        // check if the value sent is enough to cover the fees
+        uint256 maxFeePayable = maxFeePerWithdrawal * pubkeys.length;
+        _validateSufficientValueForFee(msg.value, maxFeePayable);
+
+        uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < pubkeys.length; i++) {
             // Read current fee from the contract
             (bool readOK, bytes memory feeData) = WITHDRAWAL_CONTRACT_ADDRESS.staticcall("");
@@ -71,9 +80,7 @@ abstract contract TVS is ITVS {
             uint256 fee = uint256(bytes32(feeData));
 
             // Check if fee exceeds maximum allowed
-            if (fee > maxFeePerWithdrawal) {
-                revert FeeTooHigh(fee, maxFeePerWithdrawal);
-            }
+            _validateFee(fee, maxFeePerWithdrawal);
 
             // Add the withdrawal request
             bytes memory callData = abi.encodePacked(pubkeys[i], amount[i]);
@@ -81,17 +88,21 @@ abstract contract TVS is ITVS {
             if (!writeOK) {
                 revert RequestFailed();
             }
+            totalFeePaid += fee;
         }
+
+        // Refund any access value back to the excessFeeRecipient
+        _refundExcessFee(msg.value, totalFeePaid, excessFeeRecipient);
     }
 
-    /// @inheritdoc ITVS
-    function consolidate(
+    function _consolidate(
         ConsolidationRequest[] calldata requests,
-        uint256 maxFeePerConsolidation
+        uint256 maxFeePerConsolidation,
+        address excessFeeRecipient
     )
-        external
-        _onlyOwner
+        internal
     {
+        uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < requests.length; i++) {
             for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
                 // Read current fee from the contract
@@ -102,9 +113,7 @@ abstract contract TVS is ITVS {
                 uint256 fee = uint256(bytes32(feeData));
 
                 // Check if fee exceeds maximum allowed
-                if (fee > maxFeePerConsolidation) {
-                    revert FeeTooHigh(fee, maxFeePerConsolidation);
-                }
+                _validateFee(fee, maxFeePerConsolidation);
 
                 // Add the consolidation request
                 bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
@@ -112,9 +121,16 @@ abstract contract TVS is ITVS {
                 if (!writeOK) {
                     revert RequestFailed();
                 }
+
+                totalFeePaid += fee;
             }
         }
+
+        // Refund any access value back to the excessFeeRecipient
+        _refundExcessFee(msg.value, totalFeePaid, excessFeeRecipient);
     }
+
+    function _transferTVSOwnership(address newOwner) internal virtual;
 
     function _setBeneficiary(address _beneficiary) internal virtual;
 
@@ -122,6 +138,28 @@ abstract contract TVS is ITVS {
     function _assertOwner() internal view {
         if (msg.sender != _owner()) {
             revert NotOwner(msg.sender);
+        }
+    }
+
+    function _refundExcessFee(uint256 totalValueReceived, uint256 totalFeePaid, address excessFeeRecipient) internal {
+        // send excess value  back to excessFeeRecipient
+        if (totalValueReceived > totalFeePaid) {
+            (bool success,) = payable(excessFeeRecipient).call{ value: totalValueReceived - totalFeePaid }("");
+            if (!success) {
+                emit UnsentExcessFee(excessFeeRecipient, totalValueReceived - totalFeePaid);
+            }
+        }
+    }
+
+    function _validateFee(uint256 currentFee, uint256 maxAllowedFee) internal pure {
+        if (currentFee > maxAllowedFee) {
+            revert FeeTooHigh(currentFee, maxAllowedFee);
+        }
+    }
+
+    function _validateSufficientValueForFee(uint256 value, uint256 totalFee) internal pure {
+        if (value < totalFee) {
+            revert InsufficientvalueForFee(value, totalFee);
         }
     }
 }

@@ -7,11 +7,12 @@ import "../TVS.sol";
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 import "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
+import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
 
 /// @title Upgradeable TVS (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Upgradeable implementation of the TVS
-contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
+contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     using Address for address payable;
     using Address for address;
 
@@ -30,6 +31,7 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
         if (_destination == address(0) || _owner == address(0) || _beacon == address(0)) revert InvalidAddress();
 
         __Ownable_init(_owner);
+        __ReentrancyGuard_init();
         Beneficiary.set(_destination);
         Beacon.set(_beacon);
     }
@@ -64,9 +66,41 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable {
     /// @param newBeacon The new beacon address.
     function transfer(address newBeneficiary, address newOwner, address newBeacon) external _onlyOwner {
         _setBeacon(newBeacon);
-        _transferOwnership(newOwner);
-        _setBeneficiary(newBeneficiary);
+        _transfer(newBeneficiary, newOwner);
         emit Transferred(newBeneficiary, newOwner, newBeacon);
+    }
+
+    /// @inheritdoc ITVS
+    function withdraw(
+        bytes[] memory pubkeys,
+        uint64[] calldata amount,
+        uint256 maxFeePerWithdrawal,
+        address excessFeeRecipient
+    )
+        external
+        payable
+        nonReentrant
+        _onlyOwner
+    {
+        _withdraw(pubkeys, amount, maxFeePerWithdrawal, excessFeeRecipient);
+    }
+
+    /// @inheritdoc ITVS
+    function consolidate(
+        ConsolidationRequest[] calldata requests,
+        uint256 maxFeePerConsolidation,
+        address excessFeeRecipient
+    )
+        external
+        payable
+        nonReentrant
+        _onlyOwner
+    {
+        _consolidate(requests, maxFeePerConsolidation, excessFeeRecipient);
+    }
+
+    function _transferTVSOwnership(address newOwner) internal override {
+        _transferOwnership(newOwner);
     }
 
     function _setBeacon(address _beacon) internal {
