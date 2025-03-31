@@ -4,11 +4,13 @@ pragma solidity 0.8.28;
 import "./TVSImmutableBase.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
+import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
+
 /// @title Immutable TVS (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Non-upgradeable implementation of the TVS
-contract TVSImmutable is TVSImmutableBase, Ownable {
-    constructor(address _beneficiary, address _owner) Ownable(_owner) {
+contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
+    constructor(address _beneficiary, address _owner) Ownable(_owner) ReentrancyGuard() {
         _setBeneficiary(_beneficiary);
     }
 
@@ -24,4 +26,14 @@ contract TVSImmutable is TVSImmutableBase, Ownable {
         _transferOwnership(newOwner);
     }
 
+
+    /// @inheritdoc ITVS
+    function withdraw(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external nonReentrant _onlyOwner {
+        _withdraw(pubkeys, amount, maxFeePerWithdrawal, excessFeeRecipient);
+    }
+
+    /// @inheritdoc ITVS
+    function consolidate(ConsolidationRequest[] calldata requests, uint256 maxFeePerConsolidation, address excessFeeRecipient) payable external nonReentrant _onlyOwner {
+        _consolidate(requests, maxFeePerConsolidation, excessFeeRecipient);
+    }
 }

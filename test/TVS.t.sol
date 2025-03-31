@@ -23,6 +23,8 @@ contract MockInvalidBeacon {
 
 contract MockInvalidTVSImplementation {}
 
+contract MockExcessFeeRecipient {}
+
 contract TVSUpgradeableInitializationTest is Test {
     address beacon;
     address beneficiary; 
@@ -118,12 +120,13 @@ contract TVSUpgradeableInitializationTest is Test {
 
 // Base test contract for common TVS functionality
 abstract contract BaseTVSTest is Test {
-    TVS tvs;
+    ITVS tvs;
     address beneficiary;
     address owner;
 
     event Swept(address indexed beneficiary, uint256 indexed amount);
     event BeneficiaryUpdated(address indexed newBeneficiary);
+    event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
 
     function setUp() public virtual {
         owner = makeAddr("owner");
@@ -132,7 +135,7 @@ abstract contract BaseTVSTest is Test {
     }
 
     // Abstract function to be implemented by derived test contracts
-    function deployTVS() internal virtual returns (TVS);
+    function deployTVS() internal virtual returns (ITVS);
 
 
     // Common tests that work for both implementations
@@ -188,7 +191,7 @@ abstract contract BaseTVSTest is Test {
         tvs.setBeneficiary(newBeneficiary);
     }
 
-    function testConsolidateFailsIfFeeReadFails() public {
+    function testConsolidateFailsIfNoValueSent() public {
         address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
 
         // Prepare mock data for consolidation
@@ -212,7 +215,82 @@ abstract contract BaseTVSTest is Test {
         // Expect the transaction to revert due to the call to CONSOLIDATION_CONTRACT_ADDRESS reverting
         uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
         vm.expectRevert(abi.encodeWithSignature("FeeReadFailed()"));
-        tvs.consolidate(requests, maxFeePerConsolidation);
+        tvs.consolidate(requests, maxFeePerConsolidation, owner);
+    }
+
+    function testConsolidateRefundsSenderAnyExcessFund() public {
+        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+
+        // Prepare mock data for consolidation
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+
+        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 1.5 ether; // Example max fee
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock static call response with a higher fee than maxFeePerConsolidation
+        uint256 fee = maxFeePerConsolidation - 1;
+        bytes memory mockFeeData = abi.encodePacked(fee);
+
+        vm.mockCall(
+            CONSOLIDATION_CONTRACT_ADDRESS,
+            abi.encodePacked(""),
+            mockFeeData
+        );
+
+        vm.prank(owner);
+
+        uint256 ownerBalBefore = owner.balance;
+        tvs.consolidate{value: maxFeePerConsolidation}(requests, maxFeePerConsolidation, owner);
+        uint ownerBalAfter = owner.balance;
+        assertEq(ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction.");
+    }
+
+    function testConsolidateHandlesFailedTransferOfExcessFee() public {
+        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+
+        // Prepare mock data for consolidation
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+
+        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 2 ether; // Example max fee
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock static call response with a lower fee than maxFeePerConsolidation
+        uint256 fee = maxFeePerConsolidation - 1 ether ;
+        bytes memory mockFeeData = abi.encodePacked(fee);
+
+        vm.mockCall(
+            CONSOLIDATION_CONTRACT_ADDRESS,
+            abi.encodePacked(""),
+            mockFeeData
+        );
+
+
+        // This address cannot receive eth
+        address excessFeeRecipient = address(new MockExcessFeeRecipient());
+
+        // Information about excess fee should be emitted as an event
+        vm.expectEmit(true, true, true, true);
+        emit UnsentExcessFee(excessFeeRecipient, 1 ether);
+    
+
+        uint256 tvsBalanceBefore = address(tvs).balance;
+        vm.prank(owner);
+        tvs.consolidate{value: maxFeePerConsolidation}(requests, maxFeePerConsolidation, excessFeeRecipient);
+
+        // Excess fee should remain in the contract
+        assertEq(address(tvs).balance - tvsBalanceBefore, maxFeePerConsolidation, "TVS should retain any excess funds after failed send to excessFeeRecipient");
     }
 
     function testConsolidateFailsIfFeeExceedsMax() public {
@@ -244,7 +322,7 @@ abstract contract BaseTVSTest is Test {
 
         // Expect the transaction to revert due to fee exceeding maxFeePerConsolidation
         vm.expectRevert(abi.encodeWithSignature("FeeTooHigh(uint256,uint256)", fee, maxFeePerConsolidation));
-        tvs.consolidate(requests, maxFeePerConsolidation);
+        tvs.consolidate(requests, maxFeePerConsolidation, owner);
     }
 
     function testConsolidateFailsIfRequestFails() public {
@@ -282,7 +360,7 @@ abstract contract BaseTVSTest is Test {
 
         // Expect the transaction to revert due to the call to CONSOLIDATION_CONTRACT_ADDRESS failing
         vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));        
-        tvs.consolidate(requests, maxFeePerConsolidation);
+        tvs.consolidate(requests, maxFeePerConsolidation, owner);
     }
     
     function testConsolidateWorksIfAllIsFine() public {
@@ -327,12 +405,12 @@ abstract contract BaseTVSTest is Test {
         );
 
         // Call the consolidate function
-        tvs.consolidate(requests, maxFeePerConsolidation);
+        tvs.consolidate(requests, maxFeePerConsolidation, owner);
 
 
     }
 
-    function testWithdrawFromFailsIfFeeReadFails() public {
+    function testwithdrawFailsIfFeeReadFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -343,6 +421,7 @@ abstract contract BaseTVSTest is Test {
         amounts[0] = 1 ether;
 
         uint256 maxFeePerWithdrawal = 0.1 ether; // Example max fee
+        vm.deal(owner, maxFeePerWithdrawal);
 
         // Mock the call to revert
         vm.mockCallRevert(
@@ -355,10 +434,10 @@ abstract contract BaseTVSTest is Test {
 
         // Expect the transaction to revert due to the call to WITHDRAWAL_CONTRACT_ADDRESS reverting
         vm.expectRevert(abi.encodeWithSignature("FeeReadFailed()"));
-        tvs.withdrawFrom(pubkeys, amounts, maxFeePerWithdrawal);
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromFailsIfFeeExceedsMax() public {
+    function testwithdrawFailsIfFeeExceedsMax() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -369,7 +448,7 @@ abstract contract BaseTVSTest is Test {
         amounts[0] = 1 ether;
 
         uint256 maxFeePerWithdrawal = 0.1 ether; // Example max fee
-        vm.deal(address(tvs), maxFeePerWithdrawal);
+        vm.deal(owner, maxFeePerWithdrawal);
 
         // Mock static call response with a higher fee than maxFeePerWithdrawal
         uint256 fee = maxFeePerWithdrawal + 1;
@@ -385,10 +464,10 @@ abstract contract BaseTVSTest is Test {
 
         // Expect the transaction to revert due to fee exceeding maxFeePerWithdrawal
         vm.expectRevert(abi.encodeWithSignature("FeeTooHigh(uint256,uint256)", fee, maxFeePerWithdrawal));
-        tvs.withdrawFrom(pubkeys, amounts, maxFeePerWithdrawal);
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromFailsIfRequestFails() public {
+    function testwithdrawFailsIfRequestFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -399,7 +478,7 @@ abstract contract BaseTVSTest is Test {
         amounts[0] = 1 ether;
 
         uint256 maxFeePerWithdrawal = 0.1 ether; // Example max fee
-        vm.deal(address(tvs), maxFeePerWithdrawal);
+        vm.deal(owner, maxFeePerWithdrawal);
 
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
@@ -421,10 +500,77 @@ abstract contract BaseTVSTest is Test {
 
         // Expect the transaction to revert due to the call to WITHDRAWAL_CONTRACT_ADDRESS failing
         vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));
-        tvs.withdrawFrom(pubkeys, amounts, maxFeePerWithdrawal);
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromWorksIfAllIsFine() public {
+    function testWithdrawRefundsSenderAnyExcessFund() public {
+        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
+
+        // Prepare mock data for withdrawal
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 2 ether; // Example max fee
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Mock static call response with a valid fee that is less than maxFeePerWithdrawal
+        uint256 fee = maxFeePerWithdrawal - 1 ether;
+        bytes memory mockFeeData = abi.encodePacked(fee);
+
+        vm.mockCall(
+            WITHDRAWAL_CONTRACT_ADDRESS,
+            abi.encodePacked(""),
+            mockFeeData
+        );
+
+        vm.prank(owner);
+
+        uint256 ownerBalBefore = owner.balance;
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        uint ownerBalAfter = owner.balance;
+        assertEq(ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction.");
+    }
+
+    function testwithdrawHandlesFailedTransferOfExcessFee() public {
+        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
+
+        // Prepare mock data for withdrawal
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 2 ether; // Example max fee
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Mock static call response with a valid fee
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal - 1 ether);
+
+        vm.mockCall(
+            WITHDRAWAL_CONTRACT_ADDRESS,
+            abi.encodePacked(""),
+            mockFeeData
+        );
+
+        // This address cannot receive eth
+        address excessFeeRecipient = address(new MockExcessFeeRecipient());
+
+        // Information about excess fee should be emitted as an event
+        vm.expectEmit(true, true, true, true);
+        emit UnsentExcessFee(excessFeeRecipient, 1 ether);
+        
+        uint256 tvsBalanceBefore = address(tvs).balance;
+        vm.prank(owner);
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, excessFeeRecipient);
+
+        assertEq(address(tvs).balance - tvsBalanceBefore, maxFeePerWithdrawal, "TVS should retain any excess funds after failed send to excessFeeRecipient");
+    }
+
+    function testwithdrawWorksIfAllIsFine() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -435,7 +581,7 @@ abstract contract BaseTVSTest is Test {
         amounts[0] = 1 ether;
 
         uint256 maxFeePerWithdrawal = 0.1 ether; // Example max fee
-        vm.deal(address(tvs), maxFeePerWithdrawal);
+        vm.deal(owner, maxFeePerWithdrawal);
 
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
@@ -461,15 +607,15 @@ abstract contract BaseTVSTest is Test {
             maxFeePerWithdrawal,
             callData
         );
-        // Call the withdrawFrom function
-        tvs.withdrawFrom(pubkeys, amounts, maxFeePerWithdrawal);
+        // Call the withdraw function
+        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
 }
 
 // Tests specific to TVSImmutable
 contract TVSImmutableTest is BaseTVSTest {
-    function deployTVS() internal override returns (TVS) {
+    function deployTVS() internal override returns (ITVS) {
         return new TVSImmutable(beneficiary, owner);
     }
 
@@ -517,6 +663,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
 
     event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
 
+
     function setUp() public override {
         owner = makeAddr("owner");
         beneficiary = makeAddr("beneficiary");
@@ -526,14 +673,14 @@ contract TVSUpgradeableTest is BaseTVSTest {
         tvsV1 = TVSV1(payable(tvs)); // Cast the TVS address to TVSV1
     }
 
-    function deployTVS() internal override returns (TVS) {
+    function deployTVS() internal override returns (ITVS) {
         bytes memory initData = abi.encodeWithSignature(
             "initialize(address,address,address)",
             beneficiary,
             owner,
             beacon
         );
-        return TVS(payable(new TVSBeaconProxy(beacon, initData)));
+        return ITVS(payable(new TVSBeaconProxy(beacon, initData)));
     }
 
     /// @notice Tests setting a new beacon address by the owner using the `setBeacon` function.
