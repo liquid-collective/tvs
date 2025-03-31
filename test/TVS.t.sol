@@ -9,7 +9,7 @@ import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
 import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import { TVS } from "../src/TVS.sol";
 import "../src/interfaces/ITVS.sol";
-import "../src/interfaces/ISweepBeneficiary.sol";
+import "../src/interfaces/ITVSSweepBeneficiary.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 contract MockInvalidBeacon {
@@ -22,7 +22,7 @@ contract MockInvalidBeacon {
 
 contract MockInvalidTVSImplementation { }
 
-contract MockBeneficiaryContract is ISweepBeneficiary {
+contract MockBeneficiaryContract is ITVSSweepBeneficiary {
     function receiveETHFromTVS() external payable override { }
 }
 
