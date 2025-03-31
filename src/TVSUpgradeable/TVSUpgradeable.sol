@@ -4,13 +4,13 @@ pragma solidity 0.8.28;
 import "./state/proxy/Beacon.sol";
 import "./state/tvs/Beneficiary.sol";
 import "./interfaces/ITVSUpgradeable.sol";
-import "../shared/interfaces/ISweepToContract.sol";
+import "./interfaces/IImmutableBeaconFactory.sol";
+import "../interfaces/ISweepToContract.sol";
 import "openzeppelin-contracts/contracts/utils/Address.sol";
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 import "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
 import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgradeable.sol";
-
 
 /// @title Upgradeable TVS (v1)
 /// @author Alluvial Finance Inc.
@@ -22,12 +22,20 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
     address public immutable WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
     address public immutable CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
 
-    constructor(address withdrawalContractAddress, address consolidationContractAddress) {
+    /// @notice The address of the immutable beacon contract.
+    /// @dev During a TVS transfer, this variable ensures that the current TVS Implementation is frozen,
+    /// preventing the oldOwner from modifying the TVS Implementation in the beacon.
+    address public immutable immutableBeacon;
+
+    constructor(address withdrawalContractAddress, address consolidationContractAddress, address immutableBeaconFactory) {
+
         if (withdrawalContractAddress == address(0) || consolidationContractAddress == address(0)) {
             revert InvalidAddress();
         }
         WITHDRAWAL_CONTRACT_ADDRESS = withdrawalContractAddress;
         CONSOLIDATION_CONTRACT_ADDRESS = consolidationContractAddress;
+        
+        immutableBeacon = IImmutableBeaconFactory(immutableBeaconFactory).deployBeacon(address(this));
     }
     
     receive() external payable {}
@@ -41,43 +49,47 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         Beacon.set(newBeacon);
     }
 
-    /// @inheritdoc ITVSUpgradeable
-    function transfer(address newBeneficiary, address newOwner, address newBeacon) external onlyOwner {
-        _setBeacon(newBeacon);
-        _transfer(newBeneficiary, newOwner);
-        emit Transferred(newBeneficiary, newOwner, newBeacon);
+    /// @inheritdoc ITVS
+    function transfer(address newBeneficiary, address newOwner) external onlyOwner {
+        address immutableBeaconImplementation = IBeacon(immutableBeacon).implementation();
+
+        _setBeacon(immutableBeacon, immutableBeaconImplementation);
+        _setBeneficiary(newBeneficiary);   
+        transferOwnership(newOwner);     
+        emit Transferred(newBeneficiary, newOwner);
     }
 
-    /// @inheritdoc ITVSUpgradeable
+    /// @inheritdoc ITVS
     function withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external nonReentrant onlyOwner {
         _withdrawFrom(pubkeys, amount, maxFeePerWithdrawal, excessFeeRecipient);
     }
 
-    /// @inheritdoc ITVSUpgradeable
+    /// @inheritdoc ITVS
     function consolidate(ConsolidationRequest[] calldata requests, uint256 maxFeePerConsolidation, address excessFeeRecipient) payable external nonReentrant onlyOwner {
         _consolidate(requests, maxFeePerConsolidation, excessFeeRecipient);
     }
 
-    /// @inheritdoc ITVSUpgradeable
+    /// @inheritdoc ITVS
     function sweep(address recipient, uint256 amount) external {
         (address dest, uint256 amountToSweep) = _sweep(recipient, amount);
         payable(dest).sendValue(amountToSweep);
     }
 
-    /// @inheritdoc ITVSUpgradeable
+    /// @inheritdoc ITVS
     function sweepToContract(address beneficiary, uint256 amount) external nonReentrant {
         (address dest, uint256 amountToSweep) = _sweep(beneficiary, amount);
         ISweepToContract(dest).receiveETHFromTVS{value: amountToSweep}();
     }
 
-    /// @inheritdoc ITVSUpgradeable
+    /// @inheritdoc ITVS
     function setBeneficiary(address newBeneficiary) external onlyOwner {
         _setBeneficiary(newBeneficiary);
     }
 
     /// @inheritdoc ITVSUpgradeable
     function setBeacon(address newBeacon) external onlyOwner {
-        _setBeacon(newBeacon);
+        address implementation = IBeacon(newBeacon).implementation();
+        _setBeacon(newBeacon, implementation);
     }
 
     function unsafeSetBeacon(address newBeacon) external onlyOwner {
@@ -90,7 +102,7 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         revert OwnershipCannotBeRenounced();
     }
 
-    /// @inheritdoc ITVSUpgradeable
+    /// @inheritdoc ITVS
     function getBeneficiary() public view returns (address) {
         return Beneficiary.get();
     }
@@ -100,8 +112,7 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         return Beacon.get();
     }
 
-    function _setBeacon(address _beacon) internal {
-        address implementation = IBeacon(_beacon).implementation();
+    function _setBeacon(address _beacon, address implementation) internal {
         implementation.functionDelegateCall(abi.encodeWithSignature("unsafeSetBeacon(address)", _beacon));
     }
 
@@ -111,11 +122,6 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         emit BeneficiaryUpdated(_newBeneficiary);
     }
 
-
-    function _transfer(address _newBeneficiary, address _newOwner) internal {
-        transferOwnership(_newOwner);
-        _setBeneficiary(_newBeneficiary);
-    }
 
     function _withdrawFrom(bytes[] memory _pubkeys, uint64[] calldata _amount, uint256 _maxFeePerWithdrawal, address _excessFeeRecipient)  internal   {
         if (_pubkeys.length != _amount.length) {

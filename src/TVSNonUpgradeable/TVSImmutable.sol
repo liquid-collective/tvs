@@ -2,8 +2,8 @@
 pragma solidity 0.8.28;
 
 import "./TVSImmutableBase.sol";
-import "./interfaces/ITVSImmutable.sol";
-import "../shared/interfaces/ISweepToContract.sol";
+import "../interfaces/ITVS.sol";
+import "../interfaces/ISweepToContract.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
@@ -22,28 +22,28 @@ contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
         revert OwnershipCannotBeRenounced();
     }
 
-    /// @inheritdoc ITVSImmutable
+    /// @inheritdoc ITVS
     function sweepToContract(address beneficiary, uint256 amount) external override nonReentrant {
         (address dest, uint256 amountToSweep) = _sweep(beneficiary, amount);
         ISweepToContract(dest).receiveETHFromTVS{value: amountToSweep}();
     }
 
-    /// @inheritdoc ITVSImmutable
+    /// @inheritdoc ITVS
     function transfer(address newBeneficiary, address newOwner) external onlyOwner() {
         _transfer(newBeneficiary, newOwner);
     }
 
-    /// @inheritdoc ITVSImmutable
+    /// @inheritdoc ITVS
     function setBeneficiary(address newBeneficiary) external onlyOwner {
         _setBeneficiary(newBeneficiary);
     }
 
-    /// @inheritdoc ITVSImmutable
+    /// @inheritdoc ITVS
     function withdrawFrom(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external nonReentrant onlyOwner {
         _withdrawFrom(pubkeys, amount, maxFeePerWithdrawal, excessFeeRecipient);
     }
 
-    /// @inheritdoc ITVSImmutable
+    /// @inheritdoc ITVS
     function consolidate(ConsolidationRequest[] calldata requests, uint256 maxFeePerConsolidation, address excessFeeRecipient) payable external nonReentrant onlyOwner {
         _consolidate(requests, maxFeePerConsolidation, excessFeeRecipient);
     }
