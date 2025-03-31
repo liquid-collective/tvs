@@ -7,11 +7,10 @@ pragma solidity 0.8.28;
 /// @dev This interface is used to interact with the TVS contract.
 /// @dev The TVS contract is the withdrawal credential of a set of validators in the system.
 interface ITVS {
-
     /// @notice Struct to represent a consolidation request.
     struct ConsolidationRequest {
-        bytes[] srcPubkeys; 
-        bytes targetPubkey; 
+        bytes[] srcPubkeys;
+        bytes targetPubkey;
     }
 
     /// --------------------- Events ---------------------
@@ -82,7 +81,8 @@ interface ITVS {
     /// @notice Sweeps a specific amount of funds to a specific address.
     /// @dev Only the owner can specify a custom beneficiary or amount to sweep
     /// @dev Emits {Swept} event.
-    /// @param beneficiary Address to which funds will be swept, if zero address, sweeps to the beneficiary address set on the contract
+    /// @param beneficiary Address to which funds will be swept, if zero address, sweeps to the beneficiary address set
+    /// on the contract
     /// @param amount Amount of funds to sweep, if zero, sweeps all funds on contract
     function sweep(address beneficiary, uint256 amount) external;
 
@@ -93,31 +93,45 @@ interface ITVS {
     function setBeneficiary(address beneficiary) external;
 
     // Getters
-    
+
     /// @notice Retrieves the current beneficiary address.
     /// @return The address of the beneficiary.
     function getBeneficiary() external view returns (address);
-    
+
     /// @notice Retrieves the version of the contract
     /// @return Version of the contract
     function version() external pure returns (string memory);
-    
+
     /// @notice Adds a withdrawal request to CL for a specific TVS.
-    /// @dev This is a pectra-compatible function, which allows the owner to withdraw given amount from the specified validator's stake or reward.
+    /// @dev This is a pectra-compatible function, which allows the owner to withdraw given amount from the specified
+    /// validator's stake or reward.
     /// @dev Only the owner can call this function.
     /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.
     /// @param pubkeys The public keys of the validators to withdraw from.
     /// @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
     /// @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
-    function withdraw(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external;
+    function withdraw(
+        bytes[] memory pubkeys,
+        uint64[] calldata amount,
+        uint256 maxFeePerWithdrawal,
+        address excessFeeRecipient
+    )
+        external
+        payable;
 
     /// @notice Adds a consolidation request to CL for the given source TVS.
-    /// @dev This is a pectra-compatible function, which allows the owner to consolidate one or more validators to another.
+    /// @dev This is a pectra-compatible function, which allows the owner to consolidate one or more validators to
+    /// another.
     /// @dev Only the owner can call this function.
     /// @dev Both source and target validators (pubKeys) must be from the same TVS (this TVS).
     /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.
     /// @param requests An array of consolidation requests.
     /// @param maxFeePerConsolidation The maximum fee allowed per consolidation request.
-    function consolidate(ConsolidationRequest[] memory requests, uint256 maxFeePerConsolidation, address excessFeeRecipient) payable external;
-
+    function consolidate(
+        ConsolidationRequest[] memory requests,
+        uint256 maxFeePerConsolidation,
+        address excessFeeRecipient
+    )
+        external
+        payable;
 }

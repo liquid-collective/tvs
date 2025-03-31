@@ -7,7 +7,7 @@ import "./interfaces/ITVS.sol";
 /// @title TVS (v1)
 /// @author Alluvial Finance Inc.
 /// @notice Abstract base contract for TVS implementations
-abstract contract TVS is ITVS  {
+abstract contract TVS is ITVS {
     using Address for address payable;
     using Address for address;
 
@@ -21,7 +21,7 @@ abstract contract TVS is ITVS  {
     }
 
     /// @inheritdoc ITVS
-    receive() external payable {}
+    receive() external payable { }
 
     function _owner() internal view virtual returns (address);
 
@@ -39,7 +39,7 @@ abstract contract TVS is ITVS  {
         if (beneficiary != address(0)) {
             _assertOwner();
         }
-        
+
         address dest = beneficiary == address(0) ? getBeneficiary() : beneficiary;
         uint256 amountToSweep = _amount == 0 ? address(this).balance : _amount;
         if (amountToSweep > address(this).balance) {
@@ -54,7 +54,14 @@ abstract contract TVS is ITVS  {
         _setBeneficiary(newBeneficiary);
     }
 
-    function _withdraw(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient)  internal   {
+    function _withdraw(
+        bytes[] memory pubkeys,
+        uint64[] calldata amount,
+        uint256 maxFeePerWithdrawal,
+        address excessFeeRecipient
+    )
+        internal
+    {
         if (pubkeys.length != amount.length) {
             revert LengthMismatch(pubkeys.length, amount.length);
         }
@@ -62,7 +69,7 @@ abstract contract TVS is ITVS  {
         // check if the value sent is enough to cover the fees
         uint256 maxFeePayable = maxFeePerWithdrawal * pubkeys.length;
         _validateSufficientValueForFee(msg.value, maxFeePayable);
-        
+
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < pubkeys.length; i++) {
             // Read current fee from the contract
@@ -71,13 +78,13 @@ abstract contract TVS is ITVS  {
                 revert FeeReadFailed();
             }
             uint256 fee = uint256(bytes32(feeData));
-            
+
             // Check if fee exceeds maximum allowed
             _validateFee(fee, maxFeePerWithdrawal);
 
             // Add the withdrawal request
             bytes memory callData = abi.encodePacked(pubkeys[i], amount[i]);
-            (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{value: fee}(callData);
+            (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{ value: fee }(callData);
             if (!writeOK) {
                 revert RequestFailed();
             }
@@ -88,25 +95,29 @@ abstract contract TVS is ITVS  {
         _refundExcessFee(msg.value, totalFeePaid, excessFeeRecipient);
     }
 
-    function _consolidate(ConsolidationRequest[] calldata requests, uint256 maxFeePerConsolidation, address excessFeeRecipient)  internal  {
-
+    function _consolidate(
+        ConsolidationRequest[] calldata requests,
+        uint256 maxFeePerConsolidation,
+        address excessFeeRecipient
+    )
+        internal
+    {
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < requests.length; i++) {
             for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
-                
                 // Read current fee from the contract
                 (bool readOK, bytes memory feeData) = CONSOLIDATION_CONTRACT_ADDRESS.staticcall("");
                 if (!readOK) {
                     revert FeeReadFailed();
                 }
-                uint256 fee = uint256(bytes32(feeData));   
+                uint256 fee = uint256(bytes32(feeData));
 
                 // Check if fee exceeds maximum allowed
                 _validateFee(fee, maxFeePerConsolidation);
 
                 // Add the consolidation request
                 bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
-                (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{value: fee}(callData);
+                (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{ value: fee }(callData);
                 if (!writeOK) {
                     revert RequestFailed();
                 }
@@ -133,7 +144,7 @@ abstract contract TVS is ITVS  {
     function _refundExcessFee(uint256 totalValueReceived, uint256 totalFeePaid, address excessFeeRecipient) internal {
         // send excess value  back to excessFeeRecipient
         if (totalValueReceived > totalFeePaid) {
-            (bool success, ) = payable(excessFeeRecipient).call{value: totalValueReceived - totalFeePaid}("");
+            (bool success,) = payable(excessFeeRecipient).call{ value: totalValueReceived - totalFeePaid }("");
             if (!success) {
                 emit UnsentExcessFee(excessFeeRecipient, totalValueReceived - totalFeePaid);
             }
@@ -151,5 +162,4 @@ abstract contract TVS is ITVS  {
             revert InsufficientvalueForFee(value, totalFee);
         }
     }
-
-} 
+}

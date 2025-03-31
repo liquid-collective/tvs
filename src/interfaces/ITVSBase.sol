@@ -7,11 +7,10 @@ pragma solidity 0.8.28;
 /// @dev This is the base interface used to interact with the TVS contract.
 /// @dev The TVS contract is the withdrawal credential of a set of validators in the system.
 interface ITVSBase {
-    
     /// @notice Struct to represent a consolidation request.
     struct ConsolidationRequest {
-        bytes[] srcPubkeys; 
-        bytes targetPubkey; 
+        bytes[] srcPubkeys;
+        bytes targetPubkey;
     }
 
     /// --------------------- Events ---------------------
@@ -82,7 +81,8 @@ interface ITVSBase {
     /// @notice Sweeps a specific amount of funds to a specific address.
     /// @dev Only the owner can specify a custom beneficiary or amount to sweep
     /// @dev Emits {Swept} event.
-    /// @param beneficiary Address to which funds will be swept, if zero address, sweeps to the beneficiary address set on the contract
+    /// @param beneficiary Address to which funds will be swept, if zero address, sweeps to the beneficiary address set
+    /// on the contract
     /// @param amount Amount of funds to sweep, if zero, sweeps all funds on contract
     function sweep(address beneficiary, uint256 amount) external;
 
@@ -93,11 +93,11 @@ interface ITVSBase {
     function setBeneficiary(address beneficiary) external;
 
     // Getters
-    
+
     /// @notice Retrieves the current beneficiary address.
     /// @return The address of the beneficiary.
     function getBeneficiary() external view returns (address);
-    
+
     /// @notice Retrieves the version of the contract
     /// @return Version of the contract
     function version() external pure returns (string memory);

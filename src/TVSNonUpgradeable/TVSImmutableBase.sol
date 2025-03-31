@@ -7,7 +7,7 @@ import "../TVS.sol";
 /// @author Alluvial Finance Inc.
 /// @notice Base contract for TVS Immutable implementations
 abstract contract TVSImmutableBase is TVS {
-    address internal beneficiary; 
+    address internal beneficiary;
 
     /**
      * @dev Emitted when the ownership is transferred to a new owner.
@@ -16,8 +16,7 @@ abstract contract TVSImmutableBase is TVS {
      */
     event Transferred(address indexed newBeneficiary, address indexed newOwner);
 
-
-    function getBeneficiary() public override view returns (address) {
+    function getBeneficiary() public view override returns (address) {
         return beneficiary;
     }
 
@@ -39,5 +38,4 @@ abstract contract TVSImmutableBase is TVS {
         _transfer(newBeneficiary, newOwner);
         emit Transferred(newBeneficiary, newOwner);
     }
-
 }

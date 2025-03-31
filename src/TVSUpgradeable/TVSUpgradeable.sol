@@ -30,7 +30,7 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable, ReentrancyGua
     function initialize(address _destination, address _owner, address _beacon) external initializer {
         if (_destination == address(0) || _owner == address(0) || _beacon == address(0)) revert InvalidAddress();
 
-        __Ownable_init(_owner); 
+        __Ownable_init(_owner);
         __ReentrancyGuard_init();
         Beneficiary.set(_destination);
         Beacon.set(_beacon);
@@ -43,7 +43,7 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable, ReentrancyGua
     function unsafeSetBeacon(address _beacon) external _onlyOwner {
         address oldBeacon = Beacon.get();
         Beacon.set(_beacon);
-        emit BeaconUpdated(oldBeacon, _beacon);   
+        emit BeaconUpdated(oldBeacon, _beacon);
     }
 
     function beacon() external view returns (address) {
@@ -71,12 +71,31 @@ contract TVSUpgradeable is TVS, Initializable, OwnableUpgradeable, ReentrancyGua
     }
 
     /// @inheritdoc ITVS
-    function withdraw(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external nonReentrant _onlyOwner {
+    function withdraw(
+        bytes[] memory pubkeys,
+        uint64[] calldata amount,
+        uint256 maxFeePerWithdrawal,
+        address excessFeeRecipient
+    )
+        external
+        payable
+        nonReentrant
+        _onlyOwner
+    {
         _withdraw(pubkeys, amount, maxFeePerWithdrawal, excessFeeRecipient);
     }
 
     /// @inheritdoc ITVS
-    function consolidate(ConsolidationRequest[] calldata requests, uint256 maxFeePerConsolidation, address excessFeeRecipient) payable external nonReentrant _onlyOwner {
+    function consolidate(
+        ConsolidationRequest[] calldata requests,
+        uint256 maxFeePerConsolidation,
+        address excessFeeRecipient
+    )
+        external
+        payable
+        nonReentrant
+        _onlyOwner
+    {
         _consolidate(requests, maxFeePerConsolidation, excessFeeRecipient);
     }
 
