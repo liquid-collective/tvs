@@ -26,14 +26,32 @@ contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
         _transferOwnership(newOwner);
     }
 
-
     /// @inheritdoc ITVS
-    function withdraw(bytes[] memory pubkeys, uint64[] calldata amount, uint256 maxFeePerWithdrawal, address excessFeeRecipient) payable external nonReentrant _onlyOwner {
+    function withdraw(
+        bytes[] memory pubkeys,
+        uint64[] calldata amount,
+        uint256 maxFeePerWithdrawal,
+        address excessFeeRecipient
+    )
+        external
+        payable
+        nonReentrant
+        _onlyOwner
+    {
         _withdraw(pubkeys, amount, maxFeePerWithdrawal, excessFeeRecipient);
     }
 
     /// @inheritdoc ITVS
-    function consolidate(ConsolidationRequest[] calldata requests, uint256 maxFeePerConsolidation, address excessFeeRecipient) payable external nonReentrant _onlyOwner {
+    function consolidate(
+        ConsolidationRequest[] calldata requests,
+        uint256 maxFeePerConsolidation,
+        address excessFeeRecipient
+    )
+        external
+        payable
+        nonReentrant
+        _onlyOwner
+    {
         _consolidate(requests, maxFeePerConsolidation, excessFeeRecipient);
     }
 }

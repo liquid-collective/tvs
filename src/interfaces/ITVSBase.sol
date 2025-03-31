@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: Proprietary
 pragma solidity 0.8.28;
 
-/// @title TVS Interface (v1)
+/// @title TVS Base Interface (v1)
 /// @author Alluvial Finance Inc.
-/// @notice Interface for the TVS contract.
-/// @dev This interface is used to interact with the TVS contract.
+/// @notice Base interface for the TVS contract.
+/// @dev This is the base interface used to interact with the TVS contract.
 /// @dev The TVS contract is the withdrawal credential of a set of validators in the system.
-interface ITVS {
+interface ITVSBase {
     /// @notice Struct to represent a consolidation request.
     struct ConsolidationRequest {
         bytes[] srcPubkeys;
@@ -86,14 +86,6 @@ interface ITVS {
     /// @param amount Amount of funds to sweep, if zero, sweeps all funds on contract
     function sweep(address beneficiary, uint256 amount) external;
 
-    /// @notice Sweeps all funds on the contract to a contract acting as the beneficiary address.
-    /// @dev the beneficiary contract MUST implement the {ISweepBeneficiary} interface
-    /// @dev Only the owner can call this function.
-    /// @dev Emits a {Swept} event.
-    /// @param beneficiary Address of the contract to which funds will be swept.
-    /// @param amount Amount of funds to sweep.
-    function sweepToBeneficiaryContract(address beneficiary, uint256 amount) external;
-
     /// @notice Sets a new beneficiary address for fund sweeping.
     /// @dev Only the owner can call this function.
     /// @dev Emits a {BeneficiaryUpdated} event.
@@ -109,37 +101,4 @@ interface ITVS {
     /// @notice Retrieves the version of the contract
     /// @return Version of the contract
     function version() external pure returns (string memory);
-
-    /// @notice Adds a withdrawal request to CL for a specific TVS.
-    /// @dev This is a pectra-compatible function, which allows the owner to withdraw given amount from the specified
-    /// validator's stake or reward.
-    /// @dev Only the owner can call this function.
-    /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.
-    /// @param pubkeys The public keys of the validators to withdraw from.
-    /// @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
-    /// @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
-    function withdraw(
-        bytes[] memory pubkeys,
-        uint64[] calldata amount,
-        uint256 maxFeePerWithdrawal,
-        address excessFeeRecipient
-    )
-        external
-        payable;
-
-    /// @notice Adds a consolidation request to CL for the given source TVS.
-    /// @dev This is a pectra-compatible function, which allows the owner to consolidate one or more validators to
-    /// another.
-    /// @dev Only the owner can call this function.
-    /// @dev Both source and target validators (pubKeys) must be from the same TVS (this TVS).
-    /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.
-    /// @param requests An array of consolidation requests.
-    /// @param maxFeePerConsolidation The maximum fee allowed per consolidation request.
-    function consolidate(
-        ConsolidationRequest[] memory requests,
-        uint256 maxFeePerConsolidation,
-        address excessFeeRecipient
-    )
-        external
-        payable;
 }

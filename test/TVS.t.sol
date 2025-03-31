@@ -3,16 +3,14 @@
 pragma solidity 0.8.28;
 
 import "forge-std/Test.sol";
-import {TVSUpgradeable as TVSV1} from "../src/TVSUpgradeable/TVSUpgradeable.sol";
-import {TVSImmutable} from "../src/TVSNonUpgradeable/TVSImmutable.sol";
+import { TVSUpgradeable as TVSV1 } from "../src/TVSUpgradeable/TVSUpgradeable.sol";
+import { TVSImmutable } from "../src/TVSNonUpgradeable/TVSImmutable.sol";
 import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
-import {UpgradeableBeacon} from "lib/solady/src/utils/UpgradeableBeacon.sol";
-import {TVS} from "../src/TVS.sol";
+import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
+import { TVS } from "../src/TVS.sol";
 import "../src/interfaces/ITVS.sol";
 import "../src/interfaces/ISweepBeneficiary.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
-
-
 
 contract MockInvalidBeacon {
     address internal implementation; // implementation is internal here, so no implementation() method
@@ -22,22 +20,23 @@ contract MockInvalidBeacon {
     }
 }
 
-contract MockInvalidTVSImplementation {}
+contract MockInvalidTVSImplementation { }
+
 contract MockBeneficiaryContract is ISweepBeneficiary {
-    function receiveETHFromTVS() external payable override {}
+    function receiveETHFromTVS() external payable override { }
 }
 
-contract MockExcessFeeRecipient {}
+contract MockExcessFeeRecipient { }
 
 contract TVSUpgradeableInitializationTest is Test {
     address beacon;
-    address beneficiary; 
+    address beneficiary;
     address owner;
     address tvsImplementation;
 
     function setUp() public {
         tvsImplementation = address(new TVSV1());
-        beneficiary = makeAddr("beneficiary"); 
+        beneficiary = makeAddr("beneficiary");
         owner = makeAddr("owner");
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
     }
@@ -45,48 +44,50 @@ contract TVSUpgradeableInitializationTest is Test {
     /// @notice Tests deployment of `TVSProxy` with valid arguments.
     /// @dev Ensures that:
     /// - The contract deploys and initializes successfully.
-    /// - The beacon, owner, and beneficiary are correctly set, as confirmed by getter functions. 
+    /// - The beacon, owner, and beneficiary are correctly set, as confirmed by getter functions.
     /// - A custom error `InvalidInitialization(0, 1)` is reverted if `initialize` is called after deployment.
     function testDeployWithValidArguments() public {
         // Deploy the contract with the given valid arguments
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
         TVSV1 tvsProxy = TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
 
         // Ensure that the contract was deployed and initialized successfully
         assertEq(tvsProxy.beacon(), beacon, "Beacon address not correct");
-        assertEq(tvsProxy.getBeneficiary(), beneficiary, "Beneficiary address not correct"); 
+        assertEq(tvsProxy.getBeneficiary(), beneficiary, "Beneficiary address not correct");
         assertEq(tvsProxy.owner(), owner, "Owner address not correct");
 
         // Ensure that the contract cannot be initialized again
         vm.expectRevert(abi.encodeWithSignature("InvalidInitialization()"));
-        tvsProxy.initialize(beneficiary, owner, beacon); 
+        tvsProxy.initialize(beneficiary, owner, beacon);
     }
     /// @notice Tests deployment of `TVSProxy` with a zero address as the beacon.
-    /// @dev Expects the deployment to revert with the custom error `InvalidBeacon()` when a zero address is provided as the beacon.
+    /// @dev Expects the deployment to revert with the custom error `InvalidBeacon()` when a zero address is provided as
+    /// the beacon.
 
     function testWithZeroAddressBeacon() public {
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, address(0)); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, address(0));
 
         vm.expectRevert(abi.encodeWithSignature("InvalidBeacon()"));
         TVSV1(payable(new TVSBeaconProxy(address(0), initData)));
-        
     }
 
     /// @notice Tests deployment of `TVSProxy` with a non-contract address as the beacon.
-    /// @dev Expects the deployment to revert with the custom error `InvalidBeacon()` when a non-contract address is provided as the beacon.
+    /// @dev Expects the deployment to revert with the custom error `InvalidBeacon()` when a non-contract address is
+    /// provided as the beacon.
     function testWithNonContractBeacon() public {
         address nonContractBeacon = makeAddr("beacon");
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, nonContractBeacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, nonContractBeacon);
 
         vm.expectRevert(abi.encodeWithSignature("InvalidBeacon()"));
         TVSV1(payable(new TVSBeaconProxy(nonContractBeacon, initData)));
     }
 
     /// @notice Tests deployment of `TVSProxy` with a beacon that returns a non-`TVS` contract as implementation.
-    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when the beacon returns an incompatible implementation.
+    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when the beacon returns an
+    /// incompatible implementation.
     function testWithNonTVSImplementation() public {
         // Deploy a non-TVS contract to act as an invalid implementation
         MockInvalidTVSImplementation invalidImplementation = new MockInvalidTVSImplementation();
@@ -94,7 +95,7 @@ contract TVSUpgradeableInitializationTest is Test {
         // Set the beacon to return this non-TVS implementation
         address _beacon = address(new UpgradeableBeacon(owner, address(invalidImplementation)));
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
 
         // Expect the transaction to revert with InitializationFailed() error due to non-TVS implementation
         vm.expectRevert(abi.encodeWithSignature("InitializationFailed()"));
@@ -102,20 +103,22 @@ contract TVSUpgradeableInitializationTest is Test {
     }
 
     /// @notice Tests deployment of `TVSProxy` with a zero address as the owner.
-    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when a zero address is provided as the owner.
+    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when a zero address is
+    /// provided as the owner.
     function testWithZeroAddressOwner() public {
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, address(0), beacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, address(0), beacon);
 
         vm.expectRevert(abi.encodeWithSignature("InitializationFailed()"));
         TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
     }
 
-    /// @notice Tests deployment of `TVSProxy` with a zero address as the beneficiary. 
-    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when a zero address is provided as the beneficiary. 
-    function testWithZeroAddressBeneficiary() public { 
+    /// @notice Tests deployment of `TVSProxy` with a zero address as the beneficiary.
+    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when a zero address is
+    /// provided as the beneficiary.
+    function testWithZeroAddressBeneficiary() public {
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", address(0), owner, beacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", address(0), owner, beacon);
 
         vm.expectRevert(abi.encodeWithSignature("InitializationFailed()"));
         TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
@@ -140,7 +143,6 @@ abstract contract BaseTVSTest is Test {
 
     // Abstract function to be implemented by derived test contracts
     function deployTVS() internal virtual returns (ITVS);
-
 
     // Common tests that work for both implementations
     function testSweepWithZeroBalance() public {
@@ -184,20 +186,26 @@ abstract contract BaseTVSTest is Test {
         vm.prank(owner);
         tvs.sweepToBeneficiaryContract(beneficiaryContractAddress, amount);
 
-        assertEq(address(beneficiaryContract).balance, amount, "SweepToContract balance should be equal to the amount swept");
+        assertEq(
+            address(beneficiaryContract).balance, amount, "SweepToContract balance should be equal to the amount swept"
+        );
         assertEq(address(tvs).balance, amount, "Contract balance should be zero after sweep");
 
         // test the default beneficiary contract can receive funds
         vm.prank(owner);
-        tvs.setBeneficiary(beneficiaryContractAddress); 
-        
+        tvs.setBeneficiary(beneficiaryContractAddress);
+
         vm.expectEmit(true, true, true, true);
         emit Swept(beneficiaryContractAddress, amount);
 
         vm.prank(owner);
         tvs.sweepToBeneficiaryContract(address(0), 0);
 
-        assertEq(address(beneficiaryContract).balance, amount + amount, "SweepToContract balance should be equal to the cumulative amount swept");
+        assertEq(
+            address(beneficiaryContract).balance,
+            amount + amount,
+            "SweepToContract balance should be equal to the cumulative amount swept"
+        );
         assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
     }
 
@@ -223,7 +231,6 @@ abstract contract BaseTVSTest is Test {
     }
 
     function testSetBeneficiaryAsUnauthorized() public {
-
         address randomCaller = makeAddr("randomCaller");
         address newBeneficiary = makeAddr("newBeneficiary");
         vm.prank(randomCaller);
@@ -238,19 +245,18 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
 
         // Mock the call to revert
-        vm.mockCallRevert(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            abi.encodePacked("")
-        );
+        vm.mockCallRevert(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(""));
 
         vm.prank(owner);
 
@@ -265,9 +271,12 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -279,18 +288,16 @@ abstract contract BaseTVSTest is Test {
         uint256 fee = maxFeePerConsolidation - 1;
         bytes memory mockFeeData = abi.encodePacked(fee);
 
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         vm.prank(owner);
 
         uint256 ownerBalBefore = owner.balance;
-        tvs.consolidate{value: maxFeePerConsolidation}(requests, maxFeePerConsolidation, owner);
-        uint ownerBalAfter = owner.balance;
-        assertEq(ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction.");
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+        uint256 ownerBalAfter = owner.balance;
+        assertEq(
+            ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction."
+        );
     }
 
     function testConsolidateHandlesFailedTransferOfExcessFee() public {
@@ -298,9 +305,12 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -309,15 +319,10 @@ abstract contract BaseTVSTest is Test {
         vm.deal(owner, maxFeePerConsolidation);
 
         // Mock static call response with a lower fee than maxFeePerConsolidation
-        uint256 fee = maxFeePerConsolidation - 1 ether ;
+        uint256 fee = maxFeePerConsolidation - 1 ether;
         bytes memory mockFeeData = abi.encodePacked(fee);
 
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
-
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // This address cannot receive eth
         address excessFeeRecipient = address(new MockExcessFeeRecipient());
@@ -325,14 +330,17 @@ abstract contract BaseTVSTest is Test {
         // Information about excess fee should be emitted as an event
         vm.expectEmit(true, true, true, true);
         emit UnsentExcessFee(excessFeeRecipient, 1 ether);
-    
 
         uint256 tvsBalanceBefore = address(tvs).balance;
         vm.prank(owner);
-        tvs.consolidate{value: maxFeePerConsolidation}(requests, maxFeePerConsolidation, excessFeeRecipient);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, excessFeeRecipient);
 
         // Excess fee should remain in the contract
-        assertEq(address(tvs).balance - tvsBalanceBefore, maxFeePerConsolidation, "TVS should retain any excess funds after failed send to excessFeeRecipient");
+        assertEq(
+            address(tvs).balance - tvsBalanceBefore,
+            maxFeePerConsolidation,
+            "TVS should retain any excess funds after failed send to excessFeeRecipient"
+        );
     }
 
     function testConsolidateFailsIfFeeExceedsMax() public {
@@ -340,9 +348,12 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -354,11 +365,7 @@ abstract contract BaseTVSTest is Test {
         uint256 fee = maxFeePerConsolidation + 1;
         bytes memory mockFeeData = abi.encodePacked(fee);
 
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         vm.prank(owner);
 
@@ -372,9 +379,12 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -385,34 +395,31 @@ abstract contract BaseTVSTest is Test {
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
 
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // Mock the call to fail
         vm.mockCallRevert(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(srcPubkeys[0], targetPubkey),
-            abi.encodePacked("")
+            CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(srcPubkeys[0], targetPubkey), abi.encodePacked("")
         );
 
         vm.prank(owner);
 
         // Expect the transaction to revert due to the call to CONSOLIDATION_CONTRACT_ADDRESS failing
-        vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));        
+        vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));
         tvs.consolidate(requests, maxFeePerConsolidation, owner);
     }
-    
+
     function testConsolidateWorksIfAllIsFine() public {
         address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -423,33 +430,19 @@ abstract contract BaseTVSTest is Test {
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
 
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // Mock the call to succeed
         bytes memory callData = bytes.concat(srcPubkeys[0], targetPubkey);
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            callData,
-            abi.encodePacked("")
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, callData, abi.encodePacked(""));
 
         vm.prank(owner);
 
         // Expect the call to the consolidation contract
-        vm.expectCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            maxFeePerConsolidation, 
-            callData
-        );
+        vm.expectCall(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation, callData);
 
         // Call the consolidate function
         tvs.consolidate(requests, maxFeePerConsolidation, owner);
-
-
     }
 
     function testwithdrawFailsIfFeeReadFails() public {
@@ -457,7 +450,8 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -466,17 +460,13 @@ abstract contract BaseTVSTest is Test {
         vm.deal(owner, maxFeePerWithdrawal);
 
         // Mock the call to revert
-        vm.mockCallRevert(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            abi.encodePacked("")
-        );
+        vm.mockCallRevert(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(""));
 
         vm.prank(owner);
 
         // Expect the transaction to revert due to the call to WITHDRAWAL_CONTRACT_ADDRESS reverting
         vm.expectRevert(abi.encodeWithSignature("FeeReadFailed()"));
-        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
     function testwithdrawFailsIfFeeExceedsMax() public {
@@ -484,7 +474,8 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -496,17 +487,13 @@ abstract contract BaseTVSTest is Test {
         uint256 fee = maxFeePerWithdrawal + 1;
         bytes memory mockFeeData = abi.encodePacked(fee);
 
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         vm.prank(owner);
 
         // Expect the transaction to revert due to fee exceeding maxFeePerWithdrawal
         vm.expectRevert(abi.encodeWithSignature("FeeTooHigh(uint256,uint256)", fee, maxFeePerWithdrawal));
-        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
     function testwithdrawFailsIfRequestFails() public {
@@ -514,7 +501,8 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -525,24 +513,16 @@ abstract contract BaseTVSTest is Test {
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
 
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // Mock the call to fail
-        vm.mockCallRevert(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(pubkeys[0], amounts[0]),
-            abi.encodePacked("")
-        );
+        vm.mockCallRevert(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(pubkeys[0], amounts[0]), abi.encodePacked(""));
 
         vm.prank(owner);
 
         // Expect the transaction to revert due to the call to WITHDRAWAL_CONTRACT_ADDRESS failing
         vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));
-        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
     function testWithdrawRefundsSenderAnyExcessFund() public {
@@ -550,7 +530,8 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -562,54 +543,16 @@ abstract contract BaseTVSTest is Test {
         uint256 fee = maxFeePerWithdrawal - 1 ether;
         bytes memory mockFeeData = abi.encodePacked(fee);
 
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         vm.prank(owner);
 
         uint256 ownerBalBefore = owner.balance;
-        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
-        uint ownerBalAfter = owner.balance;
-        assertEq(ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction.");
-    }
-
-    function testwithdrawHandlesFailedTransferOfExcessFee() public {
-        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
-
-        // Prepare mock data for withdrawal
-        bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
-
-        uint64[] memory amounts = new uint64[](1);
-        amounts[0] = 1 ether;
-
-        uint256 maxFeePerWithdrawal = 2 ether; // Example max fee
-        vm.deal(owner, maxFeePerWithdrawal);
-
-        // Mock static call response with a valid fee
-        bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal - 1 ether);
-
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        uint256 ownerBalAfter = owner.balance;
+        assertEq(
+            ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction."
         );
-
-        // This address cannot receive eth
-        address excessFeeRecipient = address(new MockExcessFeeRecipient());
-
-        // Information about excess fee should be emitted as an event
-        vm.expectEmit(true, true, true, true);
-        emit UnsentExcessFee(excessFeeRecipient, 1 ether);
-        
-        uint256 tvsBalanceBefore = address(tvs).balance;
-        vm.prank(owner);
-        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, excessFeeRecipient);
-
-        assertEq(address(tvs).balance - tvsBalanceBefore, maxFeePerWithdrawal, "TVS should retain any excess funds after failed send to excessFeeRecipient");
     }
 
     function testwithdrawWorksIfAllIsFine() public {
@@ -617,7 +560,8 @@ abstract contract BaseTVSTest is Test {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -628,31 +572,55 @@ abstract contract BaseTVSTest is Test {
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
 
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // Mock the call to succeed
         bytes memory callData = abi.encodePacked(pubkeys[0], amounts[0]);
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            callData,
-            abi.encodePacked("")
-        );
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, callData, abi.encodePacked(""));
 
         vm.prank(owner);
         // Expect the call to the consolidation contract
-        vm.expectCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            maxFeePerWithdrawal,
-            callData
-        );
+        vm.expectCall(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal, callData);
         // Call the withdraw function
-        tvs.withdraw{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
+    function testwithdrawHandlesFailedTransferOfExcessFee() public {
+        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
+
+        // Prepare mock data for withdrawal
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 2 ether; // Example max fee
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Mock static call response with a valid fee
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal - 1 ether);
+
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        // This address cannot receive eth
+        address excessFeeRecipient = address(new MockExcessFeeRecipient());
+
+        // Information about excess fee should be emitted as an event
+        vm.expectEmit(true, true, true, true);
+        emit UnsentExcessFee(excessFeeRecipient, 1 ether);
+
+        uint256 tvsBalanceBefore = address(tvs).balance;
+        vm.prank(owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, excessFeeRecipient);
+
+        assertEq(
+            address(tvs).balance - tvsBalanceBefore,
+            maxFeePerWithdrawal,
+            "TVS should retain any excess funds after failed send to excessFeeRecipient"
+        );
+    }
 }
 
 // Tests specific to TVSImmutable
@@ -699,12 +667,11 @@ contract TVSImmutableTest is BaseTVSTest {
 // Tests specific to TVSUpgradeable
 contract TVSUpgradeableTest is BaseTVSTest {
     // Keep the inherited TVS tvs for base functionality
-    TVSV1 public tvsV1;  // Add separate TVSV1 reference for upgradeable-specific functions
+    TVSV1 public tvsV1; // Add separate TVSV1 reference for upgradeable-specific functions
     address beacon;
     address tvsImplementation;
 
     event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
-
 
     function setUp() public override {
         owner = makeAddr("owner");
@@ -716,12 +683,8 @@ contract TVSUpgradeableTest is BaseTVSTest {
     }
 
     function deployTVS() internal override returns (ITVS) {
-        bytes memory initData = abi.encodeWithSignature(
-            "initialize(address,address,address)",
-            beneficiary,
-            owner,
-            beacon
-        );
+        bytes memory initData =
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
         return ITVS(payable(new TVSBeaconProxy(beacon, initData)));
     }
 
@@ -775,8 +738,10 @@ contract TVSUpgradeableTest is BaseTVSTest {
         tvsV1.setBeacon(newBeacon);
     }
 
-    /// @notice Tests setting a new beacon address that points to an implementation contract without `unsafeSetBeacon(address)`.
-    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `unsafeSetBeacon(address)` function.
+    /// @notice Tests setting a new beacon address that points to an implementation contract without
+    /// `unsafeSetBeacon(address)`.
+    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `unsafeSetBeacon(address)`
+    /// function.
     function testUpdateUsingBeaconWithImplementationWithoutUnsafeSetBeaconFunction() public {
         address invalidTVSImplementation = address(new MockInvalidTVSImplementation());
         address newBeacon = address(new UpgradeableBeacon(owner, invalidTVSImplementation));
@@ -787,8 +752,10 @@ contract TVSUpgradeableTest is BaseTVSTest {
         tvsV1.setBeacon(newBeacon);
     }
 
-    /// @notice Tests that a non-owner cannot set a new beacon address using both `setBeacon` and `unsafeSetBeacon` functions.
-    /// @dev Expects the transaction to revert with the custom error `Unauthorized(msg.sender)` when a non-owner attempts to set the beacon.
+    /// @notice Tests that a non-owner cannot set a new beacon address using both `setBeacon` and `unsafeSetBeacon`
+    /// functions.
+    /// @dev Expects the transaction to revert with the custom error `Unauthorized(msg.sender)` when a non-owner
+    /// attempts to set the beacon.
     function testUpdateAsUnauthorized() public {
         address randomCaller = makeAddr("randomCaller");
         vm.prank(randomCaller);
@@ -836,5 +803,4 @@ contract TVSUpgradeableTest is BaseTVSTest {
         vm.expectRevert();
         tvsV1.transfer(newBeneficiary, newOwner, invalidBeacon);
     }
-
 }

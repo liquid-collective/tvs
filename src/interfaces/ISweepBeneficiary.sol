@@ -6,8 +6,8 @@ pragma solidity 0.8.28;
 /// @dev This interface is used to receive ETH from the TVS contract.
 /// @dev The TVS contract is the withdrawal credential of a set of validators in the system.
 interface ISweepBeneficiary {
-    
     /// @notice Allows a contract to receive ETH from TVS via the `sweepToContract` function.
-    /// @dev This function MUST be implemented by the TVS beneficiary contract, in order to use the `sweepToContract` function of the TVS.
-    function receiveETHFromTVS() payable external;
+    /// @dev This function MUST be implemented by the TVS beneficiary contract, in order to use the `sweepToContract`
+    /// function of the TVS.
+    function receiveETHFromTVS() external payable;
 }
