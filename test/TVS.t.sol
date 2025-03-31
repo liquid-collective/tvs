@@ -9,6 +9,7 @@ import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
 import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import { TVS } from "../src/TVS.sol";
 import "../src/interfaces/ITVS.sol";
+import "../src/interfaces/ITVSSweepBeneficiary.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 contract MockInvalidBeacon {
@@ -20,6 +21,10 @@ contract MockInvalidBeacon {
 }
 
 contract MockInvalidTVSImplementation { }
+
+contract MockBeneficiaryContract is ITVSSweepBeneficiary {
+    function receiveETHFromTVS() external payable override { }
+}
 
 contract MockExcessFeeRecipient { }
 
@@ -157,6 +162,50 @@ abstract contract BaseTVSTest is Test {
         tvs.sweep(address(0), 0);
 
         assertEq(beneficiary.balance, amount, "Beneficiary balance should be equal to the amount swept");
+        assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
+    }
+
+    function testSweepToContractWithNoSweepToContractInterface() public {
+        uint256 amount = 1 ether;
+        vm.deal(address(tvs), amount);
+
+        vm.expectRevert();
+        tvs.sweepToBeneficiaryContract(address(0), 0);
+    }
+
+    function testSweepToContractWithSweepToContractInterfaceWorks() public {
+        uint256 amount = 1 ether;
+        vm.deal(address(tvs), 2 ether);
+
+        MockBeneficiaryContract beneficiaryContract = new MockBeneficiaryContract();
+        address beneficiaryContractAddress = address(beneficiaryContract);
+
+        vm.expectEmit(true, true, true, true);
+        emit Swept(beneficiaryContractAddress, amount);
+
+        vm.prank(owner);
+        tvs.sweepToBeneficiaryContract(beneficiaryContractAddress, amount);
+
+        assertEq(
+            address(beneficiaryContract).balance, amount, "SweepToContract balance should be equal to the amount swept"
+        );
+        assertEq(address(tvs).balance, amount, "Contract balance should be zero after sweep");
+
+        // test the default beneficiary contract can receive funds
+        vm.prank(owner);
+        tvs.setBeneficiary(beneficiaryContractAddress);
+
+        vm.expectEmit(true, true, true, true);
+        emit Swept(beneficiaryContractAddress, amount);
+
+        vm.prank(owner);
+        tvs.sweepToBeneficiaryContract(address(0), 0);
+
+        assertEq(
+            address(beneficiaryContract).balance,
+            amount + amount,
+            "SweepToContract balance should be equal to the cumulative amount swept"
+        );
         assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
     }
 
@@ -506,6 +555,36 @@ abstract contract BaseTVSTest is Test {
         );
     }
 
+    function testwithdrawWorksIfAllIsFine() public {
+        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
+
+        // Prepare mock data for withdrawal
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether; // Example max fee
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Mock static call response with a valid fee
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
+
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        // Mock the call to succeed
+        bytes memory callData = abi.encodePacked(pubkeys[0], amounts[0]);
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, callData, abi.encodePacked(""));
+
+        vm.prank(owner);
+        // Expect the call to the consolidation contract
+        vm.expectCall(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal, callData);
+        // Call the withdraw function
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
     function testwithdrawHandlesFailedTransferOfExcessFee() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
@@ -541,36 +620,6 @@ abstract contract BaseTVSTest is Test {
             maxFeePerWithdrawal,
             "TVS should retain any excess funds after failed send to excessFeeRecipient"
         );
-    }
-
-    function testwithdrawWorksIfAllIsFine() public {
-        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
-
-        // Prepare mock data for withdrawal
-        bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
-
-        uint64[] memory amounts = new uint64[](1);
-        amounts[0] = 1 ether;
-
-        uint256 maxFeePerWithdrawal = 0.1 ether; // Example max fee
-        vm.deal(owner, maxFeePerWithdrawal);
-
-        // Mock static call response with a valid fee
-        bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
-
-        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
-
-        // Mock the call to succeed
-        bytes memory callData = abi.encodePacked(pubkeys[0], amounts[0]);
-        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, callData, abi.encodePacked(""));
-
-        vm.prank(owner);
-        // Expect the call to the consolidation contract
-        vm.expectCall(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal, callData);
-        // Call the withdraw function
-        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 }
 
