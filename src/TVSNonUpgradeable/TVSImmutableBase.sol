@@ -24,13 +24,16 @@ abstract contract TVSImmutableBase is ITVSImmutable {
         CONSOLIDATION_CONTRACT_ADDRESS = consolidationContractAddress;
     }
 
+    /// @inheritdoc ITVSImmutable
     receive() external payable { }
 
+    /// @inheritdoc ITVSImmutable
     function sweep(address recipient, uint256 amount) external {
         (address dest, uint256 amountToSweep) = _sweep(recipient, amount);
         payable(dest).sendValue(amountToSweep);
     }
 
+    /// @inheritdoc ITVSImmutable
     function getBeneficiary() public view returns (address) {
         return beneficiary;
     }

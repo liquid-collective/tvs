@@ -13,7 +13,7 @@ import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardUpgrad
 /// @notice Non-upgradeable implementation of the TVS with initializer
 /// @dev The TVSClone contract is designed with the idea of providing an immutable version that is compatible with
 /// EIP-1167 clone proxy, offering users a way to minimize gas costs during deployment.
-contract TVSClone is ITVSImmutable, TVSImmutableBase, Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+contract TVSClone is TVSImmutableBase, Initializable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
     constructor(
         address withdrawalContractAddress,
         address consolidationContractAddress

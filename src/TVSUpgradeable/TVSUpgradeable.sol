@@ -18,8 +18,8 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
     using Address for address payable;
     using Address for address;
 
-    address public immutable WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
-    address public immutable CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+    address public immutable WITHDRAWAL_CONTRACT_ADDRESS;
+    address public immutable CONSOLIDATION_CONTRACT_ADDRESS;
 
     constructor(address withdrawalContractAddress, address consolidationContractAddress) {
         if (withdrawalContractAddress == address(0) || consolidationContractAddress == address(0)) {
@@ -29,6 +29,7 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         CONSOLIDATION_CONTRACT_ADDRESS = consolidationContractAddress;
     }
 
+    /// @inheritdoc ITVSUpgradeable
     receive() external payable { }
 
     function initialize(address destination, address owner, address newBeacon) external initializer {
