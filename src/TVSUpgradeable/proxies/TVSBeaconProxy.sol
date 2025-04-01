@@ -7,14 +7,17 @@ import "../state/proxy/Beacon.sol";
 /// @author Alluvial Finance Inc.
 /// @notice This is an EIP-1167 minimal proxy that interacts with an upgradable beacon contract.
 /// @dev It uses the beacon contract to fetch the implementation address and delegate the call.
-/// @dev The beacon contract is expected to have an `implementation()` function that returns the address of the implementation.
+/// @dev The beacon contract is expected to have an `implementation()` function that returns the address of the
+/// implementation.
 contract TVSBeaconProxy {
     error InitializationFailed();
     error InvalidBeacon();
 
     /// @notice Constructor that initializes the proxy with the beacon address and initialization data.
-    /// @dev The constructor will get the implementation address from the beacon, and delegate the initialization call to the implementation.
-    /// @dev This function will revert if the implementation on the beacon is not a contract, or the input data to initialize has invalid addresses.
+    /// @dev The constructor will get the implementation address from the beacon, and delegate the initialization call
+    /// to the implementation.
+    /// @dev This function will revert if the implementation on the beacon is not a contract, or the input data to
+    /// initialize has invalid addresses.
     /// @param beacon The address of the beacon contract.
     /// @param initData The initialization data to be passed to the implementation contract.
     constructor(address beacon, bytes memory initData) {

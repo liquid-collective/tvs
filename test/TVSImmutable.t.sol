@@ -3,21 +3,19 @@
 pragma solidity 0.8.28;
 
 import "forge-std/Test.sol";
-import {TVSUpgradeable as TVSV1} from "../src/TVSUpgradeable/TVSUpgradeable.sol";
-import {TVSImmutable} from "../src/TVSNonUpgradeable/TVSImmutable.sol";
-import {ITVSImmutable} from "../src/TVSNonUpgradeable/interfaces/ITVSImmutable.sol";
+import { TVSUpgradeable as TVSV1 } from "../src/TVSUpgradeable/TVSUpgradeable.sol";
+import { TVSImmutable } from "../src/TVSNonUpgradeable/TVSImmutable.sol";
+import { ITVSImmutable } from "../src/TVSNonUpgradeable/interfaces/ITVSImmutable.sol";
 import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
-import {UpgradeableBeacon} from "lib/solady/src/utils/UpgradeableBeacon.sol";
+import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import "../src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol";
 import "../src/TVSNonUpgradeable/interfaces/ITVSImmutable.sol";
-import "../src/shared/interfaces/ISweepToContract.sol";
+import "../src/shared/interfaces/ITVSSweepBeneficiary.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
-import {BaseTVSTest, ITVS} from "./TVS.t.sol";
-
+import { BaseTVSTest, ITVS } from "./TVS.t.sol";
 
 // Tests specific to TVSImmutable
 contract TVSImmutableTest is BaseTVSTest {
-
     ITVSImmutable tvsImmutable;
 
     function setUp() public override {
@@ -26,7 +24,13 @@ contract TVSImmutableTest is BaseTVSTest {
     }
 
     function deployTVS() internal override returns (ITVS) {
-        return ITVS(payable(address(new TVSImmutable(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS))));
+        return ITVS(
+            payable(
+                address(
+                    new TVSImmutable(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS)
+                )
+            )
+        );
     }
 
     function testConstructorWithZeroAddressOwner() public {
