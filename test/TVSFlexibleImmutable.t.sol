@@ -4,7 +4,7 @@ pragma solidity ^0.8.0;
 import "forge-std/Test.sol";
 import {TVSImmutableTest} from "./TVSImmutable.t.sol";
 import "../src/TVSNonUpgradeable/TVSFlexibleImmutable.sol";
-import {ITVS} from "./TVS.t.sol";
+import {ITVS} from "../src/interfaces/ITVS.sol";
 
 contract MockTarget {
     bytes32 private constant STATE_SLOT = bytes32(uint256(keccak256("mock.state.slot")));
@@ -42,7 +42,7 @@ contract TVSFlexibleImmutableTest is TVSImmutableTest{
 
     function deployTVS() internal override returns (ITVS) {
         tvsFlexible = new TVSFlexibleImmutableExt(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS);
-        return ITVS(payable(tvsFlexible));
+        return tvsFlexible;
     }
 
     function getCallData(uint256 _state) public pure returns (bytes memory) {
@@ -104,8 +104,6 @@ contract TVSFlexibleImmutableTest is TVSImmutableTest{
         vm.expectCall(address(target), data);
         vm.prank(owner);
         tvsFlexible.executeCall(call);
-
-        console.log(tvsFlexible.getState());
 
         assertEq(tvsFlexible.getState(), 3, "State of tvsFlexible should be updated to 3");
         assertEq(target.getState(), 0, "State of target should not be updated");

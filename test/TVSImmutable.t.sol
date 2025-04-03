@@ -5,28 +5,23 @@ pragma solidity 0.8.28;
 import "forge-std/Test.sol";
 import {TVSUpgradeable as TVSV1} from "../src/TVSUpgradeable/TVSUpgradeable.sol";
 import {TVSImmutable} from "../src/TVSNonUpgradeable/TVSImmutable.sol";
-import {ITVSImmutable} from "../src/TVSNonUpgradeable/interfaces/ITVSImmutable.sol";
-import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
+import {ITVS} from "../src/interfaces/ITVS.sol";
 import {UpgradeableBeacon} from "lib/solady/src/utils/UpgradeableBeacon.sol";
-import "../src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol";
-import "../src/TVSNonUpgradeable/interfaces/ITVSImmutable.sol";
-import "../src/shared/interfaces/ISweepToContract.sol";
+import "../src/interfaces/ISweepToContract.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
-import {BaseTVSTest, ITVS} from "./TVS.t.sol";
+import {BaseTVSTest} from "./TVS.t.sol";
+
 
 
 // Tests specific to TVSImmutable
 contract TVSImmutableTest is BaseTVSTest {
 
-    ITVSImmutable tvsImmutable;
-
     function setUp() public override virtual {
         super.setUp();
-        tvsImmutable = ITVSImmutable(payable(tvs)); // Cast the TVS address to TVSImmutable
     }
 
     function deployTVS() internal virtual override returns (ITVS) {
-        return ITVS(payable(address(new TVSImmutable(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS))));
+        return new TVSImmutable(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS);
     }
 
     function testConstructorWithZeroAddressOwner() public {
@@ -46,7 +41,7 @@ contract TVSImmutableTest is BaseTVSTest {
         address newOwner = makeAddr("newOwner");
 
         vm.prank(owner);
-        tvsImmutable.transfer(newBeneficiary, newOwner);
+        tvs.transfer(newBeneficiary, newOwner);
 
         assertEq(tvs.getBeneficiary(), newBeneficiary, "Beneficiary address not updated");
         assertEq(Ownable(address(tvs)).owner(), newOwner, "Owner address not updated");
@@ -60,6 +55,6 @@ contract TVSImmutableTest is BaseTVSTest {
 
         vm.prank(nonOwner);
         vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
-        tvsImmutable.transfer(newBeneficiary, newOwner);
+        tvs.transfer(newBeneficiary, newOwner);
     }
 }
