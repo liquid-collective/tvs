@@ -55,9 +55,7 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
 
     /// @inheritdoc ITVS
     function transfer(address newBeneficiary, address newOwner) external onlyOwner {
-        address immutableBeaconImplementation = IBeacon(immutableBeacon).implementation();
-
-        _setBeacon(immutableBeacon, immutableBeaconImplementation);
+        _setBeacon(immutableBeacon);
         _setBeneficiary(newBeneficiary);
         transferOwnership(newOwner);
         emit Transferred(newBeneficiary, newOwner);
@@ -111,12 +109,13 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
 
     /// @inheritdoc ITVSUpgradeable
     function setBeacon(address newBeacon) external onlyOwner {
-        address implementation = IBeacon(newBeacon).implementation();
-        _setBeacon(newBeacon, implementation);
+        _setBeacon(newBeacon);
     }
 
-    /// @notice Function used internally by the {setBeacon} function to directly set the beacon address without additional checks
-    /// @dev This function should not be called directly, but only through the {setBeacon} function, it allows the {setBeacon} perform robust checks before setting the new beacon
+    /// @notice Function used internally by the {setBeacon} function to directly set the beacon address without
+    /// additional checks
+    /// @dev This function should not be called directly, but only through the {setBeacon} function, it allows the
+    /// {setBeacon} perform robust checks before setting the new beacon
     /// @dev Emits a {BeaconUpdated} event
     /// @dev Only callable by the contract owner
     /// @param newBeacon The new beacon address

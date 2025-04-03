@@ -6,7 +6,7 @@ pragma solidity 0.8.28;
 /// @notice Interface for the TVS contract.
 /// @dev This interface is used to interact with the TVS contract.
 /// @dev The TVS contract is the withdrawal credential of a set of validators in the system.
-interface ITVS {
+interface ITVSImmutable {
     /// @notice Struct to represent a consolidation request.
     struct ConsolidationRequest {
         bytes[] srcPubkeys;
@@ -71,9 +71,6 @@ interface ITVS {
     /// @param value The value provided.
     /// @param totalFee The total fee required.
     error InsufficientValueForFee(uint256 value, uint256 totalFee);
-
-    /// @notice Error thrown when a transfer couldn't go through
-    error TransferFailed();
 
     /// -------------------------- Core Methods -------------------------
 

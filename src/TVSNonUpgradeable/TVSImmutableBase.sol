@@ -172,7 +172,7 @@ abstract contract TVSImmutableBase is ITVS {
 
     function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure {
         if (_value < _totalFee) {
-            revert InsufficientvalueForFee(_value, _totalFee);
+            revert InsufficientValueForFee(_value, _totalFee);
         }
     }
 
