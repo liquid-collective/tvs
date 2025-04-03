@@ -7,7 +7,6 @@ import "./TVSImmutable.sol";
 /// @author Alluvial Finance Inc.
 /// @notice Non-upgradeable implementation of the TVS with arbitrary executeCall function
 contract TVSFlexibleImmutable is TVSImmutable {
-
     /// @notice Struct to hold call data for executeCall function
     /// @dev The Call struct is used to hold the data required to perform a low-level call or delegatecall.
     /// @param to The target address for the operation.
@@ -21,25 +20,28 @@ contract TVSFlexibleImmutable is TVSImmutable {
         bool isDelegateCall;
     }
 
-    constructor(address newBeneficiary, address newOwner, address withdrawalContractAddress, address consolidationContractAddress) 
-    TVSImmutable(newBeneficiary, newOwner, withdrawalContractAddress, consolidationContractAddress) {
+    constructor(
+        address newBeneficiary,
+        address newOwner,
+        address withdrawalContractAddress,
+        address consolidationContractAddress
+    )
+        TVSImmutable(newBeneficiary, newOwner, withdrawalContractAddress, consolidationContractAddress)
+    {
         _setBeneficiary(newBeneficiary);
     }
-
 
     /// @notice Executes a low-level call or delegatecall to the specified address.
     /// @dev Bubbles up revert reasons and handles both ETH transfers and data calls.
     /// @param call The Call struct containing the target address, value, data, and call type.
-    function executeCall(
-        Call calldata call
-    ) payable external onlyOwner returns (bytes memory) {
+    function executeCall(Call calldata call) external payable onlyOwner returns (bytes memory) {
         return _executeCall(call);
     }
 
     /// @notice Executes a batch of low-level calls or delegatecalls.
     /// @dev revert on the first call that fails.
     /// @param calls An array of Call structs containing the target address, value, data, and call type.
-    function executeBatch(Call[] calldata calls) virtual external payable onlyOwner{
+    function executeBatch(Call[] calldata calls) external payable virtual onlyOwner {
         uint256 callsLength = calls.length;
         for (uint256 i = 0; i < callsLength; i++) {
             Call calldata call = calls[i];

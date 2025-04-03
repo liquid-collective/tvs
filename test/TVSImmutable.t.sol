@@ -3,20 +3,17 @@
 pragma solidity 0.8.28;
 
 import "forge-std/Test.sol";
-import {TVSUpgradeable as TVSV1} from "../src/TVSUpgradeable/TVSUpgradeable.sol";
-import {TVSImmutable} from "../src/TVSNonUpgradeable/TVSImmutable.sol";
-import {ITVS} from "../src/interfaces/ITVS.sol";
-import {UpgradeableBeacon} from "lib/solady/src/utils/UpgradeableBeacon.sol";
-import "../src/interfaces/ISweepToContract.sol";
+import { TVSUpgradeable as TVSV1 } from "../src/TVSUpgradeable/TVSUpgradeable.sol";
+import { TVSImmutable } from "../src/TVSNonUpgradeable/TVSImmutable.sol";
+import { ITVS } from "../src/interfaces/ITVS.sol";
+import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
+import "../src/interfaces/ITVSSweepBeneficiary.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
-import {BaseTVSTest} from "./TVS.t.sol";
-
-
+import { BaseTVSTest } from "./TVS.t.sol";
 
 // Tests specific to TVSImmutable
 contract TVSImmutableTest is BaseTVSTest {
-
-    function setUp() public override virtual {
+    function setUp() public virtual override {
         super.setUp();
     }
 

@@ -4,22 +4,22 @@ pragma solidity 0.8.28;
 
 import "forge-std/Test.sol";
 
-import {TVSUpgradeable as TVSV1} from "../src/TVSUpgradeable/TVSUpgradeable.sol";
-import {ImmutableBeacon} from "../src/TVSUpgradeable/ImmutableBeacon.sol";
+import { TVSUpgradeable as TVSV1 } from "../src/TVSUpgradeable/TVSUpgradeable.sol";
+import { ImmutableBeacon } from "../src/TVSUpgradeable/ImmutableBeacon.sol";
 
-import {TVSImmutable} from "../src/TVSNonUpgradeable/TVSImmutable.sol";
+import { TVSImmutable } from "../src/TVSNonUpgradeable/TVSImmutable.sol";
 import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
-import {UpgradeableBeacon} from "lib/solady/src/utils/UpgradeableBeacon.sol";
+import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import "../src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol";
-import {ITVS} from "../src/interfaces/ITVS.sol";
-import "../src/interfaces/ISweepToContract.sol";
-import {BaseTVSTest, PectraAddress} from "./TVS.t.sol";
-import {ImmutableBeaconFactory} from "../src/TVSUpgradeable/ImmutableBeaconFactory.sol";
+import { ITVS } from "../src/interfaces/ITVS.sol";
+import "../src/interfaces/ITVSSweepBeneficiary.sol";
+import { BaseTVSTest, PectraAddress } from "./TVS.t.sol";
+import { ImmutableBeaconFactory } from "../src/TVSUpgradeable/ImmutableBeaconFactory.sol";
 
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
+contract MockInvalidTVSImplementation { }
 
-contract MockInvalidTVSImplementation {}
 contract MockInvalidBeacon {
     address internal implementation; // implementation is internal here, so no implementation() method
 
@@ -41,16 +41,18 @@ contract MockImmutableBeaconFactoryUsingAnotherTVSImplementation {
         return address(new ImmutableBeacon(anotherImplementation));
     }
 }
+
 contract TVSUpgradeableInitializationTest is Test, PectraAddress {
     address beacon;
-    address beneficiary; 
+    address beneficiary;
     address owner;
     address tvsImplementation;
     address immutableBeaconFactory = address(new ImmutableBeaconFactory());
 
     function setUp() public {
-        tvsImplementation = address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
-        beneficiary = makeAddr("beneficiary"); 
+        tvsImplementation =
+            address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
+        beneficiary = makeAddr("beneficiary");
         owner = makeAddr("owner");
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
     }
@@ -58,51 +60,58 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
     /// @notice Tests deployment of `TVSProxy` with valid arguments.
     /// @dev Ensures that:
     /// - The contract deploys and initializes successfully.
-    /// - The beacon, owner, and beneficiary are correctly set, as confirmed by getter functions. 
+    /// - The beacon, owner, and beneficiary are correctly set, as confirmed by getter functions.
     /// - A custom error `InvalidInitialization(0, 1)` is reverted if `initialize` is called after deployment.
     function testDeployWithValidArguments() public {
         // Deploy the contract with the given valid arguments
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
         TVSV1 tvsProxy = TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
 
         // Ensure that the contract was deployed and initialized successfully
         assertEq(tvsProxy.beacon(), beacon, "Beacon address not correct");
-        assertEq(tvsProxy.getBeneficiary(), beneficiary, "Beneficiary address not correct"); 
+        assertEq(tvsProxy.getBeneficiary(), beneficiary, "Beneficiary address not correct");
         assertEq(tvsProxy.owner(), owner, "Owner address not correct");
 
-        // This check is to ensure that the implementation code is not empty because it was set while the implementation was being deployed
-        assertNotEq(ImmutableBeacon(TVSV1(payable(tvsImplementation)).immutableBeacon()).implementation().code.length, 0, "immutableBeacon implementation code not correct");
+        // This check is to ensure that the implementation code is not empty because it was set while the implementation
+        // was being deployed
+        assertNotEq(
+            ImmutableBeacon(TVSV1(payable(tvsImplementation)).immutableBeacon()).implementation().code.length,
+            0,
+            "immutableBeacon implementation code not correct"
+        );
 
         // Ensure that the contract cannot be initialized again
         vm.expectRevert(abi.encodeWithSignature("InvalidInitialization()"));
-        tvsProxy.initialize(beneficiary, owner, beacon); 
+        tvsProxy.initialize(beneficiary, owner, beacon);
     }
     /// @notice Tests deployment of `TVSProxy` with a zero address as the beacon.
-    /// @dev Expects the deployment to revert with the custom error `InvalidBeacon()` when a zero address is provided as the beacon.
+    /// @dev Expects the deployment to revert with the custom error `InvalidBeacon()` when a zero address is provided as
+    /// the beacon.
 
     function testWithZeroAddressBeacon() public {
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, address(0)); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, address(0));
 
         vm.expectRevert(abi.encodeWithSignature("InvalidBeacon()"));
         TVSV1(payable(new TVSBeaconProxy(address(0), initData)));
-        
     }
 
     /// @notice Tests deployment of `TVSProxy` with a non-contract address as the beacon.
-    /// @dev Expects the deployment to revert with the custom error `InvalidBeacon()` when a non-contract address is provided as the beacon.
+    /// @dev Expects the deployment to revert with the custom error `InvalidBeacon()` when a non-contract address is
+    /// provided as the beacon.
     function testWithNonContractBeacon() public {
         address nonContractBeacon = makeAddr("beacon");
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, nonContractBeacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, nonContractBeacon);
 
         vm.expectRevert(abi.encodeWithSignature("InvalidBeacon()"));
         TVSV1(payable(new TVSBeaconProxy(nonContractBeacon, initData)));
     }
 
     /// @notice Tests deployment of `TVSProxy` with a beacon that returns a non-`TVS` contract as implementation.
-    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when the beacon returns an incompatible implementation.
+    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when the beacon returns an
+    /// incompatible implementation.
     function testWithNonTVSImplementation() public {
         // Deploy a non-TVS contract to act as an invalid implementation
         MockInvalidTVSImplementation invalidImplementation = new MockInvalidTVSImplementation();
@@ -110,7 +119,7 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
         // Set the beacon to return this non-TVS implementation
         address _beacon = address(new UpgradeableBeacon(owner, address(invalidImplementation)));
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
 
         // Expect the transaction to revert with InitializationFailed() error due to non-TVS implementation
         vm.expectRevert(abi.encodeWithSignature("InitializationFailed()"));
@@ -118,31 +127,32 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
     }
 
     /// @notice Tests deployment of `TVSProxy` with a zero address as the owner.
-    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when a zero address is provided as the owner.
+    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when a zero address is
+    /// provided as the owner.
     function testWithZeroAddressOwner() public {
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, address(0), beacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, address(0), beacon);
 
         vm.expectRevert(abi.encodeWithSignature("InitializationFailed()"));
         TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
     }
 
-    /// @notice Tests deployment of `TVSProxy` with a zero address as the beneficiary. 
-    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when a zero address is provided as the beneficiary. 
-    function testWithZeroAddressBeneficiary() public { 
+    /// @notice Tests deployment of `TVSProxy` with a zero address as the beneficiary.
+    /// @dev Expects the deployment to revert with the custom error `InitializationFailed()` when a zero address is
+    /// provided as the beneficiary.
+    function testWithZeroAddressBeneficiary() public {
         bytes memory initData =
-            abi.encodeWithSignature("initialize(address,address,address)", address(0), owner, beacon); 
+            abi.encodeWithSignature("initialize(address,address,address)", address(0), owner, beacon);
 
         vm.expectRevert(abi.encodeWithSignature("InitializationFailed()"));
         TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
     }
 }
 
-
 // Tests specific to TVSUpgradeable
 contract TVSUpgradeableTest is BaseTVSTest {
     // Keep the inherited TVS tvs for base functionality
-    TVSV1 public tvsV1;  // Add separate TVSV1 reference for upgradeable-specific functions
+    TVSV1 public tvsV1; // Add separate TVSV1 reference for upgradeable-specific functions
     address beacon;
     address tvsImplementation;
     address immutableBeaconFactory = address(new ImmutableBeaconFactory());
@@ -150,7 +160,8 @@ contract TVSUpgradeableTest is BaseTVSTest {
     event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
 
     function setUp() public override {
-        tvsImplementation = address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
+        tvsImplementation =
+            address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
         owner = makeAddr("owner");
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
 
@@ -159,13 +170,9 @@ contract TVSUpgradeableTest is BaseTVSTest {
     }
 
     function deployTVS() internal override returns (ITVS) {
-        bytes memory initData = abi.encodeWithSignature(
-            "initialize(address,address,address)",
-            beneficiary,
-            owner,
-            beacon
-        );
-        
+        bytes memory initData =
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
+
         return ITVS(payable(new TVSBeaconProxy(beacon, initData)));
     }
 
@@ -219,8 +226,10 @@ contract TVSUpgradeableTest is BaseTVSTest {
         tvsV1.setBeacon(newBeacon);
     }
 
-    /// @notice Tests setting a new beacon address that points to an implementation contract without `unsafeSetBeacon(address)`.
-    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `unsafeSetBeacon(address)` function.
+    /// @notice Tests setting a new beacon address that points to an implementation contract without
+    /// `unsafeSetBeacon(address)`.
+    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `unsafeSetBeacon(address)`
+    /// function.
     function testUpdateUsingBeaconWithImplementationWithoutUnsafeSetBeaconFunction() public {
         address invalidTVSImplementation = address(new MockInvalidTVSImplementation());
         address newBeacon = address(new UpgradeableBeacon(owner, invalidTVSImplementation));
@@ -231,8 +240,10 @@ contract TVSUpgradeableTest is BaseTVSTest {
         tvsV1.setBeacon(newBeacon);
     }
 
-    /// @notice Tests that a non-owner cannot set a new beacon address using both `setBeacon` and `unsafeSetBeacon` functions.
-    /// @dev Expects the transaction to revert with the custom error `Unauthorized(msg.sender)` when a non-owner attempts to set the beacon.
+    /// @notice Tests that a non-owner cannot set a new beacon address using both `setBeacon` and `unsafeSetBeacon`
+    /// functions.
+    /// @dev Expects the transaction to revert with the custom error `Unauthorized(msg.sender)` when a non-owner
+    /// attempts to set the beacon.
     function testUpdateAsUnauthorized() public {
         address randomCaller = makeAddr("randomCaller");
         vm.prank(randomCaller);
@@ -256,7 +267,11 @@ contract TVSUpgradeableTest is BaseTVSTest {
 
         assertEq(tvsV1.getBeneficiary(), newBeneficiary, "Beneficiary address not updated");
         assertNotEq(tvsV1.beacon(), oldBeacon, "Beacon did not change after transfer");
-        assertEq(tvsV1.beacon(), TVSV1(payable(tvsImplementation)).immutableBeacon(), "Beacon address not updated to the immutableBeacon");
+        assertEq(
+            tvsV1.beacon(),
+            TVSV1(payable(tvsImplementation)).immutableBeacon(),
+            "Beacon address not updated to the immutableBeacon"
+        );
         assertEq(tvsV1.owner(), newOwner, "Owner address not updated");
     }
 
@@ -278,7 +293,9 @@ contract TVSUpgradeableTest is BaseTVSTest {
 
         address invalidImmutableBeaconFactory = address(new MockInvalidImmutableBeaconFactory());
 
-        tvsImplementation = address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, invalidImmutableBeaconFactory));
+        tvsImplementation = address(
+            new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, invalidImmutableBeaconFactory)
+        );
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
 
         ITVS tvs = deployTVS();
@@ -287,5 +304,4 @@ contract TVSUpgradeableTest is BaseTVSTest {
         vm.expectRevert();
         tvs.transfer(newBeneficiary, newOwner);
     }
-
 }

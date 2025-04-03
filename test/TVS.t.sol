@@ -3,19 +3,18 @@
 pragma solidity 0.8.28;
 
 import "forge-std/Test.sol";
-import {TVSUpgradeable as TVSV1} from "../src/TVSUpgradeable/TVSUpgradeable.sol";
-import {TVSImmutable} from "../src/TVSNonUpgradeable/TVSImmutable.sol";
+import { TVSUpgradeable as TVSV1 } from "../src/TVSUpgradeable/TVSUpgradeable.sol";
+import { TVSImmutable } from "../src/TVSNonUpgradeable/TVSImmutable.sol";
 import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
-import {UpgradeableBeacon} from "lib/solady/src/utils/UpgradeableBeacon.sol";
+import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import "../src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol";
 import "../src/interfaces/ITVS.sol";
-import "../src/interfaces/ISweepToContract.sol";
+import "../src/interfaces/ITVSSweepBeneficiary.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
-contract MockBeneficiaryContract is ISweepToContract {
-    function receiveETHFromTVS() external payable override {}
+contract MockBeneficiaryContract is ITVSSweepBeneficiary {
+    function receiveETHFromTVS() external payable override { }
 }
-
 
 abstract contract PectraAddress {
     address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
@@ -30,6 +29,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
     event Swept(address indexed beneficiary, uint256 indexed amount);
     event BeneficiaryUpdated(address indexed newBeneficiary);
+    event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
 
     function setUp() public virtual {
         owner = makeAddr("owner");
@@ -39,7 +39,6 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
     // Abstract function to be implemented by derived test contracts
     function deployTVS() internal virtual returns (ITVS);
-
 
     // Common tests that work for both implementations
     function testSweepWithZeroBalance() public {
@@ -67,36 +66,42 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         vm.deal(address(tvs), amount);
 
         vm.expectRevert();
-        tvs.sweepToContract(address(0), 0);
+        tvs.sweepToBeneficiaryContract(address(0), 0);
     }
 
     function testSweepToContractWithSweepToContractInterfaceWorks() public {
         uint256 amount = 1 ether;
         vm.deal(address(tvs), 2 ether);
 
-        MockBeneficiaryContract sweepToContract = new MockBeneficiaryContract();
-        address sweepToContractAddress = address(sweepToContract);
+        MockBeneficiaryContract beneficiaryContract = new MockBeneficiaryContract();
+        address beneficiaryContractAddress = address(beneficiaryContract);
 
         vm.expectEmit(true, true, true, true);
-        emit Swept(sweepToContractAddress, amount);
+        emit Swept(beneficiaryContractAddress, amount);
 
         vm.prank(owner);
-        tvs.sweepToContract(sweepToContractAddress, amount);
+        tvs.sweepToBeneficiaryContract(beneficiaryContractAddress, amount);
 
-        assertEq(address(sweepToContract).balance, amount, "SweepToContract balance should be equal to the amount swept");
+        assertEq(
+            address(beneficiaryContract).balance, amount, "SweepToContract balance should be equal to the amount swept"
+        );
         assertEq(address(tvs).balance, amount, "Contract balance should be zero after sweep");
 
         // test the default beneficiary contract can receive funds
         vm.prank(owner);
-        tvs.setBeneficiary(sweepToContractAddress); 
-        
+        tvs.setBeneficiary(beneficiaryContractAddress);
+
         vm.expectEmit(true, true, true, true);
-        emit Swept(sweepToContractAddress, amount);
+        emit Swept(beneficiaryContractAddress, amount);
 
         vm.prank(owner);
-        tvs.sweepToContract(address(0), 0);
+        tvs.sweepToBeneficiaryContract(address(0), 0);
 
-        assertEq(address(sweepToContract).balance, amount + amount, "SweepToContract balance should be equal to the cumulative amount swept");
+        assertEq(
+            address(beneficiaryContract).balance,
+            amount + amount,
+            "SweepToContract balance should be equal to the cumulative amount swept"
+        );
         assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
     }
 
@@ -122,7 +127,6 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     function testSetBeneficiaryAsUnauthorized() public {
-
         address randomCaller = makeAddr("randomCaller");
         address newBeneficiary = makeAddr("newBeneficiary");
         vm.prank(randomCaller);
@@ -137,19 +141,18 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
 
         // Mock the call to revert
-        vm.mockCallRevert(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            abi.encodePacked("")
-        );
+        vm.mockCallRevert(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(""));
 
         vm.prank(owner);
 
@@ -164,9 +167,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -178,19 +184,17 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 fee = maxFeePerConsolidation - 1;
         bytes memory mockFeeData = abi.encodePacked(fee);
 
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         vm.prank(owner);
 
         // Expect the transaction to revert due to fee exceeding maxFeePerConsolidation
         uint256 ownerBalBefore = owner.balance;
-        tvs.consolidate{value: maxFeePerConsolidation}(requests, maxFeePerConsolidation, owner);
-        uint ownerBalAfter = owner.balance;
-        assertEq(ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction.");
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+        uint256 ownerBalAfter = owner.balance;
+        assertEq(
+            ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction."
+        );
     }
 
     function testConsolidateFailsIfFeeExceedsMax() public {
@@ -198,9 +202,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -212,11 +219,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 fee = maxFeePerConsolidation + 1;
         bytes memory mockFeeData = abi.encodePacked(fee);
 
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         vm.prank(owner);
 
@@ -230,9 +233,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -243,34 +249,31 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
 
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // Mock the call to fail
         vm.mockCallRevert(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(srcPubkeys[0], targetPubkey),
-            abi.encodePacked("")
+            CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(srcPubkeys[0], targetPubkey), abi.encodePacked("")
         );
 
         vm.prank(owner);
 
         // Expect the transaction to revert due to the call to CONSOLIDATION_CONTRACT_ADDRESS failing
-        vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));        
+        vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));
         tvs.consolidate(requests, maxFeePerConsolidation, owner);
     }
-    
+
     function testConsolidateWorksIfAllIsFine() public {
         address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
-        bytes memory targetPubkey = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte example
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -281,41 +284,28 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
 
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // Mock the call to succeed
         bytes memory callData = bytes.concat(srcPubkeys[0], targetPubkey);
-        vm.mockCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            callData,
-            abi.encodePacked("")
-        );
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, callData, abi.encodePacked(""));
 
         vm.prank(owner);
 
         // Expect the call to the consolidation contract
-        vm.expectCall(
-            CONSOLIDATION_CONTRACT_ADDRESS,
-            maxFeePerConsolidation, 
-            callData
-        );
+        vm.expectCall(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation, callData);
 
         // Call the consolidate function
         tvs.consolidate(requests, maxFeePerConsolidation, owner);
-
-
     }
 
-    function testWithdrawFromFailsIfFeeReadFails() public {
+    function testwithdrawFailsIfFeeReadFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -324,25 +314,22 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         vm.deal(owner, maxFeePerWithdrawal);
 
         // Mock the call to revert
-        vm.mockCallRevert(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            abi.encodePacked("")
-        );
+        vm.mockCallRevert(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(""));
 
         vm.prank(owner);
 
         // Expect the transaction to revert due to the call to WITHDRAWAL_CONTRACT_ADDRESS reverting
         vm.expectRevert(abi.encodeWithSignature("FeeReadFailed()"));
-        tvs.withdrawFrom{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromFailsIfFeeExceedsMax() public {
+    function testwithdrawFailsIfFeeExceedsMax() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -354,25 +341,22 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 fee = maxFeePerWithdrawal + 1;
         bytes memory mockFeeData = abi.encodePacked(fee);
 
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         vm.prank(owner);
 
         // Expect the transaction to revert due to fee exceeding maxFeePerWithdrawal
         vm.expectRevert(abi.encodeWithSignature("FeeTooHigh(uint256,uint256)", fee, maxFeePerWithdrawal));
-        tvs.withdrawFrom{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromFailsIfRequestFails() public {
+    function testwithdrawFailsIfRequestFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -383,32 +367,55 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
 
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // Mock the call to fail
-        vm.mockCallRevert(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(pubkeys[0], amounts[0]),
-            abi.encodePacked("")
-        );
+        vm.mockCallRevert(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(pubkeys[0], amounts[0]), abi.encodePacked(""));
 
         vm.prank(owner);
 
         // Expect the transaction to revert due to the call to WITHDRAWAL_CONTRACT_ADDRESS failing
         vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));
-        tvs.withdrawFrom{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromWorksIfAllIsFine() public {
+    function testWithdrawRefundsSenderAnyExcessFund() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte example
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 2 ether; // Example max fee
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Mock static call response with a valid fee that is less than maxFeePerWithdrawal
+        uint256 fee = maxFeePerWithdrawal - 1 ether;
+        bytes memory mockFeeData = abi.encodePacked(fee);
+
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        vm.prank(owner);
+
+        uint256 ownerBalBefore = owner.balance;
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        uint256 ownerBalAfter = owner.balance;
+        assertEq(
+            ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction."
+        );
+    }
+
+    function testwithdrawWorksIfAllIsFine() public {
+        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
+
+        // Prepare mock data for withdrawal
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -419,29 +426,16 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
 
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            abi.encodePacked(""),
-            mockFeeData
-        );
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // Mock the call to succeed
         bytes memory callData = abi.encodePacked(pubkeys[0], amounts[0]);
-        vm.mockCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            callData,
-            abi.encodePacked("")
-        );
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, callData, abi.encodePacked(""));
 
         vm.prank(owner);
         // Expect the call to the consolidation contract
-        vm.expectCall(
-            WITHDRAWAL_CONTRACT_ADDRESS,
-            maxFeePerWithdrawal,
-            callData
-        );
+        vm.expectCall(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal, callData);
         // Call the withdrawFrom function
-        tvs.withdrawFrom{value: maxFeePerWithdrawal}(pubkeys, amounts, maxFeePerWithdrawal, owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
-
 }
