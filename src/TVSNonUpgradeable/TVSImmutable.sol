@@ -78,8 +78,9 @@ contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
         return Ownable.owner();
     }
 
-    function _transferTVSOwnership(address newOwner) internal override {
-        _transferOwnership(newOwner);
+    function _transferTVSOwnership(address _newOwner) internal override {
+        if (_newOwner == address(0)) revert InvalidAddress();
+        _transferOwnership(_newOwner);
     }
 
     /// @dev Internal function to assert caller is the owner

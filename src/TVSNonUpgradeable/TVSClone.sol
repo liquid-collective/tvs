@@ -80,6 +80,7 @@ contract TVSClone is TVSImmutableBase, Initializable, OwnableUpgradeable, Reentr
     }
 
     function _transferTVSOwnership(address _newOwner) internal override {
+        if (_newOwner == address(0)) revert InvalidAddress();
         _transferOwnership(_newOwner);
     }
 

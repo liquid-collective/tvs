@@ -9,7 +9,7 @@ import "../../interfaces/ITVS.sol";
 /// @dev This interface is used to interact with the TVS contract.
 /// @dev The TVS contract is the withdrawal credential of a set of validators in the system.
 interface ITVSUpgradeable is ITVS {
-    /// --------------------- Events ---------------------
+    /// --------------------- Events ------------------------------------
 
     /// @notice Emitted when the beacon address is updated.
     /// @param oldBeacon The old beacon address.

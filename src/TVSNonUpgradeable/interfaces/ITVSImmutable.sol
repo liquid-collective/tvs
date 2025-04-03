@@ -109,9 +109,11 @@ interface ITVSImmutable {
 
     /// @notice Adds a withdrawal request to CL for a specific TVS.
     /// @dev Only the owner can call this function.
+    /// @dev Emits a {UnsentExcessFee} event if the excess fee is not sent.
     /// @param pubkeys The public keys of the validators to withdraw from.
     /// @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
     /// @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
+    /// @param excessFeeRecipient The address to which excess fees will be sent.
     function withdraw(
         bytes[] memory pubkeys,
         uint64[] calldata amount,
