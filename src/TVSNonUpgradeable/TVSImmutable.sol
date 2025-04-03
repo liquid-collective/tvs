@@ -13,16 +13,16 @@ import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
 /// @notice Non-upgradeable implementation of the TVS
 contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
     constructor(
-        address newBeneficiary,
-        address newOwner,
+        address theBeneficiary,
+        address theOwner,
         address withdrawalContractAddress,
         address consolidationContractAddress
     )
-        Ownable(newOwner)
+        Ownable(theOwner)
         TVSImmutableBase(withdrawalContractAddress, consolidationContractAddress)
         ReentrancyGuard()
     {
-        _setBeneficiary(newBeneficiary);
+        _setBeneficiary(theBeneficiary);
     }
 
     function renounceOwnership() public view override(Ownable) onlyOwner {

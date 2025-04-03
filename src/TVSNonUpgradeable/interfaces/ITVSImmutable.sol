@@ -29,11 +29,9 @@ interface ITVSImmutable {
     /// @param excessFee The amount of excess fee sent.
     event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
 
-    /**
-     * @dev Emitted when the ownership is transferred to a new owner.
-     * @param newBeneficiary The address of the new beneficiary.
-     * @param newOwner The address of the new owner.
-     */
+    /// @dev Emitted when the ownership is transferred to a new owner.
+    /// @param newBeneficiary The address of the new beneficiary.
+    /// @param newOwner The address of the new owner.
     event Transferred(address indexed newBeneficiary, address indexed newOwner);
 
     /// ----------------------- Errors -----------------------
@@ -103,7 +101,7 @@ interface ITVSImmutable {
     /// @param beneficiary New beneficiary address.
     function setBeneficiary(address beneficiary) external;
 
-    // @notice Transfers the ownership of the TVS.
+    /// @notice Transfers the ownership of the TVS.
     /// @dev This function sets a new beneficiary, transfers ownership to a new owner.
     /// @param newBeneficiary The new beneficiary address.
     /// @param newOwner The new owner address.
@@ -126,8 +124,11 @@ interface ITVSImmutable {
     /// @notice Adds a consolidation request to CL for the given source TVS.
     /// @dev Only the owner can call this function.
     /// @dev Both source and target validators (pubKeys) must be from the same TVS (this TVS).
+    /// @dev The excess fee is the difference between the maximum fee and the actual fee paid.
+    /// @dev Emits a {UnsentExcessFee} event if the excess fee is not sent.
     /// @param requests An array of consolidation requests.
     /// @param maxFeePerConsolidation The maximum fee allowed per consolidation request.
+    /// @param excessFeeRecipient The address to which excess fees will be sent.
     function consolidate(
         ConsolidationRequest[] memory requests,
         uint256 maxFeePerConsolidation,

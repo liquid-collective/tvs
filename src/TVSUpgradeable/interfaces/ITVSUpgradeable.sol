@@ -76,7 +76,7 @@ interface ITVSUpgradeable {
     /// @notice Error thrown when the value provided is insufficient for the fee.
     /// @param value The value provided.
     /// @param totalFee The total fee required.
-    error InsufficientvalueForFee(uint256 value, uint256 totalFee);
+    error InsufficientValueForFee(uint256 value, uint256 totalFee);
 
     /// -------------------------- Core Methods -------------------------
 

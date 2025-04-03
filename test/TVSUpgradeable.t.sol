@@ -166,7 +166,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
         emit BeaconUpdated(tvsV1.beacon(), newBeacon);
 
         vm.prank(owner);
-        tvsV1.unsafeSetBeacon(newBeacon);
+        tvsV1.internalSetBeacon(newBeacon);
 
         assertEq(newBeacon, tvsV1.beacon());
     }

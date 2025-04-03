@@ -99,12 +99,21 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         _setBeacon(newBeacon);
     }
 
-    function unsafeSetBeacon(address newBeacon) external onlyOwner {
+    /// @notice Function used internally by the {setBeacon} function to directly set the beacon address without additional checks
+    /// @dev This function should not be called directly, but only through the {setBeacon} function, it allows the {setBeacon} perform robust checks before setting the new beacon
+    /// @dev Emits a {BeaconUpdated} event
+    /// @dev Only callable by the contract owner
+    /// @param newBeacon The new beacon address
+    function internalSetBeacon(address newBeacon) external onlyOwner {
         address oldBeacon = Beacon.get();
         Beacon.set(newBeacon);
         emit BeaconUpdated(oldBeacon, newBeacon);
     }
 
+    /// @notice Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement
+    /// @dev This function is intentionally left empty to prevent ownership renouncement by mistake
+    /// @dev Emits an {OwnershipCannotBeRenounced} error
+    /// @dev Only callable by the contract owner
     function renounceOwnership() public view override onlyOwner {
         revert OwnershipCannotBeRenounced();
     }
@@ -121,7 +130,7 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
 
     function _setBeacon(address _beacon) internal {
         address implementation = IBeacon(_beacon).implementation();
-        implementation.functionDelegateCall(abi.encodeWithSignature("unsafeSetBeacon(address)", _beacon));
+        implementation.functionDelegateCall(abi.encodeWithSignature("internalSetBeacon(address)", _beacon));
     }
 
     function _setBeneficiary(address _newBeneficiary) internal {
@@ -257,7 +266,7 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
 
     function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure {
         if (_value < _totalFee) {
-            revert InsufficientvalueForFee(_value, _totalFee);
+            revert InsufficientValueForFee(_value, _totalFee);
         }
     }
 
