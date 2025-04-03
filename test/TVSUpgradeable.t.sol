@@ -3,14 +3,19 @@
 pragma solidity 0.8.28;
 
 import "forge-std/Test.sol";
+
 import { TVSUpgradeable as TVSV1 } from "../src/TVSUpgradeable/TVSUpgradeable.sol";
+import { ImmutableBeacon } from "../src/TVSUpgradeable/ImmutableBeacon.sol";
+
 import { TVSImmutable } from "../src/TVSNonUpgradeable/TVSImmutable.sol";
 import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
 import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import "../src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol";
-import "../src/TVSNonUpgradeable/interfaces/ITVSImmutable.sol";
-import "../src/shared/interfaces/ITVSSweepBeneficiary.sol";
-import { BaseTVSTest, ITVS, PectraAddress } from "./TVS.t.sol";
+import { ITVS } from "../src/interfaces/ITVS.sol";
+import "../src/interfaces/ITVSSweepBeneficiary.sol";
+import { BaseTVSTest, PectraAddress } from "./TVS.t.sol";
+import { ImmutableBeaconFactory } from "../src/TVSUpgradeable/ImmutableBeaconFactory.sol";
+
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 contract MockInvalidTVSImplementation { }
@@ -23,14 +28,30 @@ contract MockInvalidBeacon {
     }
 }
 
+contract MockInvalidImmutableBeaconFactory {
+    function deployBeacon(address implementation) external returns (address beacon) {
+        return address(new MockInvalidBeacon(implementation));
+    }
+}
+
+contract MockImmutableBeaconFactoryUsingAnotherTVSImplementation {
+    function deployBeacon(address implementation) external returns (address beacon) {
+        address immutableBeaconFactory = address(new ImmutableBeaconFactory());
+        address anotherImplementation = address(new TVSV1(address(1), address(2), immutableBeaconFactory));
+        return address(new ImmutableBeacon(anotherImplementation));
+    }
+}
+
 contract TVSUpgradeableInitializationTest is Test, PectraAddress {
     address beacon;
     address beneficiary;
     address owner;
     address tvsImplementation;
+    address immutableBeaconFactory = address(new ImmutableBeaconFactory());
 
     function setUp() public {
-        tvsImplementation = address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS));
+        tvsImplementation =
+            address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
         beneficiary = makeAddr("beneficiary");
         owner = makeAddr("owner");
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
@@ -51,6 +72,14 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
         assertEq(tvsProxy.beacon(), beacon, "Beacon address not correct");
         assertEq(tvsProxy.getBeneficiary(), beneficiary, "Beneficiary address not correct");
         assertEq(tvsProxy.owner(), owner, "Owner address not correct");
+
+        // This check is to ensure that the implementation code is not empty because it was set while the implementation
+        // was being deployed
+        assertNotEq(
+            ImmutableBeacon(TVSV1(payable(tvsImplementation)).immutableBeacon()).implementation().code.length,
+            0,
+            "immutableBeacon implementation code not correct"
+        );
 
         // Ensure that the contract cannot be initialized again
         vm.expectRevert(abi.encodeWithSignature("InvalidInitialization()"));
@@ -126,12 +155,16 @@ contract TVSUpgradeableTest is BaseTVSTest {
     TVSV1 public tvsV1; // Add separate TVSV1 reference for upgradeable-specific functions
     address beacon;
     address tvsImplementation;
+    address immutableBeaconFactory = address(new ImmutableBeaconFactory());
 
     event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
 
     function setUp() public override {
-        tvsImplementation = address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS));
+        tvsImplementation =
+            address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
+        owner = makeAddr("owner");
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
+
         super.setUp();
         tvsV1 = TVSV1(payable(tvs)); // Cast the TVS address to TVSV1
     }
@@ -226,36 +259,49 @@ contract TVSUpgradeableTest is BaseTVSTest {
     function testTransfer() public {
         address newBeneficiary = makeAddr("newBeneficiary");
         address newOwner = makeAddr("newOwner");
-        address newBeacon = address(new UpgradeableBeacon(owner, tvsImplementation));
+
+        address oldBeacon = tvsV1.beacon();
 
         vm.prank(owner);
-        tvsV1.transfer(newBeneficiary, newOwner, newBeacon);
+        tvsV1.transfer(newBeneficiary, newOwner);
 
         assertEq(tvsV1.getBeneficiary(), newBeneficiary, "Beneficiary address not updated");
-        assertEq(tvsV1.beacon(), newBeacon, "Beacon address not updated");
+        assertNotEq(tvsV1.beacon(), oldBeacon, "Beacon did not change after transfer");
+        assertEq(
+            tvsV1.beacon(),
+            TVSV1(payable(tvsImplementation)).immutableBeacon(),
+            "Beacon address not updated to the immutableBeacon"
+        );
         assertEq(tvsV1.owner(), newOwner, "Owner address not updated");
     }
 
     /// @notice Tests that the transfer function fails if called by a non-owner.
     function testTransferFailsIfNotOwner() public {
         address newBeneficiary = makeAddr("newBeneficiary");
-        address newBeacon = address(new UpgradeableBeacon(owner, tvsImplementation));
         address newOwner = makeAddr("newOwner");
         address nonOwner = makeAddr("nonOwner");
 
         vm.prank(nonOwner);
         vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
-        tvsV1.transfer(newBeneficiary, newOwner, newBeacon);
+        tvsV1.transfer(newBeneficiary, newOwner);
     }
 
     /// @notice Tests that the transfer function fails if an invalid beacon is provided.
     function testTransferFailsWithInvalidBeacon() public {
         address newBeneficiary = makeAddr("newBeneficiary");
         address newOwner = makeAddr("newOwner");
-        address invalidBeacon = address(new MockInvalidBeacon(tvsImplementation));
+
+        address invalidImmutableBeaconFactory = address(new MockInvalidImmutableBeaconFactory());
+
+        tvsImplementation = address(
+            new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, invalidImmutableBeaconFactory)
+        );
+        beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
+
+        ITVS tvs = deployTVS();
 
         vm.prank(owner);
         vm.expectRevert();
-        tvsV1.transfer(newBeneficiary, newOwner, invalidBeacon);
+        tvs.transfer(newBeneficiary, newOwner);
     }
 }

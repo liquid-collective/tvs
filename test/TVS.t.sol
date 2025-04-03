@@ -8,71 +8,9 @@ import { TVSImmutable } from "../src/TVSNonUpgradeable/TVSImmutable.sol";
 import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
 import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
 import "../src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol";
-import "../src/TVSNonUpgradeable/interfaces/ITVSImmutable.sol";
-import "../src/shared/interfaces/ITVSSweepBeneficiary.sol";
+import "../src/interfaces/ITVS.sol";
+import "../src/interfaces/ITVSSweepBeneficiary.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
-
-interface ITVS {
-    struct ConsolidationRequest {
-        bytes[] srcPubkeys;
-        bytes targetPubkey;
-    }
-
-    event Swept(address indexed beneficiary, uint256 indexed amount);
-
-    event BeneficiaryUpdated(address indexed newBeneficiary);
-
-    event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
-
-    error InvalidAddress();
-
-    error Unauthorized(address caller);
-
-    error InsufficientBalance(uint256 available, uint256 required);
-
-    error FeeTooHigh(uint256 currentFee, uint256 maxAllowedFee);
-
-    error LengthMismatch(uint256 expected, uint256 actual);
-
-    error OwnableUnauthorizedAccount(address caller);
-
-    error FeeReadFailed();
-
-    error RequestFailed();
-
-    error OwnershipCannotBeRenounced();
-
-    error InsufficientvalueForFee(uint256 value, uint256 totalFee);
-
-    receive() external payable;
-
-    function sweep(address beneficiary, uint256 amount) external;
-
-    function sweepToBeneficiaryContract(address beneficiary, uint256 amount) external;
-
-    function setBeneficiary(address beneficiary) external;
-
-    function withdraw(
-        bytes[] memory pubkeys,
-        uint64[] calldata amount,
-        uint256 maxFeePerWithdrawal,
-        address excessFeeRecipient
-    )
-        external
-        payable;
-
-    function consolidate(
-        ConsolidationRequest[] memory requests,
-        uint256 maxFeePerConsolidation,
-        address excessFeeRecipient
-    )
-        external
-        payable;
-
-    function getBeneficiary() external view returns (address);
-
-    function version() external pure returns (string memory);
-}
 
 contract MockBeneficiaryContract is ITVSSweepBeneficiary {
     function receiveETHFromTVS() external payable override { }

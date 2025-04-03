@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: Proprietary
 pragma solidity 0.8.28;
 
-import "./interfaces/ITVSImmutable.sol";
+import "../interfaces/ITVS.sol";
 import "openzeppelin-contracts/contracts/utils/Address.sol";
 
 /// @title Base for Immutable TVS Contract
 /// @author Alluvial Finance Inc.
 /// @notice Base contract for TVS Immutable implementations
-abstract contract TVSImmutableBase is ITVSImmutable {
+abstract contract TVSImmutableBase is ITVS {
     address internal beneficiary;
 
     using Address for address payable;
@@ -24,16 +24,16 @@ abstract contract TVSImmutableBase is ITVSImmutable {
         CONSOLIDATION_CONTRACT_ADDRESS = consolidationContractAddress;
     }
 
-    /// @inheritdoc ITVSImmutable
+    /// @inheritdoc ITVS
     receive() external payable { }
 
-    /// @inheritdoc ITVSImmutable
+    /// @inheritdoc ITVS
     function sweep(address recipient, uint256 amount) external {
         (address dest, uint256 amountToSweep) = _sweep(recipient, amount);
         payable(dest).sendValue(amountToSweep);
     }
 
-    /// @inheritdoc ITVSImmutable
+    /// @inheritdoc ITVS
     function getBeneficiary() public view returns (address) {
         return beneficiary;
     }
@@ -176,7 +176,7 @@ abstract contract TVSImmutableBase is ITVSImmutable {
         }
     }
 
-    /// @inheritdoc ITVSImmutable
+    /// @inheritdoc ITVS
     function version() external pure returns (string memory) {
         return "v1.0.0 I";
     }
