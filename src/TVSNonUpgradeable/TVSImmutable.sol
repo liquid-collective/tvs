@@ -12,6 +12,12 @@ import "openzeppelin-contracts/contracts/utils/ReentrancyGuard.sol";
 /// @author Alluvial Finance Inc.
 /// @notice Non-upgradeable implementation of the TVS
 contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
+    /// @notice Constructs a new TVSImmutable contract
+    /// @dev Initializes the contract with beneficiary, owner, and contract addresses
+    /// @param theBeneficiary The address that will receive swept funds
+    /// @param theOwner The address that will have ownership privileges
+    /// @param withdrawalContractAddress The address of the withdrawal contract
+    /// @param consolidationContractAddress The address of the consolidation contract
     constructor(
         address theBeneficiary,
         address theOwner,
@@ -25,6 +31,9 @@ contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
         _setBeneficiary(theBeneficiary);
     }
 
+    /// @notice Prevents ownership from being renounced
+    /// @dev This is a security measure to ensure the contract always has an owner
+    /// @custom:reverts OwnershipCannotBeRenounced Always reverts with this error
     function renounceOwnership() public view override(Ownable) onlyOwner {
         revert OwnershipCannotBeRenounced();
     }
@@ -74,16 +83,24 @@ contract TVSImmutable is TVSImmutableBase, Ownable, ReentrancyGuard {
         _consolidate(requests, maxFeePerConsolidation, excessFeeRecipient);
     }
 
+    /// @notice Returns the current owner of the contract
+    /// @return The address of the current owner
     function _owner() internal view override returns (address) {
         return Ownable.owner();
     }
 
+    /// @notice Transfers ownership of the TVS contract to a new owner
+    /// @dev Reverts if the new owner address is zero
+    /// @param _newOwner The address of the new owner
+    /// @custom:reverts InvalidAddress If the new owner address is zero
     function _transferTVSOwnership(address _newOwner) internal override {
         if (_newOwner == address(0)) revert InvalidAddress();
         _transferOwnership(_newOwner);
     }
 
-    /// @dev Internal function to assert caller is the owner
+    /// @notice Asserts that the caller is the current owner of the contract
+    /// @dev Reverts if the caller is not the owner
+    /// @custom:reverts OwnableUnauthorizedAccount If the caller is not the owner
     function _assertOwner() internal view override {
         if (msg.sender != _owner()) {
             revert OwnableUnauthorizedAccount(msg.sender);

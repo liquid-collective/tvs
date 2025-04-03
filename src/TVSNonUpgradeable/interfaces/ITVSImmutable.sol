@@ -13,8 +13,6 @@ interface ITVSImmutable {
         bytes targetPubkey;
     }
 
-    /// --------------------- Events ---------------------
-
     /// @notice Emitted when funds are swept to the beneficiary.
     /// @param beneficiary The address to which funds were swept.
     /// @param amount The amount of funds swept.
@@ -33,8 +31,6 @@ interface ITVSImmutable {
     /// @param newBeneficiary The address of the new beneficiary.
     /// @param newOwner The address of the new owner.
     event Transferred(address indexed newBeneficiary, address indexed newOwner);
-
-    /// ----------------------- Errors -----------------------
 
     /// @notice Error thrown when an invalid address is provided for any reason.
     error InvalidAddress();
@@ -71,10 +67,6 @@ interface ITVSImmutable {
     /// @param value The value provided.
     /// @param totalFee The total fee required.
     error InsufficientValueForFee(uint256 value, uint256 totalFee);
-
-    /// -------------------------- Core Methods -------------------------
-
-    // Setters
 
     /// @notice Fallback function to receive funds.
     receive() external payable;
@@ -138,8 +130,6 @@ interface ITVSImmutable {
     )
         external
         payable;
-
-    // Getters
 
     /// @notice Retrieves the current beneficiary address.
     /// @return The address of the beneficiary.

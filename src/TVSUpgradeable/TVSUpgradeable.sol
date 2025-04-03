@@ -143,17 +143,35 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         return Beacon.get();
     }
 
+    /// @notice Sets the beacon address for the contract
+    /// @dev Uses delegate call to set the beacon on the implementation contract
+    /// @param _beacon The address of the beacon to set
     function _setBeacon(address _beacon) internal {
         address implementation = IBeacon(_beacon).implementation();
         implementation.functionDelegateCall(abi.encodeWithSignature("internalSetBeacon(address)", _beacon));
     }
 
+    /// @notice Sets a new beneficiary address
+    /// @dev Reverts if the new beneficiary address is zero
+    /// @param _newBeneficiary The address of the new beneficiary
+    /// @custom:reverts InvalidAddress If the new beneficiary address is zero
     function _setBeneficiary(address _newBeneficiary) internal {
         if (_newBeneficiary == address(0)) revert InvalidAddress();
         Beneficiary.set(_newBeneficiary);
         emit BeneficiaryUpdated(_newBeneficiary);
     }
 
+    /// @notice Processes withdrawal requests for multiple validators
+    /// @dev Reverts if pubkeys and amounts arrays have different lengths or if fees are insufficient
+    /// @param _pubkeys Array of validator public keys
+    /// @param _amount Array of withdrawal amounts
+    /// @param _maxFeePerWithdrawal Maximum fee allowed per withdrawal
+    /// @param _excessFeeRecipient Address to receive any excess fees
+    /// @custom:reverts LengthMismatch If pubkeys and amounts arrays have different lengths
+    /// @custom:reverts InsufficientValueForFee If sent value is less than required fees
+    /// @custom:reverts FeeTooHigh If any fee exceeds maximum allowed
+    /// @custom:reverts FeeReadFailed If fee reading fails
+    /// @custom:reverts RequestFailed If withdrawal request fails
     function _withdraw(
         bytes[] memory _pubkeys,
         uint64[] calldata _amount,
@@ -195,6 +213,15 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         _refundExcessFee(msg.value, totalFeePaid, _excessFeeRecipient);
     }
 
+    /// @notice Processes consolidation requests for multiple validators
+    /// @dev Reverts if fees are insufficient or if any request fails
+    /// @param _requests Array of consolidation requests
+    /// @param _maxFeePerConsolidation Maximum fee allowed per consolidation
+    /// @param _excessFeeRecipient Address to receive any excess fees
+    /// @custom:reverts InsufficientValueForFee If sent value is less than required fees
+    /// @custom:reverts FeeTooHigh If any fee exceeds maximum allowed
+    /// @custom:reverts FeeReadFailed If fee reading fails
+    /// @custom:reverts RequestFailed If consolidation request fails
     function _consolidate(
         ConsolidationRequest[] calldata _requests,
         uint256 _maxFeePerConsolidation,
@@ -230,6 +257,13 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         _refundExcessFee(msg.value, totalFeePaid, _excessFeeRecipient);
     }
 
+    /// @notice Sweeps funds to a specified beneficiary
+    /// @dev If beneficiary is zero address, uses default beneficiary. Requires owner for custom beneficiary
+    /// @param _beneficiary Address to receive swept funds (zero for default)
+    /// @param _amount Amount to sweep (zero for full balance)
+    /// @return dest The address that will receive the funds
+    /// @return amountToSweep The amount that will be swept
+    /// @custom:reverts InsufficientBalance If requested amount exceeds contract balance
     function _sweep(address _beneficiary, uint256 _amount) private returns (address dest, uint256 amountToSweep) {
         // Only require owner for custom beneficiary
         if (_beneficiary != address(0)) {
@@ -245,13 +279,20 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         emit Swept(dest, amountToSweep);
     }
 
-    /// @dev Internal function to assert caller is the owner
+    /// @notice Asserts that the caller is the current owner of the contract
+    /// @dev Reverts if the caller is not the owner
+    /// @custom:reverts OwnableUnauthorizedAccount If the caller is not the owner
     function _assertOwner() internal view {
         if (msg.sender != owner()) {
             revert OwnableUnauthorizedAccount(msg.sender);
         }
     }
 
+    /// @notice Refunds any excess fees to the specified recipient
+    /// @dev Emits UnsentExcessFee event if refund fails
+    /// @param _totalValueReceived Total value received in the transaction
+    /// @param _totalFeePaid Total fees paid for operations
+    /// @param _excessFeeRecipient Address to receive excess fees
     function _refundExcessFee(
         uint256 _totalValueReceived,
         uint256 _totalFeePaid,
@@ -268,18 +309,29 @@ contract TVSUpgradeable is ITVSUpgradeable, Initializable, OwnableUpgradeable, R
         }
     }
 
+    /// @notice Validates that a fee does not exceed the maximum allowed
+    /// @dev Reverts if the current fee exceeds the maximum allowed
+    /// @param _currentFee The current fee to validate
+    /// @param _maxAllowedFee The maximum allowed fee
+    /// @custom:reverts FeeTooHigh If current fee exceeds maximum allowed
     function _validateFee(uint256 _currentFee, uint256 _maxAllowedFee) internal pure {
         if (_currentFee > _maxAllowedFee) {
             revert FeeTooHigh(_currentFee, _maxAllowedFee);
         }
     }
 
+    /// @notice Validates that the sent value is sufficient to cover the total fee
+    /// @dev Reverts if the sent value is less than the total fee
+    /// @param _value The value sent in the transaction
+    /// @param _totalFee The total fee required
+    /// @custom:reverts InsufficientValueForFee If sent value is less than total fee
     function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure {
         if (_value < _totalFee) {
             revert InsufficientValueForFee(_value, _totalFee);
         }
     }
 
+    /// @inheritdoc ITVS
     function version() external pure returns (string memory) {
         return "v1.0.0 U";
     }

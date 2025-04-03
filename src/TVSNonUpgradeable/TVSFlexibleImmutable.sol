@@ -49,6 +49,10 @@ contract TVSFlexibleImmutable is TVSImmutable {
         }
     }
 
+    /// @notice Executes a call based on the provided call parameters
+    /// @dev Performs either a delegate call or a regular call with value based on call.isDelegateCall
+    /// @param call The call parameters including target address, data, value, and call type
+    /// @return returnData The return data from the executed call
     function _executeCall(Call calldata call) internal returns (bytes memory returnData) {
         if (call.isDelegateCall) {
             return Address.functionDelegateCall(call.to, call.data);
