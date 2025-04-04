@@ -34,14 +34,6 @@ contract MockInvalidImmutableBeaconFactory {
     }
 }
 
-contract MockImmutableBeaconFactoryUsingAnotherTVSImplementation {
-    function deployBeacon(address implementation) external returns (address beacon) {
-        address immutableBeaconFactory = address(new ImmutableBeaconFactory());
-        address anotherImplementation = address(new TVSV1(address(1), address(2), immutableBeaconFactory));
-        return address(new ImmutableBeacon(anotherImplementation));
-    }
-}
-
 contract TVSUpgradeableInitializationTest is Test, PectraAddress {
     address beacon;
     address beneficiary;
@@ -190,9 +182,9 @@ contract TVSUpgradeableTest is BaseTVSTest {
         assertEq(newBeacon, tvsV1.beacon());
     }
 
-    /// @notice Tests setting a new valid beacon address by the owner using the `unsafeSetBeacon` function.
+    /// @notice Tests setting a new valid beacon address by the owner using the `internalSetBeacon` function.
     /// @dev Expects the beacon address to be updated successfully when set by the owner using `unsafeSetBeacon`.
-    function testUpdateUsingUnsafeSetBeaconFunction() public {
+    function testUpdateUsingInternalSetBeaconFunction() public {
         address newBeacon = address(new UpgradeableBeacon(owner, tvsImplementation));
 
         vm.expectEmit(true, true, true, true);
@@ -227,8 +219,8 @@ contract TVSUpgradeableTest is BaseTVSTest {
     }
 
     /// @notice Tests setting a new beacon address that points to an implementation contract without
-    /// `unsafeSetBeacon(address)`.
-    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `unsafeSetBeacon(address)`
+    /// `internalSetBeacon(address)`.
+    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `internalSetBeacon(address)`
     /// function.
     function testUpdateUsingBeaconWithImplementationWithoutUnsafeSetBeaconFunction() public {
         address invalidTVSImplementation = address(new MockInvalidTVSImplementation());

@@ -3,23 +3,27 @@ pragma solidity 0.8.28;
 
 import "../state/proxy/Beacon.sol";
 
-/// @title TVSBeaconProxy
-/// @author Alluvial Finance Inc.
-/// @notice This is an EIP-1167 minimal proxy that interacts with an upgradable beacon contract.
-/// @dev It uses the beacon contract to fetch the implementation address and delegate the call.
-/// @dev The beacon contract is expected to have an `implementation()` function that returns the address of the
-/// implementation.
+/**
+ * @title TVSBeaconProxy
+ * @author Alluvial Finance Inc.
+ * @notice This is an EIP-1167 minimal proxy that interacts with an upgradable beacon contract
+ * @dev It uses the beacon contract to fetch the implementation address and delegate the call.
+ * @dev The beacon contract is expected to have an `implementation()` function that returns the address of the
+ *      implementation.
+ */
 contract TVSBeaconProxy {
     error InitializationFailed();
     error InvalidBeacon();
 
-    /// @notice Constructor that initializes the proxy with the beacon address and initialization data.
-    /// @dev The constructor will get the implementation address from the beacon, and delegate the initialization call
-    /// to the implementation.
-    /// @dev This function will revert if the implementation on the beacon is not a contract, or the input data to
-    /// initialize has invalid addresses.
-    /// @param beacon The address of the beacon contract.
-    /// @param initData The initialization data to be passed to the implementation contract.
+    /**
+     * @notice Constructs a new TVSBeaconProxy instance
+     * @dev The constructor will get the implementation address from the beacon, and delegate the initialization call
+     *      to the implementation.
+     * @dev This function will revert if the implementation on the beacon is not a contract, or the input data to
+     *      initialize has invalid addresses.
+     * @param beacon The address of the beacon contract
+     * @param initData The initialization data to be passed to the implementation contract
+     */
     constructor(address beacon, bytes memory initData) {
         address implementation = _getImplementation(beacon);
         if (implementation.code.length == 0) revert InvalidBeacon();
@@ -29,9 +33,11 @@ contract TVSBeaconProxy {
         }
     }
 
-    /// @notice Fallback function that delegates all calls to the implementation address returned by the beacon.
-    /// @dev This function uses inline assembly to first fetch the implementation address from the beacon
-    /// @dev and then delegates the call to it.
+    /**
+     * @notice Fallback function that delegates all calls to the implementation address returned by the beacon
+     * @dev This function uses inline assembly to first fetch the implementation address from the beacon
+     * @dev and then delegates the call to it.
+     */
     fallback() external payable {
         address implementation = _getImplementation(Beacon.get());
         assembly ("memory-safe") {
@@ -52,9 +58,12 @@ contract TVSBeaconProxy {
         }
     }
 
-    /// @notice Internal function to fetch the implementation address from the beacon
-    /// @param _beacon The address of the beacon contract
-    /// @return implementation The address of the implementation contract
+    /**
+     * @notice Internal function to fetch the implementation address from the beacon
+     * @dev This function uses inline assembly to fetch the implementation address from the beacon
+     * @param _beacon The address of the beacon contract
+     * @return implementation The address of the implementation contract
+     */
     function _getImplementation(address _beacon) internal view returns (address implementation) {
         assembly ("memory-safe") {
             let ptr := mload(0x40)

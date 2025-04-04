@@ -25,3 +25,4 @@ deploy/sms_deploy_param.yaml
 .DS_Store
 .idea
 lcov.info
+.wake

@@ -299,7 +299,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.consolidate(requests, maxFeePerConsolidation, owner);
     }
 
-    function testwithdrawFailsIfFeeReadFails() public {
+    function testWithdrawFromFailsIfFeeReadFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -323,7 +323,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testwithdrawFailsIfFeeExceedsMax() public {
+    function testWithdrawFromFailsIfFeeExceedsMax() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -350,7 +350,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testwithdrawFailsIfRequestFails() public {
+    function testWithdrawFromFailsIfRequestFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -409,7 +409,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         );
     }
 
-    function testwithdrawWorksIfAllIsFine() public {
+    function testWithdrawFromWorksIfAllIsFine() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal

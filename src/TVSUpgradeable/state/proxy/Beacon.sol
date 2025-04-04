@@ -9,7 +9,7 @@ import "openzeppelin-contracts/contracts/utils/StorageSlot.sol";
 /// @dev The beacon address is the address of the contract that holds the implementation address
 /// @dev The implementation address is the address of the contract that contains the business logic
 /// @dev The beacon address is expected to have an `implementation()` function that returns the address of the
-/// implementation
+///      implementation
 /// @dev The proxy contract is expected to have a `BEACON_SLOT` slot that stores the beacon address
 library Beacon {
     /// @dev Slot for the beacon address
