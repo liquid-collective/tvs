@@ -26,7 +26,7 @@ contract ImmutableBeacon {
      * @param theImplementation The address of the implementation contract
      */
     constructor(address theImplementation) {
-        if (theImplementation == address(0) || theImplementation.code.length == 0) revert InvalidImplementation();
+        if (theImplementation == address(0)) revert InvalidImplementation();
         implementation = theImplementation;
     }
 }
