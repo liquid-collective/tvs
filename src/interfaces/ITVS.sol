@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Proprietary
 pragma solidity 0.8.28;
 
-/// @title TVS Interface (v1)
+/// @title TVS Interface (Immutable)
 /// @author Alluvial Finance Inc.
 /// @notice Interface for the TVS contract.
 /// @dev This interface is used to interact with the TVS contract.
@@ -29,6 +29,11 @@ interface ITVS {
     /// @param excessFee The amount of excess fee sent.
     event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
 
+    /// @dev Emitted when the ownership is transferred to a new owner.
+    /// @param newBeneficiary The address of the new beneficiary.
+    /// @param newOwner The address of the new owner.
+    event Transferred(address indexed newBeneficiary, address indexed newOwner);
+
     /// ----------------------- Errors -----------------------
 
     /// @notice Error thrown when an invalid address is provided for any reason.
@@ -53,10 +58,6 @@ interface ITVS {
     /// @param actual The actual length of the input arrays provided.
     error LengthMismatch(uint256 expected, uint256 actual);
 
-    /// @notice Error thrown when an unauthorized access attempt is made.
-    /// @param caller The address of the caller attempting unauthorized access.
-    error NotOwner(address caller);
-
     /// @notice Error thrown when reading the fee fails.
     error FeeReadFailed();
 
@@ -69,7 +70,10 @@ interface ITVS {
     /// @notice Error thrown when the value provided is insufficient for the fee.
     /// @param value The value provided.
     /// @param totalFee The total fee required.
-    error InsufficientvalueForFee(uint256 value, uint256 totalFee);
+    error InsufficientValueForFee(uint256 value, uint256 totalFee);
+
+    /// @notice Error thrown when a transfer couldn't go through
+    error TransferFailed();
 
     /// -------------------------- Core Methods -------------------------
 
@@ -100,21 +104,14 @@ interface ITVS {
     /// @param beneficiary New beneficiary address.
     function setBeneficiary(address beneficiary) external;
 
-    // Getters
-
-    /// @notice Retrieves the current beneficiary address.
-    /// @return The address of the beneficiary.
-    function getBeneficiary() external view returns (address);
-
-    /// @notice Retrieves the version of the contract
-    /// @return Version of the contract
-    function version() external pure returns (string memory);
+    /// @notice Transfers the ownership of the TVS.
+    /// @dev This function sets a new beneficiary, transfers ownership to a new owner.
+    /// @param newBeneficiary The new beneficiary address.
+    /// @param newOwner The new owner address.
+    function transfer(address newBeneficiary, address newOwner) external;
 
     /// @notice Adds a withdrawal request to CL for a specific TVS.
-    /// @dev This is a pectra-compatible function, which allows the owner to withdraw given amount from the specified
-    /// validator's stake or reward.
     /// @dev Only the owner can call this function.
-    /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.
     /// @param pubkeys The public keys of the validators to withdraw from.
     /// @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
     /// @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
@@ -128,13 +125,13 @@ interface ITVS {
         payable;
 
     /// @notice Adds a consolidation request to CL for the given source TVS.
-    /// @dev This is a pectra-compatible function, which allows the owner to consolidate one or more validators to
-    /// another.
     /// @dev Only the owner can call this function.
     /// @dev Both source and target validators (pubKeys) must be from the same TVS (this TVS).
-    /// @dev The excessFeeRecipient can be an EOA or a contract, just ensure it can receive ETH.
+    /// @dev The excess fee is the difference between the maximum fee and the actual fee paid.
+    /// @dev Emits a {UnsentExcessFee} event if the excess fee is not sent.
     /// @param requests An array of consolidation requests.
     /// @param maxFeePerConsolidation The maximum fee allowed per consolidation request.
+    /// @param excessFeeRecipient The address to which excess fees will be sent.
     function consolidate(
         ConsolidationRequest[] memory requests,
         uint256 maxFeePerConsolidation,
@@ -142,4 +139,14 @@ interface ITVS {
     )
         external
         payable;
+
+    // Getters
+
+    /// @notice Retrieves the current beneficiary address.
+    /// @return The address of the beneficiary.
+    function getBeneficiary() external view returns (address);
+
+    /// @notice Retrieves the version of the contract
+    /// @return Version of the contract
+    function version() external pure returns (string memory);
 }
