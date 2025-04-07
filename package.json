@@ -6,7 +6,12 @@
   "repository": "git@github.com:liquid-collective/tvs.git",
   "author": "Alluvial Finance",
   "license": "MIT",
+  "scripts": {
+    "lint": "solhint '**/*.sol'"
+  },
+  
   "devDependencies": {
     "solhint": "^5.0.5"
   }
+
 }
