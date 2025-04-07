@@ -93,6 +93,11 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
         return Beacon.get();
     }
 
+    /// @inheritdoc ITVS
+    function version() external pure returns (string memory) {
+        return "v1.0.0 U";
+    }
+
     /**
      * @notice Internal function to set the beacon address
      * @dev This function is used internally to set the beacon address
@@ -103,10 +108,5 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     function _setBeacon(address _beacon) internal {
         address implementation = IBeacon(_beacon).implementation();
         implementation.functionDelegateCall(abi.encodeWithSignature("internalSetBeacon(address)", _beacon));
-    }
-
-    /// @inheritdoc ITVS
-    function version() external pure returns (string memory) {
-        return "v1.0.0 U";
     }
 }

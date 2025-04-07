@@ -18,18 +18,18 @@ library Beneficiary {
     bytes32 internal constant BENEFICIARY_SLOT = bytes32(uint256(keccak256("tvs.state.beneficiary")) - 1);
 
     /**
-     * @notice Get the beneficiary address
-     * @return The beneficiary address
-     */
-    function get() internal view returns (address) {
-        return StorageSlot.getAddressSlot(BENEFICIARY_SLOT).value;
-    }
-
-    /**
      * @notice Set the beneficiary address
      * @param newValue The new beneficiary address
      */
     function set(address newValue) internal {
         StorageSlot.getAddressSlot(BENEFICIARY_SLOT).value = newValue;
+    }
+
+    /**
+     * @notice Get the beneficiary address
+     * @return The beneficiary address
+     */
+    function get() internal view returns (address) {
+        return StorageSlot.getAddressSlot(BENEFICIARY_SLOT).value;
     }
 }

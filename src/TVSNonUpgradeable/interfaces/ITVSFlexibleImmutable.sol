@@ -1,3 +1,6 @@
+// SPDX-License-Identifier: Proprietary
+pragma solidity 0.8.28;
+
 /**
  * @title ITVSFlexibleImmutable Interface
  * @author Alluvial Finance Inc.

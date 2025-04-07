@@ -11,7 +11,7 @@ on:
       - "main"
 
 jobs:
-  lint:
+  lint_forge:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
@@ -27,6 +27,25 @@ jobs:
 
       - name: "Lint the code"
         run: "forge fmt --check"
+
+      - name: "Add lint summary"
+        run: |
+          echo "## Lint result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
+
+  lint_solhint:
+    runs-on: "ubuntu-latest"
+    steps:
+      - name: "Check out the repo"
+        uses: "actions/checkout@v4"
+        with:
+          submodules: recursive
+
+      - name: "Install solhint"
+        run: npm install --save-dev solhint
+
+      - name: "Lint the code"
+        run: "solhint 'src/**/*.sol'"
 
       - name: "Add lint summary"
         run: |
@@ -56,7 +75,7 @@ jobs:
           echo "✅ Passed" >> $GITHUB_STEP_SUMMARY
 
   test:
-    needs: ["lint", "build"]
+    needs: ["lint_forge", "lint_solhint", "build"]
     runs-on: ubuntu-latest
     steps:
       - name: "Check out the repo"

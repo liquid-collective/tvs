@@ -3,12 +3,8 @@
 pragma solidity 0.8.28;
 
 import "forge-std/Test.sol";
-import { TVSUpgradeable as TVSV1 } from "../src/TVSUpgradeable/TVSUpgradeable.sol";
-import { TVSImmutable } from "../src/TVSNonUpgradeable/TVSImmutable.sol";
-import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
-import { UpgradeableBeacon } from "lib/solady/src/utils/UpgradeableBeacon.sol";
-import "../src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol";
 import "../src/interfaces/ITVS.sol";
+import "../src/interfaces/ITVSSweepBeneficiary.sol";
 import "../src/interfaces/ITVSSweepBeneficiary.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
@@ -41,24 +37,44 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     function deployTVS() internal virtual returns (ITVS);
 
     // Common tests that work for both implementations
-    function testSweepWithZeroBalance() public {
-        vm.prank(owner);
+    function testSweepToCustomBeneficiaryFailsIfNotOwner() public {
+        address nonOwner = makeAddr("nonOwner");
+
+        vm.prank(nonOwner);
+
+        address customBeneficiary = vm.addr(5);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
+        tvs.sweep(customBeneficiary, 0);
+    }
+
+    function testSweepAllWhenZeroBalance() public {
         tvs.sweep(address(0), 0);
         assertEq(beneficiary.balance, 0 ether, "Beneficiary balance should be zero after sweep");
     }
 
-    function testSweepWithNonZeroBalance() public {
+    function testNonOwnerCanSweepToDefaultBeneficiary() public {
         uint256 amount = 1 ether;
         vm.deal(address(tvs), amount);
 
         vm.expectEmit(true, true, true, true);
         emit Swept(beneficiary, amount);
 
-        vm.prank(owner);
+        address nonOwner = makeAddr("nonOwner");
+        vm.prank(nonOwner);
         tvs.sweep(address(0), 0);
 
         assertEq(beneficiary.balance, amount, "Beneficiary balance should be equal to the amount swept");
         assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
+    }
+
+    function testSweepWithFailsWhenBalanceInsufficient() public {
+        uint256 balance = 1 ether;
+        uint256 amount = balance + 1;
+        vm.deal(address(tvs), balance);
+
+        vm.expectRevert(abi.encodeWithSignature("InsufficientBalance(uint256,uint256)", balance, amount));
+        vm.prank(owner);
+        tvs.sweep(address(0), amount);
     }
 
     function testSweepToContractWithNoSweepToContractInterface() public {
@@ -105,7 +121,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
     }
 
-    function testSetBeneficiaryWithValidAddress() public {
+    function testSetBeneficiaryWithValidAddress() public virtual {
         address newBeneficiary = makeAddr("newBeneficiary");
 
         vm.expectEmit(true, true, true, true);
@@ -127,11 +143,11 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     function testSetBeneficiaryAsUnauthorized() public {
-        address randomCaller = makeAddr("randomCaller");
+        address nonOwner = makeAddr("nonOwner");
         address newBeneficiary = makeAddr("newBeneficiary");
-        vm.prank(randomCaller);
+        vm.prank(nonOwner);
 
-        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", randomCaller));
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
 
         tvs.setBeneficiary(newBeneficiary);
     }
@@ -188,13 +204,50 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         vm.prank(owner);
 
-        // Expect the transaction to revert due to fee exceeding maxFeePerConsolidation
         uint256 ownerBalBefore = owner.balance;
         tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
         uint256 ownerBalAfter = owner.balance;
         assertEq(
             ownerBalAfter, ownerBalBefore - fee, "Owner should be refunded any excess funds after actual fee deduction."
         );
+    }
+
+    function testConsolidateEmitsEventWhenExcessRefundsFail() public {
+        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+
+        // Prepare mock data for consolidation
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 1.5 ether; // Example max fee
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock static call response with a higher fee than maxFeePerConsolidation
+        uint256 fee = maxFeePerConsolidation - 1;
+        bytes memory mockFeeData = abi.encodePacked(fee);
+
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        // Deploy a contract that cannot receive ETH
+        address excessFeeRecipient = address(new MockBeneficiaryContract());
+
+        // Expect the transaction to revert due to fee exceeding maxFeePerConsolidation
+        uint256 ownerBalBefore = owner.balance;
+        uint256 excessFee = ownerBalBefore - fee;
+
+        vm.expectEmit(true, true, true, true);
+        emit UnsentExcessFee(excessFeeRecipient, excessFee);
+
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, excessFeeRecipient);
     }
 
     function testConsolidateFailsIfFeeExceedsMax() public {
@@ -213,7 +266,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
 
         uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
-        vm.deal(address(tvs), maxFeePerConsolidation);
+        uint256 value = maxFeePerConsolidation + 1;
+        vm.deal(owner, value);
 
         // Mock static call response with a higher fee than maxFeePerConsolidation
         uint256 fee = maxFeePerConsolidation + 1;
@@ -225,7 +279,44 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Expect the transaction to revert due to fee exceeding maxFeePerConsolidation
         vm.expectRevert(abi.encodeWithSignature("FeeTooHigh(uint256,uint256)", fee, maxFeePerConsolidation));
-        tvs.consolidate(requests, maxFeePerConsolidation, owner);
+        tvs.consolidate{ value: value }(requests, maxFeePerConsolidation, owner);
+    }
+
+    function testConsolidateFailsIfFeeExceedsValue() public {
+        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+
+        // Prepare mock data for consolidation
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // leave suplus funds in contract. so although enough funds exist
+        // in contract we still expect revert because fees should only come from
+        // sufficient msg.value
+        vm.deal(address(tvs), 10 ether);
+
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
+
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        vm.prank(owner);
+
+        // Expect the transaction to revert due to fee exceeding maxFeePerConsolidation
+        uint256 value = maxFeePerConsolidation - 1;
+        vm.expectRevert(
+            abi.encodeWithSignature("InsufficientValueForFee(uint256,uint256)", value, maxFeePerConsolidation)
+        );
+        tvs.consolidate{ value: value }(requests, maxFeePerConsolidation, owner);
     }
 
     function testConsolidateFailsIfRequestFails() public {
@@ -244,7 +335,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
 
         uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
-        vm.deal(address(tvs), maxFeePerConsolidation);
+        vm.deal(owner, maxFeePerConsolidation);
 
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
@@ -260,7 +351,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Expect the transaction to revert due to the call to CONSOLIDATION_CONTRACT_ADDRESS failing
         vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));
-        tvs.consolidate(requests, maxFeePerConsolidation, owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
     }
 
     function testConsolidateWorksIfAllIsFine() public {
@@ -279,7 +370,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
 
         uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
-        vm.deal(address(tvs), maxFeePerConsolidation);
+        vm.deal(owner, maxFeePerConsolidation);
 
         // Mock static call response with a valid fee
         bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
@@ -296,10 +387,33 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         vm.expectCall(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation, callData);
 
         // Call the consolidate function
-        tvs.consolidate(requests, maxFeePerConsolidation, owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
     }
 
-    function testWithdrawFromFailsIfFeeReadFails() public {
+    function testConsolidateFailsIfNotOwner() public {
+        // Prepare mock data for consolidation
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
+        address nonOwner = makeAddr("nonOwner");
+        vm.deal(nonOwner, maxFeePerConsolidation);
+
+        // Call the consolidate function
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
+        vm.prank(nonOwner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    function testWithdrawFailsIfFeeReadFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -323,7 +437,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromFailsIfFeeExceedsMax() public {
+    function testWithdrawFailsIfFeeExceedsMax() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -350,7 +464,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    function testWithdrawFromFailsIfRequestFails() public {
+    function testWithdrawFailsIfRequestFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -409,7 +523,41 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         );
     }
 
-    function testWithdrawFromWorksIfAllIsFine() public {
+    function testWithdrawmitsEventWhenExcessRefundsFail() public {
+        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
+
+        // Prepare mock data for withdrawal
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 2 ether; // Example max fee
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Mock static call response with a valid fee that is less than maxFeePerWithdrawal
+        uint256 fee = maxFeePerWithdrawal - 1 ether;
+        bytes memory mockFeeData = abi.encodePacked(fee);
+
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        // Deploy a contract that cannot receive ETH
+        address excessFeeRecipient = address(new MockBeneficiaryContract());
+
+        // Expect the transaction to revert due to fee exceeding maxFeePerWithdrawal
+        uint256 ownerBalBefore = owner.balance;
+        uint256 excessFee = ownerBalBefore - fee;
+
+        vm.expectEmit(true, true, true, true);
+        emit UnsentExcessFee(excessFeeRecipient, excessFee);
+
+        vm.prank(owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, excessFeeRecipient);
+    }
+
+    function testWithdrawWorksIfAllIsFine() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal
@@ -435,7 +583,80 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         vm.prank(owner);
         // Expect the call to the consolidation contract
         vm.expectCall(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal, callData);
-        // Call the withdrawFrom function
+        // Call the withdraw function
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    function testWithdrawFailsIfNotOwner() public {
+        // Prepare mock data for withdrawal
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether; // Example max fee
+        address nonOwner = makeAddr("nonOwner");
+        vm.deal(nonOwner, maxFeePerWithdrawal);
+
+        // Call the withdraw function
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
+        vm.prank(nonOwner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    function testWithdrawFailsIfFeeExceedsValue() public {
+        // Prepare mock data for withdrawal
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether; // Example max fee
+        uint256 value = maxFeePerWithdrawal - 1;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Call the withdraw function
+        vm.expectRevert(abi.encodeWithSignature("InsufficientValueForFee(uint256,uint256)", value, maxFeePerWithdrawal));
+        vm.prank(owner);
+        tvs.withdraw{ value: value }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    function testWithdrawFailsIfInputLengthMismatch() public {
+        // Prepare mock data for withdrawal
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        uint64[] memory amounts; // length is zero(0)
+
+        uint256 maxFeePerWithdrawal = 0.1 ether; // Example max fee
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Call the withdraw function
+        vm.expectRevert(abi.encodeWithSignature("LengthMismatch(uint256,uint256)", pubkeys.length, amounts.length));
+        vm.prank(owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    /// @notice Tests that the transfer function fails if called by a non-owner.
+    function testTransferFailsIfNotOwner() public {
+        address newBeneficiary = makeAddr("newBeneficiary");
+        address newOwner = makeAddr("newOwner");
+        address nonOwner = makeAddr("nonOwner");
+
+        vm.prank(nonOwner);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
+        tvs.transfer(newBeneficiary, newOwner);
+    }
+
+    /// @notice Tests that renounceOwnership reverts with the expected error.
+    function testRenounceOwnershipReverts() public {
+        vm.prank(owner);
+        vm.expectRevert(abi.encodeWithSignature("OwnershipCannotBeRenounced()")); // Expect the specific revert error
+        Ownable(address(tvs)).renounceOwnership();
     }
 }

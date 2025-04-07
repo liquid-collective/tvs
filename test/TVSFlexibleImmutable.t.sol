@@ -2,8 +2,8 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Test.sol";
-import { TVSImmutableTest } from "./TVSImmutable.t.sol";
-import "../src/TVSNonUpgradeable/TVSFlexibleImmutable.sol";
+import { TVSImmutableBaseTest } from "./TVSImmutableBase.t.sol";
+import { TVSFlexibleImmutable } from "../src/TVSNonUpgradeable/TVSFlexibleImmutable.sol";
 import { ITVS } from "../src/interfaces/ITVS.sol";
 
 import { ITVSFlexibleImmutable } from "../src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol";
@@ -38,7 +38,7 @@ contract TVSFlexibleImmutableExt is TVSFlexibleImmutable, MockTarget {
     { }
 }
 
-contract TVSFlexibleImmutableTest is TVSImmutableTest {
+contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
     TVSFlexibleImmutableExt tvsFlexible;
     address nonOwner = address(0x2);
     MockTarget target;
