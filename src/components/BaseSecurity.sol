@@ -40,15 +40,6 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
     error OwnershipCannotBeRenounced();
 
     /**
-     * @dev Sets up the contract by initializing Ownable and ReentrancyGuard features.
-     * @param owner The address to set as the owner of the contract.
-     */
-    function _setupSecurity(address owner) internal initializer {
-        __Ownable_init(owner);
-        __ReentrancyGuard_init();
-    }
-
-    /**
      * @notice Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement
      * @dev This function is intentionally left empty to prevent ownership renouncement by mistake
      * @dev Emits an {OwnershipCannotBeRenounced} error
@@ -56,5 +47,14 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
      */
     function renounceOwnership() public view override onlyOwner {
         revert OwnershipCannotBeRenounced();
+    }
+
+    /**
+     * @dev Sets up the contract by initializing Ownable and ReentrancyGuard features.
+     * @param owner The address to set as the owner of the contract.
+     */
+    function _setupSecurity(address owner) internal initializer {
+        __Ownable_init(owner);
+        __ReentrancyGuard_init();
     }
 }

@@ -19,22 +19,22 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     /**
      * @notice The address of the immutable beacon contract
      * @dev During a TVS transfer, the beacon is temporarily set to this immutable beacon. This variable ensures that
-     * the current TVS Implementation is frozen,
-     * preventing the oldOwner from modifying the TVS Implementation in the beacon
+     *      the current TVS Implementation is frozen, preventing the oldOwner from modifying the TVS Implementation in
+     *      the beacon
      */
     address public immutable immutableBeacon;
 
     /**
      * @notice Constructs a new TVSUpgradeable instance
      * @dev Initializes the contract with Pectra withdrawal and consolidation EL contract addresses, and the immutable
-     * beacon factory address.
+     *      beacon factory address.
      * @dev The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
-     * once here in the constructor.
+     *      once here in the constructor.
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
      * @param immutableBeaconFactory The address of the immutable beacon factory. This is used once in the constructor
-     * to deploy a new immutable beacon contract for the TVS, and this factory address is not persisted on the TVS
-     * contract.
+     *        to deploy a new immutable beacon contract for the TVS, and this factory address is not persisted on the
+     *        TVS contract.
      */
     constructor(
         address withdrawalContractAddress,
@@ -49,7 +49,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     /**
      * @notice Initializes the TVS upgradeable instance
      * @dev This function can only be called once during the TVS deployment and sets up the initial security, owner,
-     * beneficiary, and beacon address of the TVS
+     *      beneficiary, and beacon address of the TVS
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
      * @param beacon The address of the beacon contract
@@ -68,16 +68,11 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
         _transfer(newBeneficiary, newOwner);
     }
 
-    /// @inheritdoc ITVSUpgradeable
-    function setBeacon(address newBeacon) external onlyOwner {
-        _setBeacon(newBeacon);
-    }
-
     /**
      * @notice This function is used internally by the {setBeacon} function to directly set the beacon address without
-     * additional checks
+     *         additional checks
      * @dev This function should not be called directly, but only through the {setBeacon} function, it allows the
-     * {setBeacon} perform robust checks before setting the new beacon
+     *      {setBeacon} perform robust checks before setting the new beacon
      * @dev Emits a {BeaconUpdated} event
      * @dev Only callable by the contract owner
      * @param newBeacon The new beacon address
@@ -86,6 +81,11 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
         address oldBeacon = Beacon.get();
         Beacon.set(newBeacon);
         emit BeaconUpdated(oldBeacon, newBeacon);
+    }
+
+    /// @inheritdoc ITVSUpgradeable
+    function setBeacon(address newBeacon) external onlyOwner {
+        _setBeacon(newBeacon);
     }
 
     /// @inheritdoc ITVSUpgradeable
@@ -102,7 +102,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @notice Internal function to set the beacon address
      * @dev This function is used internally to set the beacon address
      * @dev This function uses the functionDelegateCall exposed by the OpenZeppelin Address contract to delegate the
-     * call to the implementation contract, and reverts if the call fails
+     *      call to the implementation contract, and reverts if the call fails
      * @param _beacon The address of the new beacon contract
      */
     function _setBeacon(address _beacon) internal {

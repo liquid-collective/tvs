@@ -10,8 +10,8 @@ import "./TVSImmutableBase.sol";
  * @dev The TVSClone contract is designed with the idea of providing an immutable version that is compatible with
  *      EIP-1167 clone proxy, offering users a way to minimize gas costs during deployment.
  * @dev Even though this contract follows the pattern of a proxy implementation contract. It is a non-upgradeable
- * implementation of the TVS contract,
- *      expected to be used only with the clone proxy pattern which is non-upgradeable.
+ *      implementation of the TVS contract, expected to be used only with the clone proxy pattern which is
+ *      non-upgradeable.
  */
 contract TVSClone is TVSImmutableBase {
     // @inheritdoc TVSImmutableBase
@@ -25,7 +25,7 @@ contract TVSClone is TVSImmutableBase {
     /**
      * @notice Initializes the TVS clone with beneficiary and owner addresses
      * @dev This function can only be called once and sets up the contract security controls and beneficiary.
-     * {_setupSecurity} is called to set the owner and other security controls.
+     *      {_setupSecurity} is called to set the owner and other security controls.
      * @param beneficiary The default address that will receive all ETH swept from the TVS contract
      * @param owner The address that will have ownership rights over the TVS
      */

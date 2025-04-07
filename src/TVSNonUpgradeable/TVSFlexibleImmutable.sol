@@ -9,18 +9,16 @@ import "./interfaces/ITVSFlexibleImmutable.sol";
  * @author Alluvial Finance Inc.
  * @notice Non-upgradeable implementation of the TVS with arbitrary executeCall function
  * @dev This contract implements all the functionality of the TVSImmutable contract and adds an additional executeCall
- * function
- *      that allows for arbitrary calls to be made to, and from the contract by the owner only. This provides the
- * flexibility to
- *      capture, and interact with future functionalities that cannot be added to the TVSImmutable contract.
+ *      function that allows for arbitrary calls to be made to, and from the contract by the owner only. This provides
+ *      the flexibility to capture, and interact with future functionalities that cannot be added to the TVSImmutable
+ *      contract.
  */
 contract TVSFlexibleImmutable is ITVSFlexibleImmutable, TVSImmutable {
     /**
      * @notice Constructor for the TVSFlexibleImmutable contract
      * @dev Initializes the contract with all required parameters
      * @dev The withdrawal and consolidation addresses are pectra EL contract addresses, and are stored as immutable
-     * state variables.
-     *      They can only be set once here in the constructor.
+     *      state variables. They can only be set once here in the constructor.
      * @param beneficiary The default address that will receive all ETH swept from the TVS contract
      * @param owner The address that will have ownership rights over the TVS
      * @param withdrawalContractAddress The address of the withdrawal contract
@@ -53,7 +51,7 @@ contract TVSFlexibleImmutable is ITVSFlexibleImmutable, TVSImmutable {
      * @notice Internal function to execute an arbitrary call
      * @dev This function is used to execute an arbitrary call from the TVS contract by the owner only.
      * @dev The call is executed using the functionDelegateCall or functionCallWithValue function depending on the
-     * isDelegateCall flag.
+     *      isDelegateCall flag.
      * @param call The call to execute
      * @return returnData The return data from the call
      */
