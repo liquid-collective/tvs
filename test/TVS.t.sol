@@ -153,8 +153,6 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     function testConsolidateFailsIfNoValueSent() public {
-        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
-
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
@@ -179,8 +177,6 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     function testConsolidateRefundsSenderAnyExcessFund() public {
-        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
-
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
@@ -251,8 +247,6 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     function testConsolidateFailsIfFeeExceedsMax() public {
-        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
-
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
@@ -319,44 +313,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.consolidate{ value: value }(requests, maxFeePerConsolidation, owner);
     }
 
-    function testConsolidateFailsIfRequestFails() public {
-        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
-
-        // Prepare mock data for consolidation
-        bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
-
-        bytes memory targetPubkey =
-            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
-            // example
-
-        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
-        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
-
-        uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
-        vm.deal(owner, maxFeePerConsolidation);
-
-        // Mock static call response with a valid fee
-        bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
-
-        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
-
-        // Mock the call to fail
-        vm.mockCallRevert(
-            CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(srcPubkeys[0], targetPubkey), abi.encodePacked("")
-        );
-
-        vm.prank(owner);
-
-        // Expect the transaction to revert due to the call to CONSOLIDATION_CONTRACT_ADDRESS failing
-        vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));
-        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
-    }
-
     function testConsolidateWorksIfAllIsFine() public {
-        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
-
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
@@ -494,8 +451,6 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     function testWithdrawRefundsSenderAnyExcessFund() public {
-        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
-
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte

@@ -8,7 +8,6 @@ import { TVSClone } from "../src/TVSNonUpgradeable/TVSClone.sol";
 import { ITVS } from "../src/interfaces/ITVS.sol";
 import { PectraAddress } from "./TVS.t.sol";
 import { TVSImmutableBaseTest } from "./TVSImmutableBase.t.sol";
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "openzeppelin-contracts/contracts/utils/Address.sol";
 
 contract MockProxy {
@@ -47,18 +46,19 @@ contract TVSCloneInitializationTest is Test, PectraAddress {
     /**
      * @notice Tests deployment of proxy for TVSClone with a non-`TVS` contract as implementation.
      * @dev Expects the deployment to revert with the custom error `InitializationFailed()`
-     * function testWithNonTVSImplementation() public {
-     *     // Deploy a non-TVS contract to act as an invalid implementation
-     *     address invalidImplementation = address(new MockInvalidTVSImplementation());
-     *
-     *     bytes memory initData = abi.encodeWithSignature("initialize(address,address)", beneficiary, owner);
-     *
-     *     // Expect the transaction to revert due to non-TVS implementation
-     *     vm.expectRevert();
-     *     new MockProxy(invalidImplementation, initData);
-     * }
-     *
-     * /**
+     */
+    function testWithNonTVSImplementation() public {
+        // Deploy a non-TVS contract to act as an invalid implementation
+        address invalidImplementation = address(new MockInvalidTVSImplementation());
+
+        bytes memory initData = abi.encodeWithSignature("initialize(address,address)", beneficiary, owner);
+
+        // Expect the transaction to revert due to non-TVS implementation
+        vm.expectRevert();
+        new MockProxy(invalidImplementation, initData);
+    }
+
+    /**
      * @notice Tests deployment of proxy for TVSClone with a zero address as the owner.
      * @dev Expects the deployment to revert with the custom error `InitializationFailed()` when a zero address is
      * provided as the owner.
