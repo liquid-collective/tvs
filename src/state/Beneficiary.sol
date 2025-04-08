@@ -19,10 +19,10 @@ library Beneficiary {
 
     /**
      * @notice Set the beneficiary address
-     * @param newValue The new beneficiary address
+     * @param _newBeneficiary The new beneficiary address
      */
-    function set(address newValue) internal {
-        StorageSlot.getAddressSlot(BENEFICIARY_SLOT).value = newValue;
+    function set(address _newBeneficiary) internal {
+        StorageSlot.getAddressSlot(BENEFICIARY_SLOT).value = _newBeneficiary;
     }
 
     /**

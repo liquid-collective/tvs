@@ -52,14 +52,14 @@ contract TVSFlexibleImmutable is ITVSFlexibleImmutable, TVSImmutable {
      * @dev This function is used to execute an arbitrary call from the TVS contract by the owner only.
      * @dev The call is executed using the functionDelegateCall or functionCallWithValue function depending on the
      *      isDelegateCall flag.
-     * @param call The call to execute
-     * @return returnData The return data from the call
+     * @param _call The call to execute
+     * @return _returnData The return data from the call
      */
-    function _executeCall(Call calldata call) internal returns (bytes memory returnData) {
-        if (call.isDelegateCall) {
-            return Address.functionDelegateCall(call.to, call.data);
+    function _executeCall(Call calldata _call) internal returns (bytes memory _returnData) {
+        if (_call.isDelegateCall) {
+            return Address.functionDelegateCall(_call.to, _call.data);
         } else {
-            return Address.functionCallWithValue(call.to, call.data, call.value);
+            return Address.functionCallWithValue(_call.to, _call.data, _call.value);
         }
     }
 }

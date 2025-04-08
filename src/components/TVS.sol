@@ -31,6 +31,8 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @dev Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
      * @dev The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
      * once here in the constructor.
+     * @dev All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set,
+     * and available to the proxy
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
      */
@@ -62,18 +64,11 @@ abstract contract TVS is ITVS, BaseSecurity {
         uint256 maxFeePayable = maxFeePerWithdrawal * pubkeys.length;
         _validateSufficientValueForFee(msg.value, maxFeePayable);
 
+        // Check if fee exceeds maximum allowed, otherwise get fee
+        uint256 fee = _validateAndReturnFee(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal);
+
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < pubkeys.length; i++) {
-            // Read current fee from the contract
-            (bool readOK, bytes memory feeData) = WITHDRAWAL_CONTRACT_ADDRESS.staticcall("");
-            if (!readOK) {
-                revert FeeReadFailed();
-            }
-            uint256 fee = uint256(bytes32(feeData));
-
-            // Check if fee exceeds maximum allowed
-            _validateFee(fee, maxFeePerWithdrawal);
-
             // Add the withdrawal request
             bytes memory callData = abi.encodePacked(pubkeys[i], amount[i]);
             (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{ value: fee }(callData);
@@ -98,19 +93,12 @@ abstract contract TVS is ITVS, BaseSecurity {
         nonReentrant
         onlyOwner
     {
+        // Check if fee exceeds maximum allowed, otherwise get fee
+        uint256 fee = _validateAndReturnFee(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation);
+
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < requests.length; i++) {
             for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
-                // Read current fee from the contract
-                (bool readOK, bytes memory feeData) = CONSOLIDATION_CONTRACT_ADDRESS.staticcall("");
-                if (!readOK) {
-                    revert FeeReadFailed();
-                }
-                uint256 fee = uint256(bytes32(feeData));
-
-                // Check if fee exceeds maximum allowed
-                _validateFee(fee, maxFeePerConsolidation);
-
                 // Add the consolidation request
                 bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
                 (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{ value: fee }(callData);
@@ -154,15 +142,19 @@ abstract contract TVS is ITVS, BaseSecurity {
     /**
      * @notice Internal function to transfer the TVS to a new beneficiary and owner.
      * @dev This function is used to transfer the TVS to a new beneficiary and owner.
-     * @param beneficiary The address of the new beneficiary.
-     * @param owner The address of the new owner.
+     * @param _beneficiary The address of the new beneficiary.
+     * @param _owner The address of the new owner.
      */
-    function _transfer(address beneficiary, address owner) internal {
-        _setBeneficiary(beneficiary);
-        transferOwnership(owner);
-        emit Transferred(beneficiary, owner);
+    function _transfer(address _beneficiary, address _owner) internal {
+        _setBeneficiary(_beneficiary);
+        transferOwnership(_owner);
+        emit Transferred(_beneficiary, _owner);
     }
 
+    /**
+     * @notice Internal function to set the beneficiary address.
+     * @param _newBeneficiary The address of the new beneficiary.
+     */
     function _setBeneficiary(address _newBeneficiary) internal {
         if (_newBeneficiary == address(0)) revert InvalidAddress();
         Beneficiary.set(_newBeneficiary);
@@ -200,9 +192,22 @@ abstract contract TVS is ITVS, BaseSecurity {
         }
     }
 
-    function _validateFee(uint256 _currentFee, uint256 _maxAllowedFee) internal pure {
-        if (_currentFee > _maxAllowedFee) {
-            revert FeeTooHigh(_currentFee, _maxAllowedFee);
+    /**
+     * @dev Internal function to validate the fee. Used for pectra related operations.
+     * @param _maxAllowedFee The maximum allowed fee.
+     * @return _fee The fee.
+     * @dev Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.
+     */
+    function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee) {
+        // Read current fee from the contract
+        (bool readOK, bytes memory feeData) = feeContract.staticcall("");
+        if (!readOK) {
+            revert FeeReadFailed();
+        }
+        _fee = uint256(bytes32(feeData));
+
+        if (_fee > _maxAllowedFee) {
+            revert FeeTooHigh(_fee, _maxAllowedFee);
         }
     }
 
@@ -221,21 +226,21 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @dev Internal function to sweep the TVS.
      * @param _beneficiary The address of the beneficiary.
      * @param _amount The amount to sweep.
-     * @return dest The address of the destination.
-     * @return amountToSweep The amount to sweep.
+     * @return _dest The address of the _destination.
+     * @return _amountToSweep The amount to sweep.
      */
-    function _sweep(address _beneficiary, uint256 _amount) private returns (address dest, uint256 amountToSweep) {
+    function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep) {
         // Only require owner for custom beneficiary
         if (_beneficiary != address(0)) {
             _assertOwner();
         }
 
-        dest = _beneficiary == address(0) ? getBeneficiary() : _beneficiary;
-        amountToSweep = _amount == 0 ? address(this).balance : _amount;
-        if (amountToSweep > address(this).balance) {
-            revert InsufficientBalance(address(this).balance, amountToSweep);
+        _dest = _beneficiary == address(0) ? getBeneficiary() : _beneficiary;
+        _amountToSweep = _amount == 0 ? address(this).balance : _amount;
+        if (_amountToSweep > address(this).balance) {
+            revert InsufficientBalance(address(this).balance, _amountToSweep);
         }
 
-        emit Swept(dest, amountToSweep);
+        emit Swept(_dest, _amountToSweep);
     }
 }

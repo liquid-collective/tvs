@@ -62,9 +62,9 @@ contract TVSBeaconProxy {
      * @notice Internal function to fetch the implementation address from the beacon
      * @dev This function uses inline assembly to fetch the implementation address from the beacon
      * @param _beacon The address of the beacon contract
-     * @return implementation The address of the implementation contract
+     * @return _implementation The address of the implementation contract
      */
-    function _getImplementation(address _beacon) internal view returns (address implementation) {
+    function _getImplementation(address _beacon) internal view returns (address _implementation) {
         assembly ("memory-safe") {
             let ptr := mload(0x40)
 
@@ -86,7 +86,7 @@ contract TVSBeaconProxy {
             if iszero(success) { revert(0, 0) } // revert if the call failed
 
             // Load the returned address from memory (stored at ptr)
-            implementation := mload(ptr)
+            _implementation := mload(ptr)
         }
     }
 }

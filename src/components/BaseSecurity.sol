@@ -51,10 +51,10 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
 
     /**
      * @dev Sets up the contract by initializing Ownable and ReentrancyGuard features.
-     * @param owner The address to set as the owner of the contract.
+     * @param _owner The address to set as the owner of the contract.
      */
-    function _setupSecurity(address owner) internal initializer {
-        __Ownable_init(owner);
+    function _setupSecurity(address _owner) internal initializer {
+        __Ownable_init(_owner);
         __ReentrancyGuard_init();
     }
 }

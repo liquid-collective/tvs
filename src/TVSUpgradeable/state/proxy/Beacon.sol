@@ -23,10 +23,10 @@ library Beacon {
 
     /**
      * @notice Set the beacon address
-     * @param newValue The new beacon address
+     * @param newBeacon The new beacon address
      */
-    function set(address newValue) internal {
-        StorageSlot.getAddressSlot(BEACON_SLOT).value = newValue;
+    function set(address newBeacon) internal {
+        StorageSlot.getAddressSlot(BEACON_SLOT).value = newBeacon;
     }
 
     /**

@@ -69,7 +69,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     }
 
     /**
-     * @notice This function is used internally by the {setBeacon} function to directly set the beacon address without
+     * @notice This function is used by the {setBeacon} function to directly set the beacon address without
      *         additional checks
      * @dev This function should not be called directly, but only through the {setBeacon} function, it allows the
      *      {setBeacon} perform robust checks before setting the new beacon
@@ -77,7 +77,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @dev Only callable by the contract owner
      * @param newBeacon The new beacon address
      */
-    function internalSetBeacon(address newBeacon) external onlyOwner {
+    function setBeaconUnchecked(address newBeacon) external onlyOwner {
         address oldBeacon = Beacon.get();
         Beacon.set(newBeacon);
         emit BeaconUpdated(oldBeacon, newBeacon);
@@ -107,6 +107,6 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      */
     function _setBeacon(address _beacon) internal {
         address implementation = IBeacon(_beacon).implementation();
-        implementation.functionDelegateCall(abi.encodeWithSignature("internalSetBeacon(address)", _beacon));
+        implementation.functionDelegateCall(abi.encodeWithSignature("setBeaconUnchecked(address)", _beacon));
     }
 }

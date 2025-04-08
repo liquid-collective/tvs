@@ -177,17 +177,17 @@ contract TVSUpgradeableTest is BaseTVSTest {
         assertEq(newBeacon, tvsV1.beacon());
     }
 
-    /// @notice Tests setting a new valid beacon address by the owner using the `internalSetBeacon` function.
-    /// @notice Tests setting a new valid beacon address by the owner using the `internalSetBeacon` function.
+    /// @notice Tests setting a new valid beacon address by the owner using the `setBeaconUnchecked` function.
+    /// @notice Tests setting a new valid beacon address by the owner using the `setBeaconUnchecked` function.
     /// @dev Expects the beacon address to be updated successfully when set by the owner using `unsafeSetBeacon`.
-    function testUpdateUsingInternalSetBeaconFunction() public {
+    function testUpdateUsingSetBeaconUncheckedFunction() public {
         address newBeacon = address(new UpgradeableBeacon(owner, tvsImplementation));
 
         vm.expectEmit(true, true, true, true);
         emit BeaconUpdated(tvsV1.beacon(), newBeacon);
 
         vm.prank(owner);
-        tvsV1.internalSetBeacon(newBeacon);
+        tvsV1.setBeaconUnchecked(newBeacon);
 
         assertEq(newBeacon, tvsV1.beacon());
     }
@@ -215,10 +215,10 @@ contract TVSUpgradeableTest is BaseTVSTest {
     }
 
     /// @notice Tests setting a new beacon address that points to an implementation contract without
-    /// `internalSetBeacon(address)`.
-    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `internalSetBeacon(address)`
-    /// `internalSetBeacon(address)`.
-    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `internalSetBeacon(address)`
+    /// `setBeaconUnchecked(address)`.
+    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `setBeaconUnchecked(address)`
+    /// `setBeaconUnchecked(address)`.
+    /// @dev Expects the transaction to revert when the beacon's implementation lacks the `setBeaconUnchecked(address)`
     /// function.
     function testUpdateUsingBeaconWithImplementationWithoutUnsafeSetBeaconFunction() public {
         address invalidTVSImplementation = address(new MockInvalidTVSImplementation());
