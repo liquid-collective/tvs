@@ -32,4 +32,4 @@ deploy-TVSUpgradeableImplementation:
 	forge script scripts/DeployTVSUpgradeableImplementation.s.sol:DeployTVSUpgradeableImplementation $(DEPLOY_FLAGS)
 
 deploy-UpgradableBeacon:
-	forge script scripts/DeployUpgradableBeacon.s.sol:DeployUpgradableBeacon $(DEPLOY_FLAGS)
+	forge script scripts/DeployUpgradeableBeacon.s.sol:DeployUpgradeableBeacon $(DEPLOY_FLAGS)
