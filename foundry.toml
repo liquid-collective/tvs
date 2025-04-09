@@ -23,11 +23,3 @@
   tab_width = 4
   wrap_comments = true
   func-name-mixedcase = "warn"
-
-# Etherscan API keys for different networks
-[etherscan]
-mainnet = { key = "${ETHERSCAN_API_KEY}" }
-hoodi = { key = "${ETHERSCAN_API_KEY}" }
-
-[rpc_endpoints]
-hoodi = "https://rpc.hoodi.ethpandaops.io"
