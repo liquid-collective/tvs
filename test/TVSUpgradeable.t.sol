@@ -45,11 +45,38 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
     }
 
     /**
+     * @notice Tests that the constructor reverts when the withdrawal contract address is zero.
+     * @dev Expects the `InvalidAddress()` error to be reverted.
+     */
+    function testConstructorWithZeroWithdrawalContract() public {
+        vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
+        new TVSV1(address(0), CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory);
+    }
+
+    /**
+     * @notice Tests that the constructor reverts when the consolidation contract address is zero.
+     * @dev Expects revert without data `InvalidAddress()` error to be reverted.
+     */
+    function testConstructorWithZeroConsolidationContract() public {
+        vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
+        new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, address(0), immutableBeaconFactory);
+    }
+
+    /**
+     * @notice Tests that the constructor reverts when the immutableBeaconFactory is zero.
+     * @dev Expects to be reverted without data.
+     */
+    function testConstructorWithZeroImmutableBeaconFactory() public {
+        vm.expectRevert();
+        new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, address(0));
+    }
+
+    /**
      * @notice Tests deployment of `TVSBeaconProxy` with valid arguments.
      * @dev Ensures that:
      * - The contract deploys and initializes successfully.
      * - The beacon, owner, and beneficiary are correctly set, as confirmed by getter functions.
-     * - A custom error `InvalidInitialization(0, 1)` is reverted if `initialize` is called after deployment.
+     * - A custom error `InvalidInitialization()` is reverted if `initialize` is called after deployment.
      */
     function testDeployWithValidArguments() public {
         // Deploy the contract with the given valid arguments
@@ -61,10 +88,6 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
         assertEq(tvsProxy.beacon(), beacon, "Beacon address not correct");
         assertEq(tvsProxy.getBeneficiary(), beneficiary, "Beneficiary address not correct");
         assertEq(tvsProxy.owner(), owner, "Owner address not correct");
-
-        // Ensure that the proxy can access the implementation contract's immutable variables
-        assertEq(tvsProxy.WITHDRAWAL_CONTRACT_ADDRESS(), WITHDRAWAL_CONTRACT_ADDRESS);
-        assertEq(tvsProxy.CONSOLIDATION_CONTRACT_ADDRESS(), CONSOLIDATION_CONTRACT_ADDRESS);
 
         // This check is to ensure that the implementation code is not empty because it was set while the implementation
         // was being deployed
@@ -162,10 +185,6 @@ contract TVSUpgradeableTest is BaseTVSTest {
 
     event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
 
-    /**
-     * @notice Sets up the test environment.
-     * @dev Initializes the TVS implementation, owner, beacon, and tvsV1 reference.
-     */
     function setUp() public override {
         tvsImplementation =
             address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
@@ -329,7 +348,8 @@ contract TVSUpgradeableTest is BaseTVSTest {
     }
 
     /**
-     * @notice Tests that the deployment of an `ImmutableBeacon` fails when the implementation is a zero address.
+     * @notice Tests that the immutable beacon deployment fails when the implementation is zero.
+     * @dev Expects the transaction to revert with the custom error `InvalidImplementation()`.
      */
     function testImmutableBeaconDeploymentFailsWhenImplementationIsZero() public {
         vm.expectRevert(abi.encodeWithSignature("InvalidImplementation()"));

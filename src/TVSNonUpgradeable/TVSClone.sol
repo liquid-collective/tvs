@@ -29,7 +29,7 @@ contract TVSClone is TVSImmutableBase {
      * @param beneficiary The default address that will receive all ETH swept from the TVS contract
      * @param owner The address that will have ownership rights over the TVS
      */
-    function initialize(address beneficiary, address owner) external initializer {
+    function initialize(address beneficiary, address owner) external {
         _setupSecurity(owner);
         _setBeneficiary(beneficiary);
     }

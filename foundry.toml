@@ -7,6 +7,7 @@
   optimizer = true
   optimizer_runs = 10_000
   solc = "0.8.28"
+  cbor_metadata=true
 
 [profile.ci]
   fuzz = { runs = 10_000 }
@@ -22,3 +23,11 @@
   tab_width = 4
   wrap_comments = true
   func-name-mixedcase = "warn"
+
+# Etherscan API keys for different networks
+[etherscan]
+mainnet = { key = "${ETHERSCAN_API_KEY}" }
+hoodi = { key = "${ETHERSCAN_API_KEY}" }
+
+[rpc_endpoints]
+hoodi = "https://rpc.hoodi.ethpandaops.io"

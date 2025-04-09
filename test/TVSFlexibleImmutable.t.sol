@@ -48,16 +48,68 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
         super.setUp();
     }
 
+    /**
+     * @notice Deploys the TVS contract.
+     * @return The deployed TVS contract.
+     */
     function deployTVS() internal override returns (ITVS) {
         tvsFlexible =
             new TVSFlexibleImmutableExt(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS);
         return tvsFlexible;
     }
 
+    /**
+     * @notice Tests that the constructor reverts when the owner address is zero.
+     * @dev Ensures the contract enforces a valid owner address during deployment.
+     *      Expects the revert reason "OwnableInvalidOwner(address)" with the zero address.
+     */
+    function testConstructorWithZeroAddressOwner() public {
+        vm.expectRevert(abi.encodeWithSignature("OwnableInvalidOwner(address)", address(0)));
+        new TVSFlexibleImmutable(beneficiary, address(0), WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS);
+    }
+
+    /**
+     * @notice Tests that the constructor reverts when the beneficiary address is zero.
+     * @dev Ensures the contract enforces a valid beneficiary address during deployment.
+     *      Expects the revert reason "InvalidAddress()".
+     */
+    function testConstructorWithZeroAddressBeneficiary() public {
+        vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
+        new TVSFlexibleImmutable(address(0), owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS);
+    }
+
+    /**
+     * @notice Tests that the constructor reverts when the withdrawal contract address is zero.
+     * @dev Expects the `InvalidAddress()` error to be reverted.
+     */
+    function testConstructorWithZeroWithdrawalContract() public {
+        vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
+        new TVSFlexibleImmutable(beneficiary, owner, address(0), CONSOLIDATION_CONTRACT_ADDRESS);
+    }
+
+    /**
+     * @notice Tests that the constructor reverts when the consolidation contract address is zero.
+     * @dev Expects the `InvalidAddress()` error to be reverted.
+     */
+    function testConstructorWithZeroConsolidationContract() public {
+        vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
+        new TVSFlexibleImmutable(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, address(0));
+    }
+
+    /**
+     * @notice Generates the call data for the `setState` function.
+     * @param _state The state value to be set.
+     * @return The call data for the `setState` function.
+     */
     function getCallData(uint256 _state) public pure returns (bytes memory) {
         return abi.encodeWithSignature("setState(uint256)", _state);
     }
 
+    /**
+     * @notice Generates the calls for the `executeBatch` function.
+     * @param n The number of calls to generate.
+     * @return The generated calls.
+     */
     function generateCalls(uint256 n) public view returns (ITVSFlexibleImmutable.Call[] memory) {
         ITVSFlexibleImmutable.Call[] memory calls = new ITVSFlexibleImmutable.Call[](n);
 
@@ -73,6 +125,9 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
         return calls;
     }
 
+    /**
+     * @notice Tests that the `executeCall` function reverts when the caller is not the owner.
+     */
     function test_RevertWhen_CallerNotOwner() public {
         bytes memory data = getCallData(3);
 
@@ -92,6 +147,9 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
         tvsFlexible.executeCall(call);
     }
 
+    /**
+     * @notice Tests that the `executeCall` function reverts when the `isDelegateCall` is true.
+     */
     function test_ExecuteDelegateCallWhen_IsDelegateCallIsTrue() public {
         bytes memory data = getCallData(3);
         ITVSFlexibleImmutable.Call memory call =
@@ -105,6 +163,9 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
         assertEq(target.getState(), 0, "State of target should not be updated");
     }
 
+    /**
+     * @notice Tests that the `executeCall` function reverts when the `isDelegateCall` is false.
+     */
     function test_ExecuteCallWhen_IsDelegateCallIsFalse() public {
         // When Called without Value Transfer
         bytes memory data = getCallData(3);
@@ -131,6 +192,9 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
         assertEq(target.getState(), 7, "State of target should be updated to 7");
     }
 
+    /**
+     * @notice Tests that the `executeBatch` function reverts when the caller is not the owner.
+     */
     function test_ExecuteBatch_ShouldBeAtomic() public {
         // Prepare the batch of calls
         ITVSFlexibleImmutable.Call[] memory calls = new ITVSFlexibleImmutable.Call[](2);
@@ -156,6 +220,9 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
         tvsFlexible.executeBatch(calls);
     }
 
+    /**
+     * @notice Tests that the `executeBatch` function reverts when the caller is not the owner.
+     */
     function test_ExecuteBatch_RevertWhen_CallerNotOwner() public {
         // Prepare the batch of calls
         ITVSFlexibleImmutable.Call[] memory calls = new ITVSFlexibleImmutable.Call[](1);
@@ -172,6 +239,10 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
         tvsFlexible.executeBatch(calls);
     }
 
+    /**
+     * @notice Tests that the `executeBatch` function reverts when the target is called `n` times.
+     * @param n The number of calls to generate.
+     */
     function test_ExecuteBatch_TargetCalledNTimes(uint256 n) public {
         n = n % 20; // Arbitrary number;
 

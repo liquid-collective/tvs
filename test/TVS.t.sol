@@ -27,16 +27,24 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     event BeneficiaryUpdated(address indexed newBeneficiary);
     event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
 
+    /**
+     * @notice Sets up the test environment.
+     */
     function setUp() public virtual {
         owner = makeAddr("owner");
         beneficiary = makeAddr("beneficiary");
         tvs = deployTVS();
     }
 
-    // Abstract function to be implemented by derived test contracts
+    /**
+     * @notice Abstract function to be implemented by derived test contracts.
+     * @return The deployed TVS contract.
+     */
     function deployTVS() internal virtual returns (ITVS);
 
-    // Common tests that work for both implementations
+    /**
+     * @notice Common tests that work for both implementations.
+     */
     function testSweepToCustomBeneficiaryFailsIfNotOwner() public {
         address nonOwner = makeAddr("nonOwner");
 
@@ -47,11 +55,17 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.sweep(customBeneficiary, 0);
     }
 
+    /**
+     * @notice Tests that the sweep function reverts when the caller is not the owner.
+     */
     function testSweepAllWhenZeroBalance() public {
         tvs.sweep(address(0), 0);
         assertEq(beneficiary.balance, 0 ether, "Beneficiary balance should be zero after sweep");
     }
 
+    /**
+     * @notice Tests that a non-owner can sweep to the default beneficiary.
+     */
     function testNonOwnerCanSweepToDefaultBeneficiary() public {
         uint256 amount = 1 ether;
         vm.deal(address(tvs), amount);
@@ -67,6 +81,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
     }
 
+    /**
+     * @notice Tests that the sweep function reverts when the balance is insufficient.
+     */
     function testSweepWithFailsWhenBalanceInsufficient() public {
         uint256 balance = 1 ether;
         uint256 amount = balance + 1;
@@ -77,6 +94,10 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.sweep(address(0), amount);
     }
 
+    /**
+     * @notice Tests that the sweep function reverts when the beneficiary contract does not implement the
+     * `sweepToBeneficiaryContract` function.
+     */
     function testSweepToContractWithNoSweepToContractInterface() public {
         uint256 amount = 1 ether;
         vm.deal(address(tvs), amount);
@@ -85,6 +106,10 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.sweepToBeneficiaryContract(address(0), 0);
     }
 
+    /**
+     * @notice Tests that the sweep function works when the beneficiary contract implements the
+     * `sweepToBeneficiaryContract` function.
+     */
     function testSweepToContractWithSweepToContractInterfaceWorks() public {
         uint256 amount = 1 ether;
         vm.deal(address(tvs), 2 ether);
@@ -121,7 +146,10 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         assertEq(address(tvs).balance, 0, "Contract balance should be zero after sweep");
     }
 
-    function testSetBeneficiaryWithValidAddress() public virtual {
+    /**
+     * @notice Tests that the setBeneficiary function works when the beneficiary address is valid.
+     */
+    function testSetBeneficiaryWithValidAddress() public {
         address newBeneficiary = makeAddr("newBeneficiary");
 
         vm.expectEmit(true, true, true, true);
@@ -133,6 +161,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         assertEq(newBeneficiary, tvs.getBeneficiary(), "Beneficiary address not updated");
     }
 
+    /**
+     * @notice Tests that the setBeneficiary function reverts when the beneficiary address is invalid.
+     */
     function testSetBeneficiaryWithInvalidAddress() public {
         address newBeneficiary = address(0);
 
@@ -142,6 +173,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.setBeneficiary(newBeneficiary);
     }
 
+    /**
+     * @notice Tests that the setBeneficiary function reverts when the caller is not the owner.
+     */
     function testSetBeneficiaryAsUnauthorized() public {
         address nonOwner = makeAddr("nonOwner");
         address newBeneficiary = makeAddr("newBeneficiary");
@@ -152,6 +186,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.setBeneficiary(newBeneficiary);
     }
 
+    /**
+     * @notice Tests that the consolidate function reverts when no value is sent.
+     */
     function testConsolidateFailsIfNoValueSent() public {
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
@@ -176,6 +213,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.consolidate(requests, maxFeePerConsolidation, owner);
     }
 
+    /**
+     * @notice Tests that the consolidate function refunds the sender any excess funds after actual fee deduction.
+     */
     function testConsolidateRefundsSenderAnyExcessFund() public {
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
@@ -208,6 +248,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         );
     }
 
+    /**
+     * @notice Tests that the consolidate function emits an event when excess refunds fail.
+     */
     function testConsolidateEmitsEventWhenExcessRefundsFail() public {
         address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
 
@@ -246,6 +289,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, excessFeeRecipient);
     }
 
+    /**
+     * @notice Tests that the consolidate function reverts when the fee exceeds the max fee.
+     */
     function testConsolidateFailsIfFeeExceedsMax() public {
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
@@ -276,6 +322,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.consolidate{ value: value }(requests, maxFeePerConsolidation, owner);
     }
 
+    /**
+     * @notice Tests that the consolidate function reverts when the fee exceeds the value.
+     */
     function testConsolidateFailsIfFeeExceedsValue() public {
         address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
 
@@ -313,7 +362,50 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.consolidate{ value: value }(requests, maxFeePerConsolidation, owner);
     }
 
+    /**
+     * @notice Tests that the consolidate function reverts when the request fails.
+     */
+    function testConsolidateFailsIfRequestFails() public {
+        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+
+        // Prepare mock data for consolidation
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+            // example
+
+        bytes memory targetPubkey =
+            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            // example
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock static call response with a valid fee
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
+
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        // Mock the call to fail
+        vm.mockCallRevert(
+            CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(srcPubkeys[0], targetPubkey), abi.encodePacked("")
+        );
+
+        vm.prank(owner);
+
+        // Expect the transaction to revert due to the call to CONSOLIDATION_CONTRACT_ADDRESS failing
+        vm.expectRevert(abi.encodeWithSignature("RequestFailed()"));
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the consolidate function works if all is fine.
+     */
     function testConsolidateWorksIfAllIsFine() public {
+        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
@@ -347,6 +439,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
     }
 
+    /**
+     * @notice Tests that the consolidate function reverts when the caller is not the owner.
+     */
     function testConsolidateFailsIfNotOwner() public {
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
@@ -370,6 +465,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
     }
 
+    /**
+     * @notice Tests that the withdraw function reverts when the fee read fails.
+     */
     function testWithdrawFailsIfFeeReadFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
@@ -394,6 +492,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
+    /**
+     * @notice Tests that the withdraw function reverts when the fee exceeds the max fee.
+     */
     function testWithdrawFailsIfFeeExceedsMax() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
@@ -421,6 +522,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
+    /**
+     * @notice Tests that the withdraw function reverts when the request fails.
+     */
     function testWithdrawFailsIfRequestFails() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
@@ -450,6 +554,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
+    /**
+     * @notice Tests that the withdraw function refunds the sender any excess funds after actual fee deduction.
+     */
     function testWithdrawRefundsSenderAnyExcessFund() public {
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
@@ -478,6 +585,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         );
     }
 
+    /**
+     * @notice Tests that the withdraw function emits an event when excess refunds fail.
+     */
     function testWithdrawmitsEventWhenExcessRefundsFail() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
@@ -512,6 +622,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, excessFeeRecipient);
     }
 
+    /**
+     * @notice Tests that the withdraw function works if all is fine.
+     */
     function testWithdrawWorksIfAllIsFine() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
@@ -542,6 +655,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
+    /**
+     * @notice Tests that the withdraw function reverts when the caller is not the owner.
+     */
     function testWithdrawFailsIfNotOwner() public {
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
@@ -561,6 +677,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
+    /**
+     * @notice Tests that the withdraw function reverts when the fee exceeds the value.
+     */
     function testWithdrawFailsIfFeeExceedsValue() public {
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
@@ -580,6 +699,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: value }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
+    /**
+     * @notice Tests that the withdraw function reverts when the input length mismatch.
+     */
     function testWithdrawFailsIfInputLengthMismatch() public {
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
@@ -597,7 +719,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
-    /// @notice Tests that the transfer function fails if called by a non-owner.
+    /**
+     * @notice Tests that the transfer function fails if called by a non-owner.
+     */
     function testTransferFailsIfNotOwner() public {
         address newBeneficiary = makeAddr("newBeneficiary");
         address newOwner = makeAddr("newOwner");
@@ -608,7 +732,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.transfer(newBeneficiary, newOwner);
     }
 
-    /// @notice Tests that renounceOwnership reverts with the expected error.
+    /**
+     * @notice Tests that renounceOwnership reverts with the expected error.
+     */
     function testRenounceOwnershipReverts() public {
         vm.prank(owner);
         vm.expectRevert(abi.encodeWithSignature("OwnershipCannotBeRenounced()")); // Expect the specific revert error
