@@ -7,7 +7,8 @@
   "author": "Alluvial Finance",
   "license": "MIT",
   "scripts": {
-    "lint": "solhint 'src/**/*.sol'"
+    "lint": "solhint 'src/**/*.sol'",
+    "clean-local-deployments": "find broadcast -type d -name 31337 -exec rm -rf {} +"
   },
 
   "devDependencies": {
