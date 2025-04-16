@@ -1,19 +1,19 @@
 {
   "transactions": [
     {
-      "hash": "0xe8a19ccc02bfe96d8829ccd00268b0eddbb89c809ac1e83c29048d5de3b9d34b",
+      "hash": "0x9bd2c6c0a0f08086f8950ef7b26f25d70c89bc6a2ce2315c0da828ebc0ac9564",
       "transactionType": "CREATE",
       "contractName": "ImmutableBeaconFactory",
-      "contractAddress": "0x2baffcae8d5e178eefe17aab9a3ea09f55eb0568",
+      "contractAddress": "0x1159f61698c669d3dfa1ad115ad9c7e6dcdce7a1",
       "function": null,
       "arguments": null,
       "transaction": {
-        "from": "0x341c40b94bf2afbfa42573cb78f16ee15a056238",
+        "from": "0xba67fe03aa6bed76d181df17b259a21637243d89",
         "gas": "0x36602",
         "value": "0x0",
         "input": "0x6080604052348015600e575f5ffd5b506102238061001c5f395ff3fe6080604052348015600e575f5ffd5b50600436106026575f3560e01c806327be631214602a575b5f5ffd5b6039603536600460b7565b6062565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200160405180910390f35b5f81604051606e9060aa565b73ffffffffffffffffffffffffffffffffffffffff9091168152602001604051809103905ff08015801560a3573d5f5f3e3d5ffd5b5092915050565b610127806100f083390190565b5f6020828403121560c6575f5ffd5b813573ffffffffffffffffffffffffffffffffffffffff8116811460e8575f5ffd5b939250505056fe60a0604052348015600e575f5ffd5b50604051610127380380610127833981016040819052602b916061565b6001600160a01b03811660515760405163340aafcd60e11b815260040160405180910390fd5b6001600160a01b0316608052608c565b5f602082840312156070575f5ffd5b81516001600160a01b03811681146085575f5ffd5b9392505050565b60805160866100a15f395f602e015260865ff3fe6080604052348015600e575f5ffd5b50600436106026575f3560e01c80635c60da1b14602a575b5f5ffd5b60507f000000000000000000000000000000000000000000000000000000000000000081565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200160405180910390f3fea164736f6c634300081c000aa164736f6c634300081c000a",
         "nonce": "0xa",
-        "chainId": "0x88bb0"
+        "chainId": "0x4268"
       },
       "additionalContracts": [],
       "isFixedGasLimit": false
@@ -26,21 +26,43 @@
       "logs": [],
       "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
       "type": "0x2",
-      "transactionHash": "0xe8a19ccc02bfe96d8829ccd00268b0eddbb89c809ac1e83c29048d5de3b9d34b",
+      "transactionHash": "0x9bd2c6c0a0f08086f8950ef7b26f25d70c89bc6a2ce2315c0da828ebc0ac9564",
       "transactionIndex": "0x0",
-      "blockHash": "0xc75a746d7c35eed0466e2b04c2bb8e6e3c96f73007479bc7373a504f44db9649",
-      "blockNumber": "0x24e51",
+      "blockHash": "0x06210064b9dd919d3938f9cfd7660ef658999198f56c3c73bd518d9809dc0fba",
+      "blockNumber": "0x382ddf",
       "gasUsed": "0x29d3d",
-      "effectiveGasPrice": "0x3fb0cc8a",
-      "from": "0x341c40b94bf2afbfa42573cb78f16ee15a056238",
+      "effectiveGasPrice": "0x3",
+      "blobGasUsed": "0x0",
+      "from": "0xba67fe03aa6bed76d181df17b259a21637243d89",
       "to": null,
-      "contractAddress": "0x2baffcae8d5e178eefe17aab9a3ea09f55eb0568"
+      "contractAddress": "0x1159f61698c669d3dfa1ad115ad9c7e6dcdce7a1"
     }
   ],
   "libraries": [],
   "pending": [],
   "returns": {},
-  "timestamp": 1744206777,
-  "chain": 560048,
-  "commit": "dfb2e83"
+  "timestamp": 1744819066,
+  "chain": 17000,
+  "commit": "74937b5",
+  "abi": [
+    {
+      "type": "function",
+      "name": "deployBeacon",
+      "inputs": [
+        {
+          "name": "implementation",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "outputs": [
+        {
+          "name": "beacon",
+          "type": "address",
+          "internalType": "address"
+        }
+      ],
+      "stateMutability": "nonpayable"
+    }
+  ]
 }

@@ -2,13 +2,34 @@
 pragma solidity ^0.8.0;
 
 import "forge-std/Script.sol";
+
 import "solady/utils/UpgradeableBeacon.sol";
 
-contract DeployUpgradeableBeacon is Script {
+import { DeployPrepareForAbiInjection } from "scripts/DeployPrepareForAbiInjection.s.sol";
+
+contract DeployUpgradeableBeacon is DeployPrepareForAbiInjection {
     function run() external {
+        
+        address recentDeployment;
+
+        try vm.getDeployment("UpgradeableBeacon") returns (address deployment) {
+            recentDeployment = deployment;
+        } catch {}
+
+        if (recentDeployment != address(0)) {
+            console.log("No need to deploy anything, already deployed at: ", recentDeployment);
+            return;
+        }
+
         // Load constructor parameters from environment variables
         address initialOwner = vm.envAddress("OWNER");
-        address initialImplementation = vm.envAddress("TVS_UPGRADEABLE_IMPLEMENTATION");
+        address initialImplementation;
+        
+        if(vm.envExists("TVS_UPGRADEABLE_IMPLEMENTATION")){
+            initialImplementation = vm.envAddress("TVS_UPGRADEABLE_IMPLEMENTATION");
+        }else{
+            initialImplementation = vm.getDeployment("TVSUpgradeable") ;
+        }
 
         // Start broadcasting transactions
         vm.startBroadcast();
@@ -18,5 +39,8 @@ contract DeployUpgradeableBeacon is Script {
 
         // Stop broadcasting transactions
         vm.stopBroadcast();
+
+        prepareForAbiInjection();
+
     }
 }

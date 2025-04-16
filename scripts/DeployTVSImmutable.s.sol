@@ -4,7 +4,9 @@ pragma solidity ^0.8.28;
 import "forge-std/Script.sol";
 import "../src/TVSNonUpgradeable/TVSImmutable.sol";
 
-contract DeployTVSImmutable is Script {
+import { DeployPrepareForAbiInjection } from "scripts/DeployPrepareForAbiInjection.s.sol";
+
+contract DeployTVSImmutable is DeployPrepareForAbiInjection {
     function run() public {
         // Load constructor parameters from environment variables
         address beneficiary = vm.envAddress("BENEFICIARY");
@@ -25,5 +27,7 @@ contract DeployTVSImmutable is Script {
 
         // Stop broadcasting transactions
         vm.stopBroadcast();
+
+        prepareForAbiInjection();
     }
 }

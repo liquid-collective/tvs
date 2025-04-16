@@ -4,10 +4,17 @@ pragma solidity ^0.8.0;
 import "forge-std/Script.sol";
 import "../src/TVSUpgradeable/proxies/TVSBeaconProxy.sol";
 
-contract DeployTVSUpgradeable is Script {
+import { DeployPrepareForAbiInjection } from "scripts/DeployPrepareForAbiInjection.s.sol";
+
+contract DeployTVSUpgradeable is DeployPrepareForAbiInjection {
     function run() external {
         // Load constructor parameters from environment variables
-        address beacon = vm.envAddress("UPGRADEABLE_BEACON");
+        address beacon;
+        if (vm.envExists("UPGRADEABLE_BEACON")) {
+            beacon = vm.envAddress("UPGRADEABLE_BEACON");
+        } else {
+            beacon = vm.getDeployment("UpgradeableBeacon");
+        }
         address beneficiary = vm.envAddress("BENEFICIARY");
         address owner = vm.envAddress("OWNER");
 
@@ -27,5 +34,8 @@ contract DeployTVSUpgradeable is Script {
 
         // Stop broadcasting transactions
         vm.stopBroadcast();
+
+        prepareForAbiInjection();
+
     }
 }

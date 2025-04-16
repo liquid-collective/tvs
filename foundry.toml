@@ -8,6 +8,7 @@
   optimizer_runs = 10_000
   solc = "0.8.28"
   cbor_metadata=true
+  fs_permissions = [{ access = "write", path = "./broadcast" }]
 
 [profile.ci]
   fuzz = { runs = 10_000 }

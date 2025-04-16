@@ -4,12 +4,31 @@ pragma solidity ^0.8.28;
 import "forge-std/Script.sol";
 import "../src/TVSUpgradeable/TVSUpgradeable.sol";
 
-contract DeployTVSUpgradeableImplementation is Script {
+import { DeployPrepareForAbiInjection } from "scripts/DeployPrepareForAbiInjection.s.sol";
+
+contract DeployTVSUpgradeableImplementation is DeployPrepareForAbiInjection {
     function run() public {
+        address recentDeployment;
+
+        try vm.getDeployment("TVSUpgradeable") returns (address deployment) {
+            recentDeployment = deployment;
+        } catch {}
+
+        if (recentDeployment != address(0)) {
+            console.log("No need to deploy anything, already deployed at: ", recentDeployment);
+            return;
+        }
+
         // Load constructor parameters from environment variables
         address withdrawalContract = vm.envAddress("WITHDRAWAL_CONTRACT");
         address consolidationContract = vm.envAddress("CONSOLIDATION_CONTRACT");
-        address immutableBeaconFactory = vm.envAddress("IMMUTABLE_BEACON_FACTORY");
+        address immutableBeaconFactory;
+
+            if (vm.envExists("IMMUTABLE_BEACON_FACTORY")) {
+                immutableBeaconFactory = vm.envAddress("IMMUTABLE_BEACON_FACTORY");
+            } else {
+                immutableBeaconFactory = vm.getDeployment("ImmutableBeaconFactory");
+            }
 
         // Start broadcasting transactions
         vm.startBroadcast();
@@ -23,5 +42,7 @@ contract DeployTVSUpgradeableImplementation is Script {
 
         // Stop broadcasting transactions
         vm.stopBroadcast();
+
+        prepareForAbiInjection();
     }
 }

@@ -4,8 +4,21 @@ pragma solidity ^0.8.28;
 import "forge-std/Script.sol";
 import "../src/TVSNonUpgradeable/TVSClone.sol";
 
-contract DeployTVSCloneImplementation is Script {
+import { DeployPrepareForAbiInjection } from "scripts/DeployPrepareForAbiInjection.s.sol";
+
+contract DeployTVSCloneImplementation is DeployPrepareForAbiInjection {
     function run() public {
+        address recentDeployment;
+
+        try vm.getDeployment("TVSClone") returns (address deployment) {
+            recentDeployment = deployment;
+        } catch {}
+
+        if (recentDeployment != address(0)) {
+            console.log("No need to deploy anything, already deployed at: ", recentDeployment);
+            return;
+        }
+
         // Load constructor parameters from environment variables
         address withdrawalContract = vm.envAddress("WITHDRAWAL_CONTRACT");
         address consolidationContract = vm.envAddress("CONSOLIDATION_CONTRACT");
@@ -21,5 +34,7 @@ contract DeployTVSCloneImplementation is Script {
 
         // Stop broadcasting transactions
         vm.stopBroadcast();
+
+        prepareForAbiInjection();
     }
 }

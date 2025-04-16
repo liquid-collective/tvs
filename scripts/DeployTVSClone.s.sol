@@ -8,7 +8,12 @@ import { Clones } from "lib/openzeppelin-contracts/contracts/proxy/Clones.sol";
 contract DeployTVSClone is Script {
     function run() public {
         // Load constructor parameters from environment variables
-        address implementation = vm.envAddress("TVS_CLONE_IMPLEMENTATION");
+        address implementation;
+        if (vm.envExists("TVS_CLONE_IMPLEMENTATION")) {
+            implementation = vm.envAddress("TVS_CLONE_IMPLEMENTATION");
+        } else {
+            implementation = vm.getDeployment("TVSClone");
+        }
         address beneficiary = vm.envAddress("BENEFICIARY");
         address owner = vm.envAddress("OWNER");
 
