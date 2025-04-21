@@ -106,6 +106,13 @@ interface ITVS {
      */
     error TransferFailed();
 
+    // Setters
+
+    /* 
+     * @notice Fallback function to receive funds.
+     */
+    receive() external payable;
+
     /**
      * @notice Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
      * @dev Only the owner can specify a custom beneficiary for the sweep

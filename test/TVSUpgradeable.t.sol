@@ -33,12 +33,12 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
     address beacon;
     address beneficiary;
     address owner;
-    address tvsImplementation;
+    address payable tvsImplementation;
     address immutableBeaconFactory = address(new ImmutableBeaconFactory());
 
     function setUp() public {
         tvsImplementation =
-            address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
+            payable(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
         beneficiary = makeAddr("beneficiary");
         owner = makeAddr("owner");
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
@@ -82,7 +82,7 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
         // Deploy the contract with the given valid arguments
         bytes memory initData =
             abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
-        TVSV1 tvsProxy = TVSV1(address(new TVSBeaconProxy(beacon, initData)));
+        TVSV1 tvsProxy = TVSV1(payable(new TVSBeaconProxy(beacon, initData)));
 
         // Ensure that the contract was deployed and initialized successfully
         assertEq(tvsProxy.beacon(), beacon, "Beacon address not correct");
@@ -92,7 +92,7 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
         // This check is to ensure that the implementation code is not empty because it was set while the implementation
         // was being deployed
         assertNotEq(
-            ImmutableBeacon(TVSV1(address(tvsImplementation)).immutableBeacon()).implementation().code.length,
+            ImmutableBeacon(TVSV1(tvsImplementation).immutableBeacon()).implementation().code.length,
             0,
             "immutableBeacon implementation code not correct"
         );
@@ -180,26 +180,26 @@ contract TVSUpgradeableTest is BaseTVSTest {
     // Keep the inherited TVS tvs for base functionality
     TVSV1 public tvsV1; // Add separate TVSV1 reference for upgradeable-specific functions
     address beacon;
-    address tvsImplementation;
+    address payable tvsImplementation;
     address immutableBeaconFactory = address(new ImmutableBeaconFactory());
 
     event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
 
     function setUp() public override {
         tvsImplementation =
-            address(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
+            payable(new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, immutableBeaconFactory));
         owner = makeAddr("owner");
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
 
         super.setUp();
-        tvsV1 = TVSV1(address(tvs)); // Cast the TVS address to TVSV1
+        tvsV1 = TVSV1(payable(tvs)); // Cast the TVS address to TVSV1
     }
 
     function deployTVS() internal override returns (ITVS) {
         bytes memory initData =
             abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
 
-        return ITVS(address(new TVSBeaconProxy(beacon, initData)));
+        return ITVS(payable(new TVSBeaconProxy(beacon, initData)));
     }
 
     /**
@@ -309,7 +309,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
         assertNotEq(tvsV1.beacon(), oldBeacon, "Beacon did not change after transfer");
         assertEq(
             tvsV1.beacon(),
-            TVSV1(address(tvsImplementation)).immutableBeacon(),
+            TVSV1(tvsImplementation).immutableBeacon(),
             "Beacon address not updated to the immutableBeacon"
         );
         assertEq(tvsV1.owner(), newOwner, "Owner address not updated");
@@ -324,7 +324,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
 
         address invalidImmutableBeaconFactory = address(new MockInvalidImmutableBeaconFactory());
 
-        tvsImplementation = address(
+        tvsImplementation = payable(
             new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, invalidImmutableBeaconFactory)
         );
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));

@@ -17,12 +17,14 @@ contract TVSCloneInitializationTest is Test, PectraAddress {
     address beneficiary;
     address owner;
     address tvsImplementation;
+    TVSClone clone;
 
     /**
      * @notice Sets up the test environment.
      */
     function setUp() public {
         tvsImplementation = address(new TVSClone(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS));
+        clone = TVSClone(payable(Clones.clone(tvsImplementation)));
         beneficiary = makeAddr("beneficiary");
         owner = makeAddr("owner");
     }
@@ -51,7 +53,7 @@ contract TVSCloneInitializationTest is Test, PectraAddress {
      *      Expects the revert reason "OwnableInvalidOwner(address)" with the zero address.
      */
     function testInitializerWithZeroAddressOwner() public {
-        TVSClone clone = TVSClone(Clones.clone(tvsImplementation));
+        TVSClone clone = TVSClone(payable(Clones.clone(tvsImplementation)));
 
         vm.expectRevert(abi.encodeWithSignature("OwnableInvalidOwner(address)", address(0)));
         clone.initialize(beneficiary, address(0));
@@ -63,7 +65,6 @@ contract TVSCloneInitializationTest is Test, PectraAddress {
      *      Expects the revert reason "InvalidAddress()".
      */
     function testInitializerWithZeroAddressBeneficiary() public {
-        TVSClone clone = TVSClone(Clones.clone(tvsImplementation));
         vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
         clone.initialize(address(0), owner);
     }
@@ -77,7 +78,6 @@ contract TVSCloneInitializationTest is Test, PectraAddress {
      */
     function testDeployWithValidArguments() public {
         // Deploy the contract with the given valid arguments
-        TVSClone clone = TVSClone(Clones.clone(tvsImplementation));
         clone.initialize(beneficiary, owner);
 
         // Ensure that the contract was deployed and initialized successfully
@@ -100,7 +100,7 @@ contract TVSCloneInitializationTest is Test, PectraAddress {
         // Expect the transaction to revert due to non-TVS implementation
         address clone = Clones.clone(invalidImplementation);
         vm.expectRevert();
-        TVSClone(clone).initialize(beneficiary, owner);
+        TVSClone(payable(clone)).initialize(beneficiary, owner);
     }
 
     /**
@@ -109,9 +109,8 @@ contract TVSCloneInitializationTest is Test, PectraAddress {
      * provided as the owner.
      */
     function testWithZeroAddressOwner() public {
-        address clone = Clones.clone(tvsImplementation);
         vm.expectRevert(abi.encodeWithSignature("OwnableInvalidOwner(address)", address(0)));
-        TVSClone(clone).initialize(beneficiary, address(0));
+        clone.initialize(beneficiary, address(0));
     }
 
     /**
@@ -120,9 +119,8 @@ contract TVSCloneInitializationTest is Test, PectraAddress {
      * provided as the beneficiary.
      */
     function testWithZeroAddressBeneficiary() public {
-        address clone = Clones.clone(tvsImplementation);
         vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
-        TVSClone(clone).initialize(address(0), owner);
+        clone.initialize(address(0), owner);
     }
 }
 
@@ -130,7 +128,7 @@ contract TVSCloneInitializationTest is Test, PectraAddress {
 contract TVSCloneTest is TVSImmutableBaseTest {
     function deployTVS() internal override returns (ITVS) {
         address tvsImplementation = address(new TVSClone(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS));
-        address clone = Clones.clone(tvsImplementation);
+        address payable clone = payable(Clones.clone(tvsImplementation));
         TVSClone(clone).initialize(beneficiary, owner);
 
         return ITVS(clone);
