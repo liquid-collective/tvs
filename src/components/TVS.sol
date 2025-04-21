@@ -45,8 +45,8 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /// @inheritdoc ITVS
-    receive() external payable {}
-    
+    receive() external payable { }
+
     /// @inheritdoc ITVS
     function withdraw(
         bytes[] memory pubkeys,
@@ -169,6 +169,7 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @param _totalFeePaid The total fee paid.
      * @param _excessFeeRecipient The address of the excess fee recipient.
      */
+
     function _refundExcessFee(
         uint256 _totalValueReceived,
         uint256 _totalFeePaid,
