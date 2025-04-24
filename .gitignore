@@ -1,27 +1,16 @@
 node_modules
 .env
-coverage
-coverage.json
-typechain
-.vscode
 
-#Hardhat files
-hardhat-cache
-artifacts
-docgen
 
 # Forge files
 cache
-forge-artifacts
 out
 
 # Deployment files
-deployment.local.json
-deployments/local
-deployments/localhost
-deployments/tenderly
-deploy/sms_deploy_param.yaml
+broadcast/**/31337/
 
 .DS_Store
-.idea
 lcov.info
+.wake
+.vscode
+.idea

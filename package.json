@@ -5,5 +5,13 @@
   "main": "index.js",
   "repository": "git@github.com:liquid-collective/tvs.git",
   "author": "Alluvial Finance",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "lint": "solhint 'src/**/*.sol'",
+    "clean-local-deployments": "find broadcast -type d -name 31337 -exec rm -rf {} +"
+  },
+
+  "devDependencies": {
+    "solhint": "^5.0.5"
+  }
 }
