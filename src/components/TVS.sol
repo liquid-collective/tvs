@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.28;
+pragma solidity 0.8.29;
 
 import "../state/Beneficiary.sol";
 import "../interfaces/ITVSSweepBeneficiary.sol";
@@ -79,6 +79,9 @@ abstract contract TVS is ITVS, BaseSecurity {
                 revert RequestFailed();
             }
             totalFeePaid += fee;
+
+            // Emit withdrawal event
+            emit WithdrawalRequested(pubkeys[i], amount[i], fee);
         }
 
         // Refund any access value back to the excessFeeRecipient
@@ -110,6 +113,9 @@ abstract contract TVS is ITVS, BaseSecurity {
                 }
 
                 totalFeePaid += fee;
+
+                // Emit consolidation event
+                emit ConsolidationRequested(requests[i].srcPubkeys[j], requests[i].targetPubkey, fee);
             }
         }
 
@@ -177,7 +183,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     )
         internal
     {
-        // send excess value  back to _excessFeeRecipient
+        // send excess value back to _excessFeeRecipient
         if (_totalValueReceived > _totalFeePaid) {
             (bool success,) = payable(_excessFeeRecipient).call{ value: _totalValueReceived - _totalFeePaid }("");
             if (!success) {

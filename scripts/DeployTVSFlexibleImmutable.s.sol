@@ -1,5 +1,5 @@
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.28;
+// SPDX-License-Identifier: Proprietary
+pragma solidity 0.8.29;
 
 import "forge-std/Script.sol";
 import "../src/TVSNonUpgradeable/TVSFlexibleImmutable.sol";

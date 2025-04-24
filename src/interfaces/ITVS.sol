@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.28;
+pragma solidity 0.8.29;
 
 /**
  * @title TVS Interface
@@ -46,6 +46,22 @@ interface ITVS {
      * @param newOwner The address of the new owner.
      */
     event Transferred(address indexed newBeneficiary, address indexed newOwner);
+
+    /**
+     * @notice Emitted when a withdrawal request is submitted for a validator.
+     * @param pubkey The public key of the validator.
+     * @param amount The amount to withdraw from the validator.
+     * @param fee The fee paid for the withdrawal.
+     */
+    event WithdrawalRequested(bytes indexed pubkey, uint64 indexed amount, uint256 indexed fee);
+
+    /**
+     * @notice Emitted when a consolidation request is submitted.
+     * @param srcPubkey The public key of the source validator.
+     * @param targetPubkey The public key of the target validator.
+     * @param fee The fee paid for the consolidation.
+     */
+    event ConsolidationRequested(bytes indexed srcPubkey, bytes indexed targetPubkey, uint256 indexed fee);
 
     /**
      * @notice Error thrown when an invalid address is provided for any reason.
