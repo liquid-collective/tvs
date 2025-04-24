@@ -93,4 +93,4 @@ docs:
 
 # Coverage commands
 coverage:
-	forge coverage --report lcov
+	forge coverage --no-match-coverage "test|scripts" --report lcov
