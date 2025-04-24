@@ -85,3 +85,12 @@ abi:
 	echo "🧹 Cleaning up $(TEMP_JSON)..." && \
 	rm -f $(TEMP_JSON) && \
 	echo "✅ Temp file removed"
+
+
+# Documentation commands
+docs:
+	forge doc --build
+
+# Coverage commands
+coverage:
+	forge coverage --report lcov

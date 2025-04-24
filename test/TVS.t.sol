@@ -26,6 +26,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     event Swept(address indexed beneficiary, uint256 indexed amount);
     event BeneficiaryUpdated(address indexed newBeneficiary);
     event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
+    event WithdrawalRequested(bytes indexed pubkey, uint64 indexed amount, uint256 indexed fee);
+    event ConsolidationRequested(bytes indexed srcPubkey, bytes indexed targetPubkey, uint256 indexed fee);
 
     /**
      * @notice Sets up the test environment.
@@ -435,8 +437,62 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         // Expect the call to the consolidation contract
         vm.expectCall(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation, callData);
 
+        // Expect the consolidation event
+        vm.expectEmit(true, true, true, true);
+        emit ConsolidationRequested(srcPubkeys[0], targetPubkey, maxFeePerConsolidation);
+
         // Call the consolidate function
         tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the consolidate function emits events for multiple consolidations.
+     */
+    function testConsolidateEmitsEventsForMultipleConsolidations() public {
+        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+
+        // Prepare mock data for multiple consolidations
+        bytes[] memory srcPubkeys1 = new bytes[](1);
+        srcPubkeys1[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+
+        bytes[] memory srcPubkeys2 = new bytes[](1);
+        srcPubkeys2[0] = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12";
+
+        bytes memory targetPubkey =
+            hex"fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210";
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](2);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys1, targetPubkey);
+        requests[1] = ITVS.ConsolidationRequest(srcPubkeys2, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation * 2);
+
+        // Mock static call response with a valid fee
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        // Mock the calls to succeed
+        bytes memory callData1 = bytes.concat(srcPubkeys1[0], targetPubkey);
+        bytes memory callData2 = bytes.concat(srcPubkeys2[0], targetPubkey);
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, callData1, abi.encodePacked(""));
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, callData2, abi.encodePacked(""));
+
+        vm.prank(owner);
+
+        // Expect the calls to the consolidation contract
+        vm.expectCall(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation, callData1);
+        vm.expectCall(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation, callData2);
+
+        // Expect the consolidation events
+        vm.expectEmit(true, true, true, true);
+        emit ConsolidationRequested(srcPubkeys1[0], targetPubkey, maxFeePerConsolidation);
+
+        vm.expectEmit(true, true, true, true);
+        emit ConsolidationRequested(srcPubkeys2[0], targetPubkey, maxFeePerConsolidation);
+
+        // Call the consolidate function
+        tvs.consolidate{ value: maxFeePerConsolidation * 2 }(requests, maxFeePerConsolidation, owner);
     }
 
     /**
@@ -649,10 +705,61 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, callData, abi.encodePacked(""));
 
         vm.prank(owner);
-        // Expect the call to the consolidation contract
+
+        // Expect the call to the withdrawal contract
         vm.expectCall(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal, callData);
+
+        // Expect the withdrawal event
+        vm.expectEmit(true, true, true, true);
+        emit WithdrawalRequested(pubkeys[0], amounts[0], maxFeePerWithdrawal);
+
         // Call the withdraw function
         tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    /**
+     * @notice Tests that the withdraw function emits events for multiple withdrawals.
+     */
+    function testWithdrawEmitsEventsForMultipleWithdrawals() public {
+        address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
+
+        // Prepare mock data for multiple withdrawals
+        bytes[] memory pubkeys = new bytes[](2);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+        pubkeys[1] = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12";
+
+        uint64[] memory amounts = new uint64[](2);
+        amounts[0] = 1 ether;
+        amounts[1] = 2 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal * 2);
+
+        // Mock static call response with a valid fee
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        // Mock the calls to succeed
+        bytes memory callData1 = abi.encodePacked(pubkeys[0], amounts[0]);
+        bytes memory callData2 = abi.encodePacked(pubkeys[1], amounts[1]);
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, callData1, abi.encodePacked(""));
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, callData2, abi.encodePacked(""));
+
+        vm.prank(owner);
+
+        // Expect the calls to the withdrawal contract
+        vm.expectCall(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal, callData1);
+        vm.expectCall(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal, callData2);
+
+        // Expect the withdrawal events
+        vm.expectEmit(true, true, true, true);
+        emit WithdrawalRequested(pubkeys[0], amounts[0], maxFeePerWithdrawal);
+
+        vm.expectEmit(true, true, true, true);
+        emit WithdrawalRequested(pubkeys[1], amounts[1], maxFeePerWithdrawal);
+
+        // Call the withdraw function
+        tvs.withdraw{ value: maxFeePerWithdrawal * 2 }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
     /**

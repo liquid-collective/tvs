@@ -80,7 +80,7 @@ abstract contract TVS is ITVS, BaseSecurity {
             }
             totalFeePaid += fee;
 
-            // Emit withdrawal event
+            // Emit withdrawal event for each validator
             emit WithdrawalRequested(pubkeys[i], amount[i], fee);
         }
 
@@ -114,7 +114,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
                 totalFeePaid += fee;
 
-                // Emit consolidation event
+                // Emit consolidation event for each operation
                 emit ConsolidationRequested(requests[i].srcPubkeys[j], requests[i].targetPubkey, fee);
             }
         }
