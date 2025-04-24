@@ -16,7 +16,7 @@ jobs:
           version: nightly
           
       - name: Generate Coverage Report
-        run: make coverage
+        run: forge coverage --report lcov
         
       - name: Upload Coverage to Codecov
         uses: codecov/codecov-action@v5
