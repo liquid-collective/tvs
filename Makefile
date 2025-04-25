@@ -1,5 +1,5 @@
 # Load environment variables from .env file
-include .env
+-include .env
 export
 
 # Conditionally set the etherscan-api-key flag
@@ -19,11 +19,11 @@ endif
 
 # Common deployment flags
 DEPLOY_FLAGS = --rpc-url $(RPC_URL) \
-               --private-key $(PRIVATE_KEY) \
                $(VERIFY_FLAG) \
-               $(ETHERSCAN_API_KEY_FLAG) \
                $(VERIFIER_URL_FLAG) \
-               --broadcast
+               $(ETHERSCAN_API_KEY_FLAG) \
+               --broadcast \
+               --private-key $(PRIVATE_KEY)
 
 deploy-ImmutableBeaconFactory:
 	forge script scripts/DeployImmutableBeaconFactory.s.sol:DeployImmutableBeaconFactory $(DEPLOY_FLAGS) && \
@@ -56,6 +56,8 @@ deploy-UpgradeableBeacon:
 	forge script scripts/DeployUpgradeableBeacon.s.sol:DeployUpgradeableBeacon $(DEPLOY_FLAGS) --ffi && \
 	DEPLOYMENT_PATH=UpgradeableBeacon CONTRACT_NAME=UpgradeableBeacon make abi
 
+deploy-PectraFeeGetter:
+	forge script scripts/DeployPectraFeeGetter.s.sol:DeployPectraFeeGetter $(DEPLOY_FLAGS) 
 
 ABI_SOURCE := out/$(CONTRACT_NAME).sol/$(CONTRACT_NAME).json
 TEMP_JSON := broadcast/temp.json
@@ -94,3 +96,6 @@ docs:
 # Coverage commands
 coverage:
 	forge coverage --no-match-coverage "test|scripts" --report lcov
+
+check-submodules:
+	bash check-submodule-versions.sh
