@@ -1,19 +1,22 @@
 name: Documentation
 
 on:
-  push:
-    branches: [ main ]
+    pull_request:
+    push:
+        branches:
+        - "main"
+
 
 jobs:
   docs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive
       
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
           
       - name: Generate Documentation
         run: forge doc --build
