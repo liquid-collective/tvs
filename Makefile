@@ -96,3 +96,6 @@ docs:
 # Coverage commands
 coverage:
 	forge coverage --no-match-coverage "test|scripts" --report lcov
+
+check-submodules:
+	bash check-submodule-versions.sh
