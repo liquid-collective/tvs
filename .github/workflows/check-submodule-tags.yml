@@ -1,0 +1,22 @@
+name: Check Submodule Tags
+
+on:
+  pull_request:
+
+jobs:
+  check-submodule-versions:
+    name: Verify Submodules are Pinned
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0  # ensure tags are fetched
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run submodule version checks
+        run: make check-submodules

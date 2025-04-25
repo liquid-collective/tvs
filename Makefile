@@ -1,5 +1,5 @@
 # Load environment variables from .env file
-include .env
+-include .env
 export
 
 # Conditionally set the etherscan-api-key flag
