@@ -1,8 +1,11 @@
 name: Documentation
 
 on:
-  push:
-    branches: [ main ]
+    pull_request:
+    push:
+        branches:
+        - "main"
+
 
 jobs:
   docs:
@@ -12,8 +15,6 @@ jobs:
       
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
-        with:
-          version: nightly
           
       - name: Generate Documentation
         run: forge doc --build

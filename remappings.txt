@@ -1,0 +1,4 @@
+openzeppelin-contracts-upgradeable/=lib/openzeppelin-contracts-upgradeable/
+openzeppelin-contracts/=lib/openzeppelin-contracts/
+solady/=lib/solady/src/
+forge-std/=lib/forge-std/src/
