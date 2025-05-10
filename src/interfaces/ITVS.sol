@@ -122,6 +122,12 @@ interface ITVS {
      */
     error TransferFailed();
 
+    /**
+     * @notice Error thrown when the length of a pubkey is invalid.
+     * @param length The length of the pubkey.
+     */
+    error InvalidPubkeyLength(uint256 length);
+
     // Setters
 
     /* 
