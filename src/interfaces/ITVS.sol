@@ -53,7 +53,7 @@ interface ITVS {
      * @param amount The amount to withdraw from the validator.
      * @param fee The fee paid for the withdrawal.
      */
-    event WithdrawalRequested(bytes indexed pubkey, uint64 indexed amount, uint256 indexed fee);
+    event WithdrawalRequested(bytes pubkey, uint64 indexed amount, uint256 indexed fee);
 
     /**
      * @notice Emitted when a consolidation request is submitted.
@@ -61,7 +61,7 @@ interface ITVS {
      * @param targetPubkey The public key of the target validator.
      * @param fee The fee paid for the consolidation.
      */
-    event ConsolidationRequested(bytes indexed srcPubkey, bytes indexed targetPubkey, uint256 indexed fee);
+    event ConsolidationRequested(bytes srcPubkey, bytes targetPubkey, uint256 indexed fee);
 
     /**
      * @notice Error thrown when an invalid address is provided for any reason.
