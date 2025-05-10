@@ -73,14 +73,13 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      *         additional checks
      * @dev This function should not be called directly, but only through the {setBeacon} function, it allows the
      *      {setBeacon} perform robust checks before setting the new beacon
-     * @dev Emits a {BeaconUpdated} event
+     * @dev Emits a {BeaconUpgraded} event
      * @dev Only callable by the contract owner
      * @param newBeacon The new beacon address
      */
     function setBeaconUnchecked(address newBeacon) external onlyOwner {
-        address oldBeacon = Beacon.get();
         Beacon.set(newBeacon);
-        emit BeaconUpdated(oldBeacon, newBeacon);
+        emit BeaconUpgraded(newBeacon);
     }
 
     /// @inheritdoc ITVSUpgradeable

@@ -183,7 +183,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
     address payable tvsImplementation;
     address immutableBeaconFactory = address(new ImmutableBeaconFactory());
 
-    event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
+    event BeaconUpgraded(address indexed beacon);
 
     function setUp() public override {
         tvsImplementation =
@@ -210,7 +210,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
         address newBeacon = address(new UpgradeableBeacon(owner, tvsImplementation));
 
         vm.expectEmit(true, true, true, true);
-        emit BeaconUpdated(tvsV1.beacon(), newBeacon);
+        emit BeaconUpgraded(newBeacon);
 
         vm.prank(owner);
         tvsV1.setBeacon(newBeacon);
@@ -226,7 +226,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
         address newBeacon = address(new UpgradeableBeacon(owner, tvsImplementation));
 
         vm.expectEmit(true, true, true, true);
-        emit BeaconUpdated(tvsV1.beacon(), newBeacon);
+        emit BeaconUpgraded(newBeacon);
 
         vm.prank(owner);
         tvsV1.setBeaconUnchecked(newBeacon);
