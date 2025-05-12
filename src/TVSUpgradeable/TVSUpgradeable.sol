@@ -44,6 +44,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
         TVS(withdrawalContractAddress, consolidationContractAddress)
     {
         immutableBeacon = IImmutableBeaconFactory(immutableBeaconFactory).deployBeacon(address(this));
+        _disableInitializers();
     }
 
     /**
