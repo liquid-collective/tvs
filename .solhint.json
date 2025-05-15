@@ -1,6 +1,6 @@
 {
-    "extends": "solhint:default",
-    "rules": {
-      "ordering": "error"
-    }
+  "extends": "solhint:recommended",
+  "rules": {
+    "ordering": "error"
   }
+}
