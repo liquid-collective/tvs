@@ -173,7 +173,8 @@ interface ITVS {
      * @notice Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.
      * @dev Only the owner can call this function.
      * @param pubkeys The public keys of the validators to withdraw from.
-     * @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
+     * @param amount The amount in gwei to withdraw from each validator. Zero indicates a full withdrawal (validator
+     * exit).
      * @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
      * @param excessFeeRecipient The address to which excess fees will be sent.
      */
