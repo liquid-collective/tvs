@@ -72,6 +72,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < pubkeys.length; i++) {
+            _validatePubkeyLength(pubkeys[i]);
             // Add the withdrawal request
             bytes memory callData = abi.encodePacked(pubkeys[i], amount[i]);
             (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{ value: fee }(callData);
@@ -104,7 +105,11 @@ abstract contract TVS is ITVS, BaseSecurity {
 
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < requests.length; i++) {
+            _validatePubkeyLength(requests[i].targetPubkey);
+
             for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
+                _validatePubkeyLength(requests[i].srcPubkeys[j]);
+
                 // Add the consolidation request
                 bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
                 (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{ value: fee }(callData);
@@ -228,6 +233,16 @@ abstract contract TVS is ITVS, BaseSecurity {
     function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure {
         if (_value < _totalFee) {
             revert InsufficientValueForFee(_value, _totalFee);
+        }
+    }
+
+    /**
+     * @dev Internal function to validate that a public key is exactly 48 bytes in length
+     * @param pubkey The public key to validate
+     */
+    function _validatePubkeyLength(bytes memory pubkey) internal pure {
+        if (pubkey.length != 48) {
+            revert InvalidPubkeyLength(pubkey.length);
         }
     }
 
