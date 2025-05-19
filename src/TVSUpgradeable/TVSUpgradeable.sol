@@ -44,6 +44,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
         TVS(withdrawalContractAddress, consolidationContractAddress)
     {
         immutableBeacon = IImmutableBeaconFactory(immutableBeaconFactory).deployBeacon(address(this));
+        _disableInitializers();
     }
 
     /**
@@ -54,7 +55,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @param owner The address that will have ownership rights over the TVS
      * @param beacon The address of the beacon contract
      */
-    function initialize(address beneficiary, address owner, address beacon) external initializer {
+    function initialize(address beneficiary, address owner, address beacon) external {
         if (beneficiary == address(0) || owner == address(0) || beacon == address(0)) revert InvalidAddress();
 
         _setupSecurity(owner);
@@ -73,14 +74,13 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      *         additional checks
      * @dev This function should not be called directly, but only through the {setBeacon} function, it allows the
      *      {setBeacon} perform robust checks before setting the new beacon
-     * @dev Emits a {BeaconUpdated} event
+     * @dev Emits a {BeaconUpgraded} event
      * @dev Only callable by the contract owner
      * @param newBeacon The new beacon address
      */
     function setBeaconUnchecked(address newBeacon) external onlyOwner {
-        address oldBeacon = Beacon.get();
         Beacon.set(newBeacon);
-        emit BeaconUpdated(oldBeacon, newBeacon);
+        emit BeaconUpgraded(newBeacon);
     }
 
     /// @inheritdoc ITVSUpgradeable

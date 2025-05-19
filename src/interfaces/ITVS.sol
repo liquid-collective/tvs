@@ -53,7 +53,7 @@ interface ITVS {
      * @param amount The amount to withdraw from the validator.
      * @param fee The fee paid for the withdrawal.
      */
-    event WithdrawalRequested(bytes indexed pubkey, uint64 indexed amount, uint256 indexed fee);
+    event WithdrawalRequested(bytes pubkey, uint64 indexed amount, uint256 indexed fee);
 
     /**
      * @notice Emitted when a consolidation request is submitted.
@@ -61,7 +61,7 @@ interface ITVS {
      * @param targetPubkey The public key of the target validator.
      * @param fee The fee paid for the consolidation.
      */
-    event ConsolidationRequested(bytes indexed srcPubkey, bytes indexed targetPubkey, uint256 indexed fee);
+    event ConsolidationRequested(bytes srcPubkey, bytes targetPubkey, uint256 indexed fee);
 
     /**
      * @notice Error thrown when an invalid address is provided for any reason.
@@ -122,6 +122,12 @@ interface ITVS {
      */
     error TransferFailed();
 
+    /**
+     * @notice Error thrown when the length of a pubkey is invalid.
+     * @param length The length of the pubkey.
+     */
+    error InvalidPubkeyLength(uint256 length);
+
     // Setters
 
     /* 
@@ -173,7 +179,8 @@ interface ITVS {
      * @notice Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.
      * @dev Only the owner can call this function.
      * @param pubkeys The public keys of the validators to withdraw from.
-     * @param amount The respective amounts to withdraw from each of the validators. Zero amount means full exit
+     * @param amount The amount in gwei to withdraw from each validator. Zero indicates a full withdrawal (validator
+     * exit).
      * @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
      * @param excessFeeRecipient The address to which excess fees will be sent.
      */

@@ -72,6 +72,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < pubkeys.length; i++) {
+            _validatePubkeyLength(pubkeys[i]);
             // Add the withdrawal request
             bytes memory callData = abi.encodePacked(pubkeys[i], amount[i]);
             (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{ value: fee }(callData);
@@ -104,7 +105,11 @@ abstract contract TVS is ITVS, BaseSecurity {
 
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < requests.length; i++) {
+            _validatePubkeyLength(requests[i].targetPubkey);
+
             for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
+                _validatePubkeyLength(requests[i].srcPubkeys[j]);
+
                 // Add the consolidation request
                 bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
                 (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{ value: fee }(callData);
@@ -193,15 +198,6 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Assert caller is the owner of the contract
-     */
-    function _assertOwner() internal view {
-        if (msg.sender != owner()) {
-            revert OwnableUnauthorizedAccount(msg.sender);
-        }
-    }
-
-    /**
      * @dev Internal function to validate the fee. Used for pectra related operations.
      * @param _maxAllowedFee The maximum allowed fee.
      * @return _fee The fee.
@@ -232,6 +228,16 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
+     * @dev Internal function to validate that a public key is exactly 48 bytes in length
+     * @param pubkey The public key to validate
+     */
+    function _validatePubkeyLength(bytes memory pubkey) internal pure {
+        if (pubkey.length != 48) {
+            revert InvalidPubkeyLength(pubkey.length);
+        }
+    }
+
+    /**
      * @dev Internal function to sweep the TVS.
      * @param _beneficiary The address of the beneficiary.
      * @param _amount The amount to sweep.
@@ -241,7 +247,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep) {
         // Only require owner for custom beneficiary
         if (_beneficiary != address(0)) {
-            _assertOwner();
+            _checkOwner();
         }
 
         _dest = _beneficiary == address(0) ? getBeneficiary() : _beneficiary;

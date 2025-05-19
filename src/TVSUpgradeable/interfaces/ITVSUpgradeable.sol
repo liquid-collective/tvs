@@ -13,10 +13,9 @@ import "../../interfaces/ITVS.sol";
 interface ITVSUpgradeable is ITVS {
     /**
      * @notice Emitted when the beacon address is updated.
-     * @param oldBeacon The old beacon address.
-     * @param newBeacon The new beacon address.
+     * @param beacon The new beacon address.
      */
-    event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
+    event BeaconUpgraded(address indexed beacon);
 
     /**
      * @notice Error thrown when the beacon address is invalid.
@@ -26,7 +25,7 @@ interface ITVSUpgradeable is ITVS {
     /**
      * @notice Sets a new beacon address for the TVS.
      * @dev Only the owner can call this function.
-     * @dev Emits a {BeaconUpdated} event.
+     * @dev Emits a {BeaconUpgraded} event.
      * @param beacon The new beacon address.
      */
     function setBeacon(address beacon) external;

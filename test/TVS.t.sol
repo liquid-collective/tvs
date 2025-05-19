@@ -26,8 +26,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     event Swept(address indexed beneficiary, uint256 indexed amount);
     event BeneficiaryUpdated(address indexed newBeneficiary);
     event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
-    event WithdrawalRequested(bytes indexed pubkey, uint64 indexed amount, uint256 indexed fee);
-    event ConsolidationRequested(bytes indexed srcPubkey, bytes indexed targetPubkey, uint256 indexed fee);
+    event WithdrawalRequested(bytes pubkey, uint64 indexed amount, uint256 indexed fee);
+    event ConsolidationRequested(bytes srcPubkey, bytes targetPubkey, uint256 indexed fee);
 
     /**
      * @notice Sets up the test environment.
@@ -221,11 +221,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     function testConsolidateRefundsSenderAnyExcessFund() public {
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcdef1234567890abcd12345678ef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         bytes memory targetPubkey =
-            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            hex"1234567890abcdef1234567890abcdef1234567890abcdef123412345678567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
@@ -258,11 +259,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         bytes memory targetPubkey =
-            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
@@ -297,11 +299,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     function testConsolidateFailsIfFeeExceedsMax() public {
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         bytes memory targetPubkey =
-            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
@@ -332,11 +335,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         bytes memory targetPubkey =
-            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
@@ -372,11 +376,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         bytes memory targetPubkey =
-            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
@@ -410,11 +415,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         bytes memory targetPubkey =
-            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
@@ -453,13 +459,15 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for multiple consolidations
         bytes[] memory srcPubkeys1 = new bytes[](1);
-        srcPubkeys1[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+        srcPubkeys1[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
 
         bytes[] memory srcPubkeys2 = new bytes[](1);
-        srcPubkeys2[0] = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12";
+        srcPubkeys2[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
 
         bytes memory targetPubkey =
-            hex"fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210";
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](2);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys1, targetPubkey);
@@ -501,11 +509,12 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     function testConsolidateFailsIfNotOwner() public {
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
-        srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         bytes memory targetPubkey =
-            hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
@@ -529,7 +538,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         uint64[] memory amounts = new uint64[](1);
@@ -556,7 +566,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         uint64[] memory amounts = new uint64[](1);
@@ -586,7 +597,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         uint64[] memory amounts = new uint64[](1);
@@ -616,7 +628,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     function testWithdrawRefundsSenderAnyExcessFund() public {
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         uint64[] memory amounts = new uint64[](1);
@@ -649,7 +662,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         uint64[] memory amounts = new uint64[](1);
@@ -686,7 +700,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         uint64[] memory amounts = new uint64[](1);
@@ -725,8 +740,10 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         // Prepare mock data for multiple withdrawals
         bytes[] memory pubkeys = new bytes[](2);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678";
-        pubkeys[1] = hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12";
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+        pubkeys[1] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
 
         uint64[] memory amounts = new uint64[](2);
         amounts[0] = 1 ether;
@@ -768,7 +785,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     function testWithdrawFailsIfNotOwner() public {
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         uint64[] memory amounts = new uint64[](1);
@@ -785,12 +803,81 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     /**
+     * @notice Tests that the withdraw function reverts when a public key is not 48 bytes.
+     */
+    function testWithdrawFailsIfPubkeyLengthInvalid() public {
+        // Prepare mock data for withdrawal with invalid length pubkey
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef123456"; // 47-byte
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Call the withdraw function
+        vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 47));
+        vm.prank(owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    /**
+     * @notice Tests that the consolidate function reverts when a source public key is not 48 bytes.
+     */
+    function testConsolidateFailsIfSrcPubkeyLengthInvalid() public {
+        // Prepare mock data for consolidation with invalid length source pubkey
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef123456"; // 47-byte
+
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Call the consolidate function
+        vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 47));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the consolidate function reverts when a target public key is not 48 bytes.
+     */
+    function testConsolidateFailsIfTargetPubkeyLengthInvalid() public {
+        // Prepare mock data for consolidation with invalid length target pubkey
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef123456"; // 47-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Call the consolidate function
+        vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 47));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
      * @notice Tests that the withdraw function reverts when the fee exceeds the value.
      */
     function testWithdrawFailsIfFeeExceedsValue() public {
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         uint64[] memory amounts = new uint64[](1);
@@ -812,7 +899,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     function testWithdrawFailsIfInputLengthMismatch() public {
         // Prepare mock data for withdrawal
         bytes[] memory pubkeys = new bytes[](1);
-        pubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        pubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
             // example
 
         uint64[] memory amounts; // length is zero(0)
