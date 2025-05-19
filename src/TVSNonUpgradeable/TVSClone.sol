@@ -20,7 +20,9 @@ contract TVSClone is TVSImmutableBase {
         address consolidationContractAddress
     )
         TVSImmutableBase(withdrawalContractAddress, consolidationContractAddress)
-    { }
+    {
+        _disableInitializers();
+    }
 
     /**
      * @notice Initializes the TVS clone with beneficiary and owner addresses
