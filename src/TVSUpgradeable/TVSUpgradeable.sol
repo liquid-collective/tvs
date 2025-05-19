@@ -54,7 +54,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @param owner The address that will have ownership rights over the TVS
      * @param beacon The address of the beacon contract
      */
-    function initialize(address beneficiary, address owner, address beacon) external initializer {
+    function initialize(address beneficiary, address owner, address beacon) external {
         if (beneficiary == address(0) || owner == address(0) || beacon == address(0)) revert InvalidAddress();
 
         _setupSecurity(owner);
