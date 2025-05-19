@@ -26,8 +26,8 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     event Swept(address indexed beneficiary, uint256 indexed amount);
     event BeneficiaryUpdated(address indexed newBeneficiary);
     event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
-    event WithdrawalRequested(bytes indexed pubkey, uint64 indexed amount, uint256 indexed fee);
-    event ConsolidationRequested(bytes indexed srcPubkey, bytes indexed targetPubkey, uint256 indexed fee);
+    event WithdrawalRequested(bytes pubkey, uint64 indexed amount, uint256 indexed fee);
+    event ConsolidationRequested(bytes srcPubkey, bytes targetPubkey, uint256 indexed fee);
 
     /**
      * @notice Sets up the test environment.
