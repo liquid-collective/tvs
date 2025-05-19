@@ -198,15 +198,6 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Assert caller is the owner of the contract
-     */
-    function _assertOwner() internal view {
-        if (msg.sender != owner()) {
-            revert OwnableUnauthorizedAccount(msg.sender);
-        }
-    }
-
-    /**
      * @dev Internal function to validate the fee. Used for pectra related operations.
      * @param _maxAllowedFee The maximum allowed fee.
      * @return _fee The fee.
@@ -256,7 +247,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep) {
         // Only require owner for custom beneficiary
         if (_beneficiary != address(0)) {
-            _assertOwner();
+            _checkOwner();
         }
 
         _dest = _beneficiary == address(0) ? getBeneficiary() : _beneficiary;
