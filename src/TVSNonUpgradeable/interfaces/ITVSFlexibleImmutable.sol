@@ -34,11 +34,11 @@ interface ITVSFlexibleImmutable {
 
     /**
      * @notice Executes a batch of low-level calls or delegatecalls.
+     * NOTE:
+     *  - when msg.value is passed, only one delegatecall should be made
+     *  - when msg.value is passed, any delegatecall to non-payable functions will fail
      * @dev revert on the first call that fails.
      * @param calls An array of Call structs containing the target address, value, data, and call type.
-     * @dev For delegate calls, note that, msg.value can end up being reused unadvertedly, which
-     * can lead to contract balance being used if the calls require value transfer, and not enough
-     * ETH is sent in when  executeBatch is called.
      */
     function executeBatch(Call[] calldata calls) external payable;
 }
