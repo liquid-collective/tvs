@@ -53,14 +53,14 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      *      beneficiary, and beacon address of the TVS
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
-     * @param beacon The address of the beacon contract
+     * @param beaconAddress The address of the beacon contract
      */
-    function initialize(address beneficiary, address owner, address beacon) external {
-        if (beneficiary == address(0) || owner == address(0) || beacon == address(0)) revert InvalidAddress();
+    function initialize(address beneficiary, address owner, address beaconAddress) external {
+        if (beneficiary == address(0) || owner == address(0) || beaconAddress == address(0)) revert InvalidAddress();
 
         _setupSecurity(owner);
         Beneficiary.set(beneficiary);
-        Beacon.set(beacon);
+        Beacon.set(beaconAddress);
     }
 
     /// @inheritdoc ITVS
@@ -78,7 +78,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @dev Only callable by the contract owner
      * @param newBeacon The new beacon address
      */
-    function setBeaconUnchecked(address newBeacon) external onlyOwner {
+    function setBeaconUnchecked(address newBeacon) external onlyOwner nonReentrant {
         Beacon.set(newBeacon);
         emit BeaconUpgraded(newBeacon);
     }
