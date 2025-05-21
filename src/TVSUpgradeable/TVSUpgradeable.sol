@@ -78,7 +78,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @dev Only callable by the contract owner
      * @param newBeacon The new beacon address
      */
-    function setBeaconUnchecked(address newBeacon) external onlyOwner nonReentrant {
+    function setBeaconUnchecked(address newBeacon) external onlyOwner {
         Beacon.set(newBeacon);
         emit BeaconUpgraded(newBeacon);
     }
