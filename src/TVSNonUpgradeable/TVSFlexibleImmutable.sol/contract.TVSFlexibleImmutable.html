@@ -162,7 +162,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvsflexibleimmutable"><a class="header" href="#tvsflexibleimmutable">TVSFlexibleImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/ed14942a9d0381c99b745775bf504c12305ff04c/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/03d62a29ebc84d5546f68b193940449245e34170/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.html">ITVSFlexibleImmutable</a>, <a href="/src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.html">TVSImmutable</a></p>
 <p><strong>Author:</strong>
@@ -197,7 +197,7 @@ state variables. They can only be set once here in the constructor.</em></p>
 <h3 id="executecall"><a class="header" href="#executecall">executeCall</a></h3>
 <p>Executes a low-level call or delegatecall to the specified address.</p>
 <p><em>Bubbles up revert reasons and handles both ETH transfers and data calls.</em></p>
-<pre><code class="language-solidity">function executeCall(Call calldata call) external payable onlyOwner returns (bytes memory);
+<pre><code class="language-solidity">function executeCall(Call calldata call) external payable onlyOwner nonReentrant returns (bytes memory);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
@@ -217,7 +217,7 @@ NOTE:</p>
 <li>when msg.value is passed, any delegatecall to non-payable functions will fail</li>
 </ul>
 <p><em>revert on the first call that fails.</em></p>
-<pre><code class="language-solidity">function executeBatch(Call[] calldata calls) external payable virtual onlyOwner;
+<pre><code class="language-solidity">function executeBatch(Call[] calldata calls) external payable virtual onlyOwner nonReentrant;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>

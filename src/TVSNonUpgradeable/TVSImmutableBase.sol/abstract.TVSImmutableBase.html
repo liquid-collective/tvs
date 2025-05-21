@@ -162,7 +162,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvsimmutablebase"><a class="header" href="#tvsimmutablebase">TVSImmutableBase</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/ed14942a9d0381c99b745775bf504c12305ff04c/src/TVSNonUpgradeable/TVSImmutableBase.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/03d62a29ebc84d5546f68b193940449245e34170/src/TVSNonUpgradeable/TVSImmutableBase.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="/src/components/TVS.sol/abstract.TVS.html">TVS</a></p>
 <p><strong>Author:</strong>
@@ -190,7 +190,7 @@ once here in the constructor.</em></p>
 <h3 id="transfer"><a class="header" href="#transfer">transfer</a></h3>
 <p>Transfers the ownership of the TVS.</p>
 <p><em>This function sets a new beneficiary, transfers ownership to a new owner.</em></p>
-<pre><code class="language-solidity">function transfer(address newBeneficiary, address newOwner) external onlyOwner;
+<pre><code class="language-solidity">function transfer(address newBeneficiary, address newOwner) external onlyOwner nonReentrant;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
