@@ -64,7 +64,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     }
 
     /// @inheritdoc ITVS
-    function transfer(address newBeneficiary, address newOwner) external override onlyOwner {
+    function transfer(address newBeneficiary, address newOwner) external override onlyOwner nonReentrant {
         _setBeacon(immutableBeacon);
         _transfer(newBeneficiary, newOwner);
     }
@@ -84,7 +84,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     }
 
     /// @inheritdoc ITVSUpgradeable
-    function setBeacon(address newBeacon) external onlyOwner {
+    function setBeacon(address newBeacon) external onlyOwner nonReentrant {
         _setBeacon(newBeacon);
     }
 
