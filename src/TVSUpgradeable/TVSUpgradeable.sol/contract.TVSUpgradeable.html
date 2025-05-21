@@ -162,7 +162,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvsupgradeable"><a class="header" href="#tvsupgradeable">TVSUpgradeable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/6cf4277749b1c1dceb48faed327b7c3b8f5b7fa5/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/22a0ed12c7a93ce0efa30ba57761541bff80fcd6/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.html">ITVSUpgradeable</a>, <a href="/src/components/TVS.sol/abstract.TVS.html">TVS</a></p>
 <p><strong>Author:</strong>
@@ -229,7 +229,7 @@ additional checks</p>
 {setBeacon} perform robust checks before setting the new beacon</em></p>
 <p><em>Emits a {BeaconUpgraded} event</em></p>
 <p><em>Only callable by the contract owner</em></p>
-<pre><code class="language-solidity">function setBeaconUnchecked(address newBeacon) external onlyOwner;
+<pre><code class="language-solidity">function setBeaconUnchecked(address newBeacon) external onlyOwner nonReentrant;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
