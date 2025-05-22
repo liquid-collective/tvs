@@ -26,7 +26,7 @@ abstract contract TVSImmutableBase is TVS {
     { }
 
     /// @inheritdoc ITVS
-    function transfer(address newBeneficiary, address newOwner) external onlyOwner {
+    function transfer(address newBeneficiary, address newOwner) external onlyOwner nonReentrant {
         _transfer(newBeneficiary, newOwner);
     }
 

@@ -34,12 +34,12 @@ contract TVSFlexibleImmutable is ITVSFlexibleImmutable, TVSImmutable {
     { }
 
     /// @inheritdoc ITVSFlexibleImmutable
-    function executeCall(Call calldata call) external payable onlyOwner returns (bytes memory) {
+    function executeCall(Call calldata call) external payable onlyOwner nonReentrant returns (bytes memory) {
         return _executeCall(call);
     }
 
     /// @inheritdoc ITVSFlexibleImmutable
-    function executeBatch(Call[] calldata calls) external payable virtual onlyOwner {
+    function executeBatch(Call[] calldata calls) external payable virtual onlyOwner nonReentrant {
         uint256 callsLength = calls.length;
         for (uint256 i = 0; i < callsLength; i++) {
             Call calldata call = calls[i];

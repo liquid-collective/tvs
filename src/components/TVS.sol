@@ -132,7 +132,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /// @inheritdoc ITVS
-    function sweep(address recipient, uint256 amount) external {
+    function sweep(address recipient, uint256 amount) external nonReentrant {
         (address dest, uint256 amountToSweep) = _sweep(recipient, amount);
         payable(dest).sendValue(amountToSweep);
     }
