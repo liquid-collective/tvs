@@ -36,8 +36,14 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
      */
-    constructor(address withdrawalContractAddress, address consolidationContractAddress) {
-        if (withdrawalContractAddress == address(0) || consolidationContractAddress == address(0)) {
+    constructor(
+        address withdrawalContractAddress,
+        address consolidationContractAddress
+    ) {
+        if (
+            withdrawalContractAddress == address(0) ||
+            consolidationContractAddress == address(0)
+        ) {
             revert InvalidAddress();
         }
         WITHDRAWAL_CONTRACT_ADDRESS = withdrawalContractAddress;
@@ -45,7 +51,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /// @inheritdoc ITVS
-    receive() external payable { }
+    receive() external payable {}
 
     /// @inheritdoc ITVS
     function withdraw(
@@ -53,12 +59,7 @@ abstract contract TVS is ITVS, BaseSecurity {
         uint64[] calldata amount,
         uint256 maxFeePerWithdrawal,
         address excessFeeRecipient
-    )
-        external
-        payable
-        nonReentrant
-        onlyOwner
-    {
+    ) external payable nonReentrant onlyOwner {
         if (pubkeys.length != amount.length) {
             revert LengthMismatch(pubkeys.length, amount.length);
         }
@@ -68,14 +69,19 @@ abstract contract TVS is ITVS, BaseSecurity {
         _validateSufficientValueForFee(msg.value, maxFeePayable);
 
         // Check if fee exceeds maximum allowed, otherwise get fee
-        uint256 fee = _validateAndReturnFee(WITHDRAWAL_CONTRACT_ADDRESS, maxFeePerWithdrawal);
+        uint256 fee = _validateAndReturnFee(
+            WITHDRAWAL_CONTRACT_ADDRESS,
+            maxFeePerWithdrawal
+        );
 
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < pubkeys.length; i++) {
             _validatePubkeyLength(pubkeys[i]);
             // Add the withdrawal request
             bytes memory callData = abi.encodePacked(pubkeys[i], amount[i]);
-            (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{ value: fee }(callData);
+            (bool writeOK, ) = WITHDRAWAL_CONTRACT_ADDRESS.call{value: fee}(
+                callData
+            );
             if (!writeOK) {
                 revert RequestFailed();
             }
@@ -94,14 +100,12 @@ abstract contract TVS is ITVS, BaseSecurity {
         ConsolidationRequest[] calldata requests,
         uint256 maxFeePerConsolidation,
         address excessFeeRecipient
-    )
-        external
-        payable
-        nonReentrant
-        onlyOwner
-    {
+    ) external payable nonReentrant onlyOwner {
         // Check if fee exceeds maximum allowed, otherwise get fee
-        uint256 fee = _validateAndReturnFee(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation);
+        uint256 fee = _validateAndReturnFee(
+            CONSOLIDATION_CONTRACT_ADDRESS,
+            maxFeePerConsolidation
+        );
 
         uint256 totalFeePaid = 0;
         for (uint256 i = 0; i < requests.length; i++) {
@@ -111,8 +115,13 @@ abstract contract TVS is ITVS, BaseSecurity {
                 _validatePubkeyLength(requests[i].srcPubkeys[j]);
 
                 // Add the consolidation request
-                bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
-                (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{ value: fee }(callData);
+                bytes memory callData = bytes.concat(
+                    requests[i].srcPubkeys[j],
+                    requests[i].targetPubkey
+                );
+                (bool writeOK, ) = CONSOLIDATION_CONTRACT_ADDRESS.call{
+                    value: fee
+                }(callData);
                 if (!writeOK) {
                     revert RequestFailed();
                 }
@@ -120,7 +129,11 @@ abstract contract TVS is ITVS, BaseSecurity {
                 totalFeePaid += fee;
 
                 // Emit consolidation event for each operation
-                emit ConsolidationRequested(requests[i].srcPubkeys[j], requests[i].targetPubkey, fee);
+                emit ConsolidationRequested(
+                    requests[i].srcPubkeys[j],
+                    requests[i].targetPubkey,
+                    fee
+                );
             }
         }
 
@@ -138,9 +151,12 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /// @inheritdoc ITVS
-    function sweepToBeneficiaryContract(address beneficiary, uint256 amount) external nonReentrant {
+    function sweepToBeneficiaryContract(
+        address beneficiary,
+        uint256 amount
+    ) external nonReentrant {
         (address dest, uint256 amountToSweep) = _sweep(beneficiary, amount);
-        ITVSSweepBeneficiary(dest).receiveETHFromTVS{ value: amountToSweep }();
+        ITVSSweepBeneficiary(dest).receiveETHFromTVS{value: amountToSweep}();
     }
 
     /// @inheritdoc ITVS
@@ -174,6 +190,7 @@ abstract contract TVS is ITVS, BaseSecurity {
         Beneficiary.set(_newBeneficiary);
         emit BeneficiaryUpdated(_newBeneficiary);
     }
+
     /**
      * @dev Internal function to refund the excess fee for pectra related operations.
      * @param _totalValueReceived The total value received.
@@ -185,25 +202,32 @@ abstract contract TVS is ITVS, BaseSecurity {
         uint256 _totalValueReceived,
         uint256 _totalFeePaid,
         address _excessFeeRecipient
-    )
-        internal
-    {
+    ) internal {
         // send excess value back to _excessFeeRecipient
         if (_totalValueReceived > _totalFeePaid) {
-            (bool success,) = payable(_excessFeeRecipient).call{ value: _totalValueReceived - _totalFeePaid }("");
+            (bool success, ) = payable(_excessFeeRecipient).call{
+                value: _totalValueReceived - _totalFeePaid
+            }("");
             if (!success) {
-                emit UnsentExcessFee(_excessFeeRecipient, _totalValueReceived - _totalFeePaid);
+                emit UnsentExcessFee(
+                    _excessFeeRecipient,
+                    _totalValueReceived - _totalFeePaid
+                );
             }
         }
     }
 
     /**
      * @dev Internal function to validate the fee. Used for pectra related operations.
+     * @param feeContract The address of the fee contract.
      * @param _maxAllowedFee The maximum allowed fee.
      * @return _fee The fee.
      * @dev Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.
      */
-    function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee) {
+    function _validateAndReturnFee(
+        address feeContract,
+        uint256 _maxAllowedFee
+    ) internal view returns (uint256 _fee) {
         // Read current fee from the contract
         (bool readOK, bytes memory feeData) = feeContract.staticcall("");
         if (!readOK) {
@@ -221,7 +245,10 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @param _value The value.
      * @param _totalFee The total fee.
      */
-    function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure {
+    function _validateSufficientValueForFee(
+        uint256 _value,
+        uint256 _totalFee
+    ) internal pure {
         if (_value < _totalFee) {
             revert InsufficientValueForFee(_value, _totalFee);
         }
@@ -244,7 +271,10 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @return _dest The address of the _destination.
      * @return _amountToSweep The amount to sweep.
      */
-    function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep) {
+    function _sweep(
+        address _beneficiary,
+        uint256 _amount
+    ) private returns (address _dest, uint256 _amountToSweep) {
         // Only require owner for custom beneficiary
         if (_beneficiary != address(0)) {
             _checkOwner();
