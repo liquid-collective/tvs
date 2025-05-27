@@ -38,10 +38,7 @@ interface ITVS {
      * @param excessFeeRecipient The address to which the excess fee should have been sent.
      * @param excessFee The amount of excess fee sent.
      */
-    event UnsentExcessFee(
-        address indexed excessFeeRecipient,
-        uint256 indexed excessFee
-    );
+    event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
 
     /**
      * @notice Emitted when the ownership of the TVS is transferred to a new owner.
@@ -56,11 +53,7 @@ interface ITVS {
      * @param amount The amount to withdraw from the validator.
      * @param fee The fee paid for the withdrawal.
      */
-    event WithdrawalRequested(
-        bytes pubkey,
-        uint64 indexed amount,
-        uint256 indexed fee
-    );
+    event WithdrawalRequested(bytes pubkey, uint64 indexed amount, uint256 indexed fee);
 
     /**
      * @notice Emitted when a consolidation request is submitted.
@@ -68,11 +61,7 @@ interface ITVS {
      * @param targetPubkey The public key of the target validator.
      * @param fee The fee paid for the consolidation.
      */
-    event ConsolidationRequested(
-        bytes srcPubkey,
-        bytes targetPubkey,
-        uint256 indexed fee
-    );
+    event ConsolidationRequested(bytes srcPubkey, bytes targetPubkey, uint256 indexed fee);
 
     /**
      * @notice Error thrown when an invalid address is provided for any reason.
@@ -166,10 +155,7 @@ interface ITVS {
      * on the contract
      * @param amount  Amount of funds to sweep, if zero, sweeps all funds on contract.
      */
-    function sweepToBeneficiaryContract(
-        address beneficiary,
-        uint256 amount
-    ) external;
+    function sweepToBeneficiaryContract(address beneficiary, uint256 amount) external;
 
     /**
      * @notice Sets a new beneficiary address for fund sweeping.
@@ -203,7 +189,9 @@ interface ITVS {
         uint64[] calldata amount,
         uint256 maxFeePerWithdrawal,
         address excessFeeRecipient
-    ) external payable;
+    )
+        external
+        payable;
 
     /**
      * @notice Adds a consolidation request to the pectra EL consolidation contract for the given source validators.
@@ -219,7 +207,9 @@ interface ITVS {
         ConsolidationRequest[] memory requests,
         uint256 maxFeePerConsolidation,
         address excessFeeRecipient
-    ) external payable;
+    )
+        external
+        payable;
 
     // Getters
 
