@@ -33,7 +33,7 @@ interface ITVS {
     event BeneficiaryUpdated(address indexed newBeneficiary);
 
     /**
-     * @notice Emitted when the excess feel sent as part of a {consolidation}, or {withdrawal} - (partial or full)
+     * @notice Emitted when the excess fee sent as part of a {consolidation}, or {withdrawal} - (partial or full)
      * request could not be refunded to the {excessFeeRecipient} recipient.
      * @param excessFeeRecipient The address to which the excess fee should have been sent.
      * @param excessFee The amount of excess fee sent.
@@ -130,7 +130,7 @@ interface ITVS {
 
     // Setters
 
-    /* 
+    /*
      * @notice Fallback function to receive funds.
      */
     receive() external payable;

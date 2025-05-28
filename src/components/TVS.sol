@@ -174,13 +174,13 @@ abstract contract TVS is ITVS, BaseSecurity {
         Beneficiary.set(_newBeneficiary);
         emit BeneficiaryUpdated(_newBeneficiary);
     }
+
     /**
      * @dev Internal function to refund the excess fee for pectra related operations.
      * @param _totalValueReceived The total value received.
      * @param _totalFeePaid The total fee paid.
      * @param _excessFeeRecipient The address of the excess fee recipient.
      */
-
     function _refundExcessFee(
         uint256 _totalValueReceived,
         uint256 _totalFeePaid,
@@ -199,6 +199,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
     /**
      * @dev Internal function to validate the fee. Used for pectra related operations.
+     * @param feeContract The address of the fee contract.
      * @param _maxAllowedFee The maximum allowed fee.
      * @return _fee The fee.
      * @dev Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.
