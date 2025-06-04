@@ -8,7 +8,7 @@ This repository provides a reference implementation for deploying and managing a
 
 ## Audits 
 
-These smart contract have been audited by Certora and Quantstamp. The audit reports can be found in the [audits directory](./audits).
+These smart contracts have been audited by Certora and Quantstamp. The audit reports can be found in the [audits directory](./audits).
 
 ## Features
 
