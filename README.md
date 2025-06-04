@@ -1,8 +1,8 @@
 # <h1 align="center"> TVS Reference Implementation </h1>
 
-**A transferable validator set (TVS) is a set of `n` validators sharing the same smart contract for their withdrawal credentials, whose ownership can be transferred to a new owner.**
+**A Transferable Validator Set (TVS) is a smart contract used as the withdrawal credential for a set of `n` validators, whose ownership can be transferred to a new owner.**
 
-This repository provides a reference implementation for deploying and managing a transferable validator set using smart contracts.
+This repository provides multiple implementations of Transferable Validator Set (TVS) smart contracts, including both immutable and upgradeable versions.
 
 ---
 
@@ -140,4 +140,4 @@ make deploy-TVSFlexibleImmutable
 Contributions are welcome! Please fork the repository and submit a pull request with your changes.
 
 ## License
-See the LICENSE file for details.
+See the [LICENSE](./LICENSE) file for details.
