@@ -45,7 +45,9 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /// @inheritdoc ITVS
-    receive() external payable { }
+    receive() external payable {
+        emit ETHReceived(msg.sender, msg.value, block.number);
+    }
 
     /// @inheritdoc ITVS
     function withdraw(

@@ -28,6 +28,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
     event WithdrawalRequested(bytes pubkey, uint64 indexed amount, uint256 indexed fee);
     event ConsolidationRequested(bytes srcPubkey, bytes targetPubkey, uint256 indexed fee);
+    event ETHReceived(address indexed sender, uint256 indexed amount, uint256 indexed blockNumber);
 
     /**
      * @notice Sets up the test environment.
@@ -934,5 +935,24 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         vm.prank(owner);
         vm.expectRevert(abi.encodeWithSignature("OwnershipCannotBeRenounced()")); // Expect the specific revert error
         Ownable(address(tvs)).renounceOwnership();
+    }
+
+    /**
+     * @notice Tests that the contract can receive ETH and emits the correct event.
+     */
+    function testReceiveETH() public {
+        uint256 amount = 1 ether;
+        address sender = makeAddr("sender");
+        vm.deal(sender, amount);
+
+        vm.expectEmit(true, true, true, true);
+        emit ETHReceived(sender, amount, block.number);
+        uint256 prevBal = address(tvs).balance;
+
+        vm.prank(sender);
+        (bool success,) = address(tvs).call{value: amount}("");
+        require(success, "ETH transfer failed");
+
+        assertEq(address(tvs).balance, prevBal + amount, "Contract balance should be equal to the amount sent");
     }
 }

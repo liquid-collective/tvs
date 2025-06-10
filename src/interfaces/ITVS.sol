@@ -20,6 +20,14 @@ interface ITVS {
     }
 
     /**
+     * @notice Emitted when ETH is received by the TVS.
+     * @param sender The address that sent the ETH.
+     * @param amount The amount of ETH sent.
+     * @param blockNumber The block number of the transaction.
+     */
+    event ETHReceived(address indexed sender, uint256 indexed amount, uint256 indexed blockNumber);
+
+    /**
      * @notice Emitted when funds are swept to the beneficiary.
      * @param beneficiary The address to which funds were swept.
      * @param amount The amount of funds swept.
