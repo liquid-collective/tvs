@@ -162,7 +162,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="itvs"><a class="header" href="#itvs">ITVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/7467b5b3f5925078f69f9f325caf1c73336a8ec0/src/interfaces/ITVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/09ff2e39d86d22e23233ee0c0e6deb2aea6088c9/src/interfaces/ITVS.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>Interface for the TVS contract.</p>
@@ -281,17 +281,6 @@ beneficiary contract address.</p>
 </tbody></table>
 </div>
 <h2 id="events"><a class="header" href="#events">Events</a></h2>
-<h3 id="ethreceived"><a class="header" href="#ethreceived">ETHReceived</a></h3>
-<p>Emitted when ETH is received by the TVS.</p>
-<pre><code class="language-solidity">event ETHReceived(address indexed sender, uint256 indexed amount, uint256 indexed blockNumber);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>sender</code></td><td><code>address</code></td><td>The address that sent the ETH.</td></tr>
-<tr><td><code>amount</code></td><td><code>uint256</code></td><td>The amount of ETH sent.</td></tr>
-<tr><td><code>blockNumber</code></td><td><code>uint256</code></td><td>The block number of the transaction.</td></tr>
-</tbody></table>
-</div>
 <h3 id="swept"><a class="header" href="#swept">Swept</a></h3>
 <p>Emitted when funds are swept to the beneficiary.</p>
 <pre><code class="language-solidity">event Swept(address indexed beneficiary, uint256 indexed amount);
