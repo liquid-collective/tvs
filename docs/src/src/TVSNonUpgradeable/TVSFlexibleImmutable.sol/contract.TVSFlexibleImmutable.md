@@ -1,5 +1,5 @@
 # TVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/74937b56cfb6ca2a00ba3057606cc7f6aeafe8f6/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f5c73298c5c83b0c84fd88c0b4e9e6669cf53875/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
 
 **Inherits:**
 [ITVSFlexibleImmutable](/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.md), [TVSImmutable](/src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.md)
@@ -53,7 +53,7 @@ Executes a low-level call or delegatecall to the specified address.
 
 
 ```solidity
-function executeCall(Call calldata call) external payable onlyOwner returns (bytes memory);
+function executeCall(Call calldata call) external payable onlyOwner nonReentrant returns (bytes memory);
 ```
 **Parameters**
 
@@ -71,12 +71,15 @@ function executeCall(Call calldata call) external payable onlyOwner returns (byt
 ### executeBatch
 
 Executes a batch of low-level calls or delegatecalls.
+NOTE:
+- when msg.value is passed, only one delegatecall should be made
+- when msg.value is passed, any delegatecall to non-payable functions will fail
 
 *revert on the first call that fails.*
 
 
 ```solidity
-function executeBatch(Call[] calldata calls) external payable virtual onlyOwner;
+function executeBatch(Call[] calldata calls) external payable virtual onlyOwner nonReentrant;
 ```
 **Parameters**
 
