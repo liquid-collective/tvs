@@ -1,5 +1,5 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/74937b56cfb6ca2a00ba3057606cc7f6aeafe8f6/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f5c73298c5c83b0c84fd88c0b4e9e6669cf53875/src/components/TVS.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
@@ -54,6 +54,13 @@ constructor(address withdrawalContractAddress, address consolidationContractAddr
 |`consolidationContractAddress`|`address`|The address of the consolidation contract|
 
 
+### receive
+
+
+```solidity
+receive() external payable;
+```
+
 ### withdraw
 
 Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.
@@ -78,7 +85,7 @@ function withdraw(
 |Name|Type|Description|
 |----|----|-----------|
 |`pubkeys`|`bytes[]`|The public keys of the validators to withdraw from.|
-|`amount`|`uint64[]`|The respective amounts to withdraw from each of the validators. Zero amount means full exit|
+|`amount`|`uint64[]`|The amount in gwei to withdraw from each validator. Zero indicates a full withdrawal (validator exit).|
 |`maxFeePerWithdrawal`|`uint256`|The maximum fee allowed per withdrawal.|
 |`excessFeeRecipient`|`address`|The address to which excess fees will be sent.|
 
@@ -118,7 +125,7 @@ Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a spec
 
 
 ```solidity
-function sweep(address recipient, uint256 amount) external;
+function sweep(address recipient, uint256 amount) external nonReentrant;
 ```
 **Parameters**
 
@@ -229,15 +236,6 @@ function _refundExcessFee(uint256 _totalValueReceived, uint256 _totalFeePaid, ad
 |`_excessFeeRecipient`|`address`|The address of the excess fee recipient.|
 
 
-### _assertOwner
-
-*Assert caller is the owner of the contract*
-
-
-```solidity
-function _assertOwner() internal view;
-```
-
 ### _validateAndReturnFee
 
 *Internal function to validate the fee. Used for pectra related operations.*
@@ -252,7 +250,7 @@ function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) inte
 
 |Name|Type|Description|
 |----|----|-----------|
-|`feeContract`|`address`||
+|`feeContract`|`address`|The address of the fee contract.|
 |`_maxAllowedFee`|`uint256`|The maximum allowed fee.|
 
 **Returns**
@@ -276,6 +274,21 @@ function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) inter
 |----|----|-----------|
 |`_value`|`uint256`|The value.|
 |`_totalFee`|`uint256`|The total fee.|
+
+
+### _validatePubkeyLength
+
+*Internal function to validate that a public key is exactly 48 bytes in length*
+
+
+```solidity
+function _validatePubkeyLength(bytes memory pubkey) internal pure;
+```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pubkey`|`bytes`|The public key to validate|
 
 
 ### _sweep

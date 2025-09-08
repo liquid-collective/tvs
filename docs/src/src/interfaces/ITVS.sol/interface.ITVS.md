@@ -1,5 +1,5 @@
 # ITVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/74937b56cfb6ca2a00ba3057606cc7f6aeafe8f6/src/interfaces/ITVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f5c73298c5c83b0c84fd88c0b4e9e6669cf53875/src/interfaces/ITVS.sol)
 
 **Author:**
 Alluvial Finance Inc.
@@ -12,6 +12,13 @@ Interface for the TVS contract.
 
 
 ## Functions
+### receive
+
+
+```solidity
+receive() external payable;
+```
+
 ### sweep
 
 Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
@@ -116,7 +123,7 @@ function withdraw(
 |Name|Type|Description|
 |----|----|-----------|
 |`pubkeys`|`bytes[]`|The public keys of the validators to withdraw from.|
-|`amount`|`uint64[]`|The respective amounts to withdraw from each of the validators. Zero amount means full exit|
+|`amount`|`uint64[]`|The amount in gwei to withdraw from each validator. Zero indicates a full withdrawal (validator exit).|
 |`maxFeePerWithdrawal`|`uint256`|The maximum fee allowed per withdrawal.|
 |`excessFeeRecipient`|`address`|The address to which excess fees will be sent.|
 
@@ -213,7 +220,7 @@ event BeneficiaryUpdated(address indexed newBeneficiary);
 |`newBeneficiary`|`address`|The new beneficiary address.|
 
 ### UnsentExcessFee
-Emitted when the excess feel sent as part of a {consolidation}, or {withdrawal} - (partial or full)
+Emitted when the excess fee sent as part of a {consolidation}, or {withdrawal} - (partial or full)
 request could not be refunded to the {excessFeeRecipient} recipient.
 
 
@@ -242,6 +249,38 @@ event Transferred(address indexed newBeneficiary, address indexed newOwner);
 |----|----|-----------|
 |`newBeneficiary`|`address`|The address of the new beneficiary.|
 |`newOwner`|`address`|The address of the new owner.|
+
+### WithdrawalRequested
+Emitted when a withdrawal request is submitted for a validator.
+
+
+```solidity
+event WithdrawalRequested(bytes pubkey, uint64 indexed amount, uint256 indexed fee);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`pubkey`|`bytes`|The public key of the validator.|
+|`amount`|`uint64`|The amount to withdraw from the validator.|
+|`fee`|`uint256`|The fee paid for the withdrawal.|
+
+### ConsolidationRequested
+Emitted when a consolidation request is submitted.
+
+
+```solidity
+event ConsolidationRequested(bytes srcPubkey, bytes targetPubkey, uint256 indexed fee);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`srcPubkey`|`bytes`|The public key of the source validator.|
+|`targetPubkey`|`bytes`|The public key of the target validator.|
+|`fee`|`uint256`|The fee paid for the consolidation.|
 
 ## Errors
 ### InvalidAddress
@@ -357,6 +396,20 @@ Error thrown when a TVS transfer couldn't be completed.
 ```solidity
 error TransferFailed();
 ```
+
+### InvalidPubkeyLength
+Error thrown when the length of a pubkey is invalid.
+
+
+```solidity
+error InvalidPubkeyLength(uint256 length);
+```
+
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`length`|`uint256`|The length of the pubkey.|
 
 ## Structs
 ### ConsolidationRequest

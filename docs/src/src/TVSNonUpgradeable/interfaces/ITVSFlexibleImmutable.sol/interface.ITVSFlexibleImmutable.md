@@ -1,5 +1,5 @@
 # ITVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/74937b56cfb6ca2a00ba3057606cc7f6aeafe8f6/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f5c73298c5c83b0c84fd88c0b4e9e6669cf53875/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
 
 **Author:**
 Alluvial Finance Inc.
@@ -38,6 +38,9 @@ function executeCall(Call calldata call) external payable returns (bytes memory)
 ### executeBatch
 
 Executes a batch of low-level calls or delegatecalls.
+NOTE:
+- when msg.value is passed, only one delegatecall should be made
+- when msg.value is passed, any delegatecall to non-payable functions will fail
 
 *revert on the first call that fails.*
 

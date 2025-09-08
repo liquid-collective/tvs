@@ -1,5 +1,5 @@
 # TVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/74937b56cfb6ca2a00ba3057606cc7f6aeafe8f6/src/TVSUpgradeable/TVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f5c73298c5c83b0c84fd88c0b4e9e6669cf53875/src/TVSUpgradeable/TVSUpgradeable.sol)
 
 **Inherits:**
 [ITVSUpgradeable](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md), [TVS](/src/components/TVS.sol/abstract.TVS.md)
@@ -64,7 +64,7 @@ beneficiary, and beacon address of the TVS*
 
 
 ```solidity
-function initialize(address beneficiary, address owner, address beacon) external initializer;
+function initialize(address beneficiary, address owner, address beaconAddress) external;
 ```
 **Parameters**
 
@@ -72,7 +72,7 @@ function initialize(address beneficiary, address owner, address beacon) external
 |----|----|-----------|
 |`beneficiary`|`address`|The address that will receive all ETH swept from the TVS|
 |`owner`|`address`|The address that will have ownership rights over the TVS|
-|`beacon`|`address`|The address of the beacon contract|
+|`beaconAddress`|`address`|The address of the beacon contract|
 
 
 ### transfer
@@ -83,7 +83,7 @@ Transfers the ownership of the TVS.
 
 
 ```solidity
-function transfer(address newBeneficiary, address newOwner) external override onlyOwner;
+function transfer(address newBeneficiary, address newOwner) external override onlyOwner nonReentrant;
 ```
 **Parameters**
 
@@ -101,7 +101,7 @@ additional checks
 *This function should not be called directly, but only through the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function, it allows the
 {setBeacon} perform robust checks before setting the new beacon*
 
-*Emits a {BeaconUpdated} event*
+*Emits a {BeaconUpgraded} event*
 
 *Only callable by the contract owner*
 
@@ -124,7 +124,7 @@ Sets a new beacon address for the TVS.
 
 
 ```solidity
-function setBeacon(address newBeacon) external onlyOwner;
+function setBeacon(address newBeacon) external onlyOwner nonReentrant;
 ```
 **Parameters**
 

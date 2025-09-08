@@ -1,5 +1,5 @@
 # ITVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/74937b56cfb6ca2a00ba3057606cc7f6aeafe8f6/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f5c73298c5c83b0c84fd88c0b4e9e6669cf53875/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md)
@@ -21,7 +21,7 @@ Sets a new beacon address for the TVS.
 
 *Only the owner can call this function.*
 
-*Emits a [BeaconUpdated](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md#beaconupdated) event.*
+*Emits a [BeaconUpgraded](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md#beaconupgraded) event.*
 
 
 ```solidity
@@ -50,20 +50,19 @@ function beacon() external view returns (address);
 
 
 ## Events
-### BeaconUpdated
+### BeaconUpgraded
 Emitted when the beacon address is updated.
 
 
 ```solidity
-event BeaconUpdated(address indexed oldBeacon, address indexed newBeacon);
+event BeaconUpgraded(address indexed beacon);
 ```
 
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`oldBeacon`|`address`|The old beacon address.|
-|`newBeacon`|`address`|The new beacon address.|
+|`beacon`|`address`|The new beacon address.|
 
 ## Errors
 ### InvalidBeacon
