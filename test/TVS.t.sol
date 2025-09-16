@@ -368,6 +368,63 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         tvs.consolidate{ value: value }(requests, maxFeePerConsolidation, owner);
     }
 
+    function testConsolidateFailsIfFeeExceedsValueForMultipleConsolidations() public {
+        address CONSOLIDATION_CONTRACT_ADDRESS = 0x00431F263cE400f4455c2dCf564e53007Ca4bbBb;
+
+        // Prepare mock data for consolidation
+        bytes[] memory srcPubkeys = new bytes[](4);
+        srcPubkeys[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[1] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[2] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys[3] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        // Prepare mock data for consolidation
+        bytes[] memory srcPubkeys2 = new bytes[](4);
+        srcPubkeys2[0] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys2[1] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys2[2] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+        srcPubkeys2[3] =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes memory targetPubkey2 =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](2);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+        requests[1] = ITVS.ConsolidationRequest(srcPubkeys2, targetPubkey2);
+
+        uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
+        vm.deal(owner, 1 ether); // Give enough funds for the test
+
+        // leave suplus funds in contract. so although enough funds exist
+        // in contract we still expect revert because fees should only come from
+        // sufficient msg.value
+        vm.deal(address(tvs), 10 ether);
+
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
+
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        vm.prank(owner);
+
+        // Expect the transaction to revert due to insufficient value for total fee
+        uint256 totalOperations = 4 * 2; // 4 srcPubkeys per request × 2 requests
+        uint256 value = maxFeePerConsolidation * totalOperations - 1;
+        uint256 totalFeeRequired = maxFeePerConsolidation * totalOperations;
+        vm.expectRevert(abi.encodeWithSignature("InsufficientValueForFee(uint256,uint256)", value, totalFeeRequired));
+        tvs.consolidate{ value: value }(requests, maxFeePerConsolidation, owner);
+    }
+
     /**
      * @notice Tests that the consolidate function reverts when the request fails.
      */
