@@ -103,7 +103,16 @@ abstract contract TVS is ITVS, BaseSecurity {
         // Check if fee exceeds maximum allowed, otherwise get fee
         uint256 fee = _validateAndReturnFee(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation);
 
-        uint256 totalFeePaid = 0;
+        // Calculate total number of consolidation operations
+        uint256 totalNumOfConsolidationOperations = 0;
+        for (uint256 i = 0; i < requests.length; i++) {
+            totalNumOfConsolidationOperations += requests[i].srcPubkeys.length;
+        }
+        // Check if the msg.value is enough to cover the fees
+        uint256 totalFeeRequired = fee * totalNumOfConsolidationOperations;
+        _validateSufficientValueForFee(msg.value, totalFeeRequired);
+
+        // Perform the consolidation requests
         for (uint256 i = 0; i < requests.length; i++) {
             _validatePubkeyLength(requests[i].targetPubkey);
 
@@ -116,19 +125,12 @@ abstract contract TVS is ITVS, BaseSecurity {
                 if (!writeOK) {
                     revert RequestFailed();
                 }
-
-                totalFeePaid += fee;
-
                 // Emit consolidation event for each operation
                 emit ConsolidationRequested(requests[i].srcPubkeys[j], requests[i].targetPubkey, fee);
             }
         }
-
-        // Ensure only msg.value is used
-        _validateSufficientValueForFee(msg.value, totalFeePaid);
-
-        // Refund any access value back to the excessFeeRecipient
-        _refundExcessFee(msg.value, totalFeePaid, excessFeeRecipient);
+        // Refund any excess value back to the excessFeeRecipient
+        _refundExcessFee(msg.value, totalFeeRequired, excessFeeRecipient);
     }
 
     /// @inheritdoc ITVS
