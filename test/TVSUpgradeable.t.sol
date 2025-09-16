@@ -344,7 +344,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
         string memory returnedVersion = tvs.version();
 
         // Assert that the returned version matches the expected value
-        assertEq(returnedVersion, "1.0.1 U", "Version string does not match expected value");
+        assertEq(returnedVersion, "1.0.0", "Version string does not match expected value");
     }
 
     /**

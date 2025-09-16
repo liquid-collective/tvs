@@ -32,6 +32,6 @@ abstract contract TVSImmutableBase is TVS {
 
     /// @inheritdoc ITVS
     function version() external pure returns (string memory) {
-        return "1.0.1 I";
+        return "1.0.0";
     }
 }
