@@ -103,13 +103,22 @@ abstract contract TVS is ITVS, BaseSecurity {
         // Check if fee exceeds maximum allowed, otherwise get fee
         uint256 fee = _validateAndReturnFee(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation);
 
-        uint256 totalFeePaid = 0;
+        // Calculate total number of valid consolidation operations needed
+        uint256 totalNumOfConsolidationOperations = 0;
         for (uint256 i = 0; i < requests.length; i++) {
             _validatePubkeyLength(requests[i].targetPubkey);
-
             for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
                 _validatePubkeyLength(requests[i].srcPubkeys[j]);
+                totalNumOfConsolidationOperations++;
+            }
+        }
 
+        // Check if the value sent is enough to cover the fees (fail early)
+        uint256 totalFeeRequired = fee * totalNumOfConsolidationOperations;
+        _validateSufficientValueForFee(msg.value, totalFeeRequired);
+
+        for (uint256 i = 0; i < requests.length; i++) {
+            for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
                 // Add the consolidation request
                 bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
                 (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{ value: fee }(callData);
@@ -117,18 +126,12 @@ abstract contract TVS is ITVS, BaseSecurity {
                     revert RequestFailed();
                 }
 
-                totalFeePaid += fee;
-
                 // Emit consolidation event for each operation
                 emit ConsolidationRequested(requests[i].srcPubkeys[j], requests[i].targetPubkey, fee);
             }
         }
-
-        // Ensure only msg.value is used
-        _validateSufficientValueForFee(msg.value, totalFeePaid);
-
-        // Refund any access value back to the excessFeeRecipient
-        _refundExcessFee(msg.value, totalFeePaid, excessFeeRecipient);
+        // Refund any excess value back to the excessFeeRecipient
+        _refundExcessFee(msg.value, totalFeeRequired, excessFeeRecipient);
     }
 
     /// @inheritdoc ITVS
