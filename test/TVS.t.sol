@@ -349,7 +349,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
         vm.deal(owner, maxFeePerConsolidation);
 
-        // leave suplus funds in contract. so although enough funds exist
+        // leave surplus funds in contract. so although enough funds exist
         // in contract we still expect revert because fees should only come from
         // sufficient msg.value
         vm.deal(address(tvs), 10 ether);
@@ -406,7 +406,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerConsolidation = 0.1 ether; // Example max fee
         vm.deal(owner, 1 ether); // Give enough funds for the test
 
-        // leave suplus funds in contract. so although enough funds exist
+        // leave surplus funds in contract. so although enough funds exist
         // in contract we still expect revert because fees should only come from
         // sufficient msg.value
         vm.deal(address(tvs), 10 ether);
