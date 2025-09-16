@@ -103,29 +103,28 @@ abstract contract TVS is ITVS, BaseSecurity {
         // Check if fee exceeds maximum allowed, otherwise get fee
         uint256 fee = _validateAndReturnFee(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation);
 
-        // Calculate total number of valid consolidation operations needed
+        // Calculate total number of consolidation operations
         uint256 totalNumOfConsolidationOperations = 0;
         for (uint256 i = 0; i < requests.length; i++) {
-            _validatePubkeyLength(requests[i].targetPubkey);
-            for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
-                _validatePubkeyLength(requests[i].srcPubkeys[j]);
-                totalNumOfConsolidationOperations++;
-            }
+                totalNumOfConsolidationOperations += requests[i].srcPubkeys.length;
         }
-
-        // Check if the value sent is enough to cover the fees (fail early)
+        // Check if the msg.value is enough to cover the fees
         uint256 totalFeeRequired = fee * totalNumOfConsolidationOperations;
         _validateSufficientValueForFee(msg.value, totalFeeRequired);
 
+        // Perform the consolidation requests
         for (uint256 i = 0; i < requests.length; i++) {
+            _validatePubkeyLength(requests[i].targetPubkey);
+
             for (uint256 j = 0; j < requests[i].srcPubkeys.length; j++) {
+                _validatePubkeyLength(requests[i].srcPubkeys[j]);
+
                 // Add the consolidation request
                 bytes memory callData = bytes.concat(requests[i].srcPubkeys[j], requests[i].targetPubkey);
                 (bool writeOK,) = CONSOLIDATION_CONTRACT_ADDRESS.call{ value: fee }(callData);
                 if (!writeOK) {
                     revert RequestFailed();
                 }
-
                 // Emit consolidation event for each operation
                 emit ConsolidationRequested(requests[i].srcPubkeys[j], requests[i].targetPubkey, fee);
             }
