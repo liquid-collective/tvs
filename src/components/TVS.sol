@@ -106,7 +106,7 @@ abstract contract TVS is ITVS, BaseSecurity {
         // Calculate total number of consolidation operations
         uint256 totalNumOfConsolidationOperations = 0;
         for (uint256 i = 0; i < requests.length; i++) {
-                totalNumOfConsolidationOperations += requests[i].srcPubkeys.length;
+            totalNumOfConsolidationOperations += requests[i].srcPubkeys.length;
         }
         // Check if the msg.value is enough to cover the fees
         uint256 totalFeeRequired = fee * totalNumOfConsolidationOperations;
