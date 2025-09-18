@@ -95,7 +95,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
 
     /// @inheritdoc ITVS
     function version() external pure returns (string memory) {
-        return "v1.0.0 U";
+        return "1.0.0";
     }
 
     /**
