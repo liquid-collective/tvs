@@ -182,7 +182,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvsupgradeable"><a class="header" href="#tvsupgradeable">TVSUpgradeable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/38611239716fb860d808f1c79c23ba140dc875ae/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/d3aba8a1538d1ee4f43492c1c82ba8119b9bcbfc/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.html">ITVSUpgradeable</a>, <a href="/src/components/TVS.sol/abstract.TVS.html">TVS</a></p>
 <p><strong>Author:</strong>
@@ -242,6 +242,16 @@ beneficiary, and beacon address of the TVS</em></p>
 <tr><td><code>newOwner</code></td><td><code>address</code></td><td>The new owner address.</td></tr>
 </tbody></table>
 </div>
+<h3 id="accepttransfer"><a class="header" href="#accepttransfer">acceptTransfer</a></h3>
+<p>Accepts the ownership transfer.</p>
+<p><em>Only the new owner can call this function.</em></p>
+<pre><code class="language-solidity">function acceptTransfer() external nonReentrant;
+</code></pre>
+<h3 id="canceltransfer"><a class="header" href="#canceltransfer">cancelTransfer</a></h3>
+<p>Cancels the ownership transfer.</p>
+<p><em>Only the owner can call this function.</em></p>
+<pre><code class="language-solidity">function cancelTransfer() external onlyOwner;
+</code></pre>
 <h3 id="setbeaconunchecked"><a class="header" href="#setbeaconunchecked">setBeaconUnchecked</a></h3>
 <p>This function is used by the <a href="/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.html#setbeacon">setBeacon</a> function to directly set the beacon address without
 additional checks</p>
