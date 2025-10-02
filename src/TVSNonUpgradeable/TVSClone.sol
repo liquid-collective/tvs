@@ -15,10 +15,7 @@ import "./TVSImmutableBase.sol";
  */
 contract TVSClone is TVSImmutableBase {
     // @inheritdoc TVSImmutableBase
-    constructor(
-        address withdrawalContractAddress,
-        address consolidationContractAddress
-    )
+    constructor(address withdrawalContractAddress, address consolidationContractAddress)
         TVSImmutableBase(withdrawalContractAddress, consolidationContractAddress)
     {
         _disableInitializers();

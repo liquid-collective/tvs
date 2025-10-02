@@ -36,11 +36,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      *        to deploy a new immutable beacon contract for the TVS, and this factory address is not persisted on the
      *        TVS contract.
      */
-    constructor(
-        address withdrawalContractAddress,
-        address consolidationContractAddress,
-        address immutableBeaconFactory
-    )
+    constructor(address withdrawalContractAddress, address consolidationContractAddress, address immutableBeaconFactory)
         TVS(withdrawalContractAddress, consolidationContractAddress)
     {
         immutableBeacon = IImmutableBeaconFactory(immutableBeaconFactory).deployBeacon(address(this));
@@ -67,6 +63,16 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     function transfer(address newBeneficiary, address newOwner) external override onlyOwner nonReentrant {
         _setBeacon(immutableBeacon);
         _transfer(newBeneficiary, newOwner);
+    }
+
+    /// @inheritdoc ITVS
+    function acceptTransfer() external nonReentrant {
+        _acceptTransfer();
+    }
+
+    /// @inheritdoc ITVS
+    function cancelTransfer() external onlyOwner {
+        _cancelTransfer();
     }
 
     /**

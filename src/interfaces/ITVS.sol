@@ -45,7 +45,12 @@ interface ITVS {
      * @param newBeneficiary The address of the new beneficiary.
      * @param newOwner The address of the new owner.
      */
-    event Transferred(address indexed newBeneficiary, address indexed newOwner);
+    event OwnershipTransferAccepted(address indexed newBeneficiary, address indexed newOwner);
+
+    /**
+     * @notice Emitted when the ownership transfer is canceled.
+     */
+    event TransferCanceled();
 
     /**
      * @notice Emitted when a withdrawal request is submitted for a validator.
@@ -139,7 +144,7 @@ interface ITVS {
      * @notice Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
      * @dev Only the owner can specify a custom beneficiary for the sweep
      * @dev Emits {Swept} event.
-     * @param beneficiary Address to which funds will be swept, if zero address, sweeps to the  beneficiary address set
+     * @param beneficiary Address to which funds will be swept, if zero address, sweeps to the beneficiary address set
      * on the contract
      * @param amount Amount of funds to sweep, if zero, sweeps all funds on contract
      */
@@ -153,7 +158,7 @@ interface ITVS {
      * @param beneficiary Address for the contract to which funds will be swept, if zero address, sweeps to the
      * beneficiary address set
      * on the contract
-     * @param amount  Amount of funds to sweep, if zero, sweeps all funds on contract.
+     * @param amount Amount of funds to sweep, if zero, sweeps all funds on contract.
      */
     function sweepToBeneficiaryContract(address beneficiary, uint256 amount) external;
 
@@ -174,6 +179,20 @@ interface ITVS {
      * @param newOwner The new owner address.
      */
     function transfer(address newBeneficiary, address newOwner) external;
+
+    /**
+     * @notice Accepts the ownership transfer.
+     * @dev Only the new owner can call this function.
+     * @dev Emits a {Transferred} event.
+     */
+    function acceptTransfer() external;
+
+    /**
+     * @notice Cancels the ownership transfer.
+     * @dev Only the owner can call this function.
+     * @dev Emits a {TransferCanceled} event.
+     */
+    function cancelTransfer() external;
 
     /**
      * @notice Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.

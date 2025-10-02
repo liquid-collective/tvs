@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Proprietary
+// SPDX-License-Identifier: Proprietary
 
 pragma solidity 0.8.29;
 
@@ -300,10 +300,19 @@ contract TVSUpgradeableTest is BaseTVSTest {
         address newBeneficiary = makeAddr("newBeneficiary");
         address newOwner = makeAddr("newOwner");
 
+        address oldBeneficiary = tvsV1.getBeneficiary();
+        address oldOwner = tvsV1.owner();
+
         address oldBeacon = tvsV1.beacon();
 
         vm.prank(owner);
         tvsV1.transfer(newBeneficiary, newOwner);
+
+        assertEq(tvsV1.getBeneficiary(), oldBeneficiary, "Beneficiary address updated!");
+        assertEq(tvsV1.owner(), oldOwner, "Owner address updated!");
+
+        vm.prank(newOwner);
+        tvs.acceptTransfer();
 
         assertEq(tvsV1.getBeneficiary(), newBeneficiary, "Beneficiary address not updated");
         assertNotEq(tvsV1.beacon(), oldBeacon, "Beacon did not change after transfer");
@@ -324,9 +333,9 @@ contract TVSUpgradeableTest is BaseTVSTest {
 
         address invalidImmutableBeaconFactory = address(new MockInvalidImmutableBeaconFactory());
 
-        tvsImplementation = payable(
-            new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, invalidImmutableBeaconFactory)
-        );
+        tvsImplementation = payable(new TVSV1(
+                WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, invalidImmutableBeaconFactory
+            ));
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
 
         ITVS tvs = deployTVS();

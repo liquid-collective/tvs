@@ -2,6 +2,7 @@
 pragma solidity 0.8.29;
 
 import "../state/Beneficiary.sol";
+import "../state/PendingBeneficiary.sol";
 import "../interfaces/ITVSSweepBeneficiary.sol";
 import "../components/BaseSecurity.sol";
 import "../interfaces/ITVS.sol";
@@ -159,12 +160,32 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @notice Internal function to transfer the TVS to a new beneficiary and owner.
      * @dev This function is used to transfer the TVS to a new beneficiary and owner.
      * @param _beneficiary The address of the new beneficiary.
-     * @param _owner The address of the new owner.
+     * @param _newOwner The address of the new owner.
      */
-    function _transfer(address _beneficiary, address _owner) internal {
-        _setBeneficiary(_beneficiary);
-        transferOwnership(_owner);
-        emit Transferred(_beneficiary, _owner);
+    function _transfer(address _beneficiary, address _newOwner) internal {
+        _setPendingBeneficiary(_beneficiary);
+        transferOwnership(_newOwner);
+    }
+
+    /**
+     * @notice Internal function to accept the ownership transfer.
+     * @dev This function is used to accept the ownership transfer.
+     */
+    function _acceptTransfer() internal {
+        acceptOwnership();
+        _setBeneficiary(PendingBeneficiary.get());
+        PendingBeneficiary.set(address(0));
+        emit OwnershipTransferAccepted(Beneficiary.get(), owner());
+    }
+
+    /**
+     * @notice Internal function to cancel the ownership transfer.
+     * @dev This function is used to cancel the ownership transfer.
+     */
+    function _cancelTransfer() internal {
+        PendingBeneficiary.set(address(0));
+        _clearPendingOwner();
+        emit TransferCanceled();
     }
 
     /**
@@ -178,16 +199,21 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
+     * @notice Internal function to set the pending beneficiary address.
+     * @param _newPendingBeneficiary The address of the new pending beneficiary.
+     */
+    function _setPendingBeneficiary(address _newPendingBeneficiary) internal {
+        if (_newPendingBeneficiary == address(0)) revert InvalidAddress();
+        PendingBeneficiary.set(_newPendingBeneficiary);
+    }
+
+    /**
      * @dev Internal function to refund the excess fee for pectra related operations.
      * @param _totalValueReceived The total value received.
      * @param _totalFeePaid The total fee paid.
      * @param _excessFeeRecipient The address of the excess fee recipient.
      */
-    function _refundExcessFee(
-        uint256 _totalValueReceived,
-        uint256 _totalFeePaid,
-        address _excessFeeRecipient
-    )
+    function _refundExcessFee(uint256 _totalValueReceived, uint256 _totalFeePaid, address _excessFeeRecipient)
         internal
     {
         // send excess value back to _excessFeeRecipient

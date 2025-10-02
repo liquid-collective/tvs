@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: Proprietary
 pragma solidity 0.8.29;
 
-import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
+import "openzeppelin-contracts-upgradeable/contracts/access/Ownable2StepUpgradeable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardTransientUpgradeable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
@@ -33,14 +33,17 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.s
  * @dev Inheriting contracts should call `_setupSecurity` during their initialization or
  *      deployment phase to properly configure ownership and reentrancy protection.
  */
-abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyGuardTransientUpgradeable {
+abstract contract BaseSecurity is Initializable, Ownable2StepUpgradeable, ReentrancyGuardTransientUpgradeable {
+    // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Ownable2Step")) - 1)) & ~bytes32(uint256(0xff))
+    bytes32 private constant Ownable2StepStorageLocation =
+        0x237e158222e3e6968b72b9db0d8043aacf074ad9f650f0d1606b4d82ee432c00;
     /**
      * @notice Error thrown when ownership cannot be renounced.
      */
     error OwnershipCannotBeRenounced();
 
     /**
-     * @notice Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement
+     * @notice Overrides the renounceOwnership function from Ownable2StepUpgradeable to prevent ownership renouncement
      * @dev This function is intentionally left empty to prevent ownership renouncement by mistake
      * @dev Emits an {OwnershipCannotBeRenounced} error
      * @dev Only callable by the contract owner
@@ -55,6 +58,15 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
      */
     function _setupSecurity(address _owner) internal initializer {
         __Ownable_init(_owner);
+        __Ownable2Step_init();
         __ReentrancyGuardTransient_init();
+    }
+
+    function _clearPendingOwner() internal {
+        Ownable2StepUpgradeable.Ownable2StepStorage storage $;
+        assembly {
+            $.slot := Ownable2StepStorageLocation
+        }
+        delete $._pendingOwner;
     }
 }

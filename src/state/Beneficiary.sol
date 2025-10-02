@@ -1,4 +1,4 @@
-//SPDX-License-Identifier: Proprietary
+// SPDX-License-Identifier: Proprietary
 pragma solidity 0.8.29;
 
 import "openzeppelin-contracts/contracts/utils/StorageSlot.sol";

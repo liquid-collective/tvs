@@ -18,16 +18,23 @@ abstract contract TVSImmutableBase is TVS {
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
      */
-    constructor(
-        address withdrawalContractAddress,
-        address consolidationContractAddress
-    )
+    constructor(address withdrawalContractAddress, address consolidationContractAddress)
         TVS(withdrawalContractAddress, consolidationContractAddress)
     { }
 
     /// @inheritdoc ITVS
     function transfer(address newBeneficiary, address newOwner) external onlyOwner nonReentrant {
         _transfer(newBeneficiary, newOwner);
+    }
+
+    /// @inheritdoc ITVS
+    function acceptTransfer() external nonReentrant {
+        _acceptTransfer();
+    }
+
+    /// @inheritdoc ITVS
+    function cancelTransfer() external onlyOwner {
+        _cancelTransfer();
     }
 
     /// @inheritdoc ITVS
