@@ -33,6 +33,30 @@ abstract contract TVSImmutableBaseTest is BaseTVSTest {
     }
 
     /**
+     * @notice Tests the cancelTransfer function.
+     * @dev Ensures that no state changes took effect
+     */
+    function testTransferCancel() public {
+        address newBeneficiary = makeAddr("newBeneficiary");
+        address newOwner = makeAddr("newOwner");
+
+        address oldBeneficiary = tvs.getBeneficiary();
+        address oldOwner = Ownable(address(tvs)).owner();
+
+        vm.prank(owner);
+        tvs.transfer(newBeneficiary, newOwner);
+
+        assertEq(tvs.getBeneficiary(), oldBeneficiary, "Beneficiary address updated!");
+        assertEq(Ownable(address(tvs)).owner(), oldOwner, "Owner address updated!");
+
+        vm.prank(owner);
+        tvs.cancelTransfer();
+
+        assertEq(tvs.getBeneficiary(), oldBeneficiary, "Beneficiary address not updated");
+        assertEq(Ownable(address(tvs)).owner(), oldOwner, "Owner address not updated");
+    }
+
+    /**
      * @notice Tests the version function.
      * @dev Ensures that the version function returns the correct version string.
      */

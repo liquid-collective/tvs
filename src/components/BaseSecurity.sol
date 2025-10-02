@@ -34,9 +34,12 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.s
  *      deployment phase to properly configure ownership and reentrancy protection.
  */
 abstract contract BaseSecurity is Initializable, Ownable2StepUpgradeable, ReentrancyGuardTransientUpgradeable {
+    // The following storage location is copied from OpenZeppelin's Ownable2StepUpgradeable contract
+    // It is copied here as the upgradeable library does not provide a public getter for the storage location
     // keccak256(abi.encode(uint256(keccak256("openzeppelin.storage.Ownable2Step")) - 1)) & ~bytes32(uint256(0xff))
     bytes32 private constant Ownable2StepStorageLocation =
         0x237e158222e3e6968b72b9db0d8043aacf074ad9f650f0d1606b4d82ee432c00;
+
     /**
      * @notice Error thrown when ownership cannot be renounced.
      */
@@ -62,6 +65,10 @@ abstract contract BaseSecurity is Initializable, Ownable2StepUpgradeable, Reentr
         __ReentrancyGuardTransient_init();
     }
 
+    /**
+     * @notice Internal function to clear the pending owner.
+     * @dev This function is used to clear the pending owner.
+     */
     function _clearPendingOwner() internal {
         Ownable2StepUpgradeable.Ownable2StepStorage storage $;
         assembly {

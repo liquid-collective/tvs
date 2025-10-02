@@ -325,6 +325,30 @@ contract TVSUpgradeableTest is BaseTVSTest {
     }
 
     /**
+     * @notice Tests the cancelTransfer function.
+     * @dev Ensures that no state changes took effect
+     */
+    function testTransferCancel() public {
+        address newBeneficiary = makeAddr("newBeneficiary");
+        address newOwner = makeAddr("newOwner");
+
+        address oldBeneficiary = tvsV1.getBeneficiary();
+        address oldOwner = tvsV1.owner();
+
+        vm.prank(owner);
+        tvsV1.transfer(newBeneficiary, newOwner);
+
+        assertEq(tvsV1.getBeneficiary(), oldBeneficiary, "Beneficiary address updated!");
+        assertEq(tvsV1.owner(), oldOwner, "Owner address updated!");
+
+        vm.prank(owner);
+        tvsV1.cancelTransfer();
+
+        assertEq(tvsV1.getBeneficiary(), oldBeneficiary, "Beneficiary address not updated");
+        assertEq(tvsV1.owner(), oldOwner, "Owner address not updated");
+    }
+
+    /**
      * @notice Tests that the transfer function fails if an invalid beacon is provided.
      */
     function testTransferFailsWithInvalidBeacon() public {
