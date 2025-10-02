@@ -985,6 +985,18 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     /**
+     * @notice Tests that the transfer function fails if the new beneficiary is a zero address.
+     */
+    function testTransferFailsIfNewBeneficiaryIsZeroAddress() public {
+        address newOwner = makeAddr("newOwner");
+        address newBeneficiary = address(0);
+
+        vm.prank(owner);
+        vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
+        tvs.transfer(newBeneficiary, newOwner);
+    }
+
+    /**
      * @notice Tests that renounceOwnership reverts with the expected error.
      */
     function testRenounceOwnershipReverts() public {
