@@ -339,7 +339,7 @@ yarn install
 <li><a href="src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.html">ITVSFlexibleImmutable</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="itvsflexibleimmutable"><a class="header" href="#itvsflexibleimmutable">ITVSFlexibleImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>Interface for the TVSFlexibleImmutable contract</p>
@@ -395,7 +395,7 @@ NOTE:</p>
 <tr><td><code>isDelegateCall</code></td><td><code>bool</code></td><td>Boolean flag to indicate whether to perform a delegatecall (true) or a call (false).</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsclone"><a class="header" href="#tvsclone">TVSClone</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSNonUpgradeable/TVSClone.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSNonUpgradeable/TVSClone.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSNonUpgradeable/TVSClone.sol//src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.html">TVSImmutableBase</a></p>
 <p><strong>Author:</strong>
@@ -426,7 +426,7 @@ non-upgradeable.</em></p>
 <tr><td><code>owner</code></td><td><code>address</code></td><td>The address that will have ownership rights over the TVS</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsflexibleimmutable"><a class="header" href="#tvsflexibleimmutable">TVSFlexibleImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSNonUpgradeable/TVSFlexibleImmutable.sol//src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.html">ITVSFlexibleImmutable</a>, <a href="src/TVSNonUpgradeable/TVSFlexibleImmutable.sol//src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.html">TVSImmutable</a></p>
 <p><strong>Author:</strong>
@@ -505,7 +505,7 @@ isDelegateCall flag.</em></p>
 <tr><td><code>_returnData</code></td><td><code>bytes</code></td><td>The return data from the call</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsimmutable"><a class="header" href="#tvsimmutable">TVSImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSNonUpgradeable/TVSImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSNonUpgradeable/TVSImmutable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSNonUpgradeable/TVSImmutable.sol//src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.html">TVSImmutableBase</a></p>
 <p><strong>Author:</strong>
@@ -540,7 +540,7 @@ the new addresses due to the immutability of this contract.</em></p>
 <tr><td><code>consolidationContractAddress</code></td><td><code>address</code></td><td>The address of the consolidation contract</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsimmutablebase"><a class="header" href="#tvsimmutablebase">TVSImmutableBase</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSNonUpgradeable/TVSImmutableBase.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSNonUpgradeable/TVSImmutableBase.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSNonUpgradeable/TVSImmutableBase.sol//src/components/TVS.sol/abstract.TVS.html">TVS</a></p>
 <p><strong>Author:</strong>
@@ -576,16 +576,6 @@ once here in the constructor.</em></p>
 <tr><td><code>newOwner</code></td><td><code>address</code></td><td>The new owner address.</td></tr>
 </tbody></table>
 </div>
-<h3 id="accepttransfer"><a class="header" href="#accepttransfer">acceptTransfer</a></h3>
-<p>Accepts the ownership transfer.</p>
-<p><em>Only the new owner can call this function.</em></p>
-<pre><code class="language-solidity">function acceptTransfer() external nonReentrant;
-</code></pre>
-<h3 id="canceltransfer"><a class="header" href="#canceltransfer">cancelTransfer</a></h3>
-<p>Cancels the ownership transfer.</p>
-<p><em>Only the owner can call this function.</em></p>
-<pre><code class="language-solidity">function cancelTransfer() external onlyOwner;
-</code></pre>
 <h3 id="version"><a class="header" href="#version">version</a></h3>
 <p>Retrieves the version of the contract.</p>
 <pre><code class="language-solidity">function version() external pure returns (string memory);
@@ -609,7 +599,7 @@ once here in the constructor.</em></p>
 <li><a href="src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.html">ITVSUpgradeable</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="iimmutablebeaconfactory"><a class="header" href="#iimmutablebeaconfactory">IImmutableBeaconFactory</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol">Git Source</a></p>
 <p>Interface for the Immutable Beacon Factory</p>
 <p><em>This interface is used to deploy new immutable beacon contracts</em></p>
 <h2 id="functions-5"><a class="header" href="#functions-5">Functions</a></h2>
@@ -627,7 +617,7 @@ once here in the constructor.</em></p>
 <tr><td><code>beacon</code></td><td><code>address</code></td><td>The address of the deployed immutable beacon</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="itvsupgradeable"><a class="header" href="#itvsupgradeable">ITVSUpgradeable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol//src/interfaces/ITVS.sol/interface.ITVS.html">ITVS</a></p>
 <p><strong>Author:</strong>
@@ -676,7 +666,7 @@ Alluvial Finance Inc.</p>
 <li><a href="src/TVSUpgradeable/proxies/TVSBeaconProxy.sol/contract.TVSBeaconProxy.html">TVSBeaconProxy</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="tvsbeaconproxy"><a class="header" href="#tvsbeaconproxy">TVSBeaconProxy</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>This is an EIP-1167 minimal proxy that interacts with an upgradable beacon contract</p>
@@ -735,7 +725,7 @@ initialize has invalid addresses.</em></p>
 <li><a href="src/TVSUpgradeable/state/proxy/Beacon.sol/library.Beacon.html">Beacon</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="beacon-1"><a class="header" href="#beacon-1">Beacon</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSUpgradeable/state/proxy/Beacon.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSUpgradeable/state/proxy/Beacon.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>This library manages the beacon address for the proxy contract</p>
@@ -769,7 +759,7 @@ implementation</em></p>
 <tr><td><code>&lt;none&gt;</code></td><td><code>address</code></td><td>The beacon address</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="immutablebeacon"><a class="header" href="#immutablebeacon">ImmutableBeacon</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSUpgradeable/ImmutableBeacon.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSUpgradeable/ImmutableBeacon.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>An immutable beacon whose implementation can never be altered after deployment</p>
@@ -798,7 +788,7 @@ Alluvial Finance Inc.</p>
 <pre><code class="language-solidity">error InvalidImplementation();
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="immutablebeaconfactory"><a class="header" href="#immutablebeaconfactory">ImmutableBeaconFactory</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSUpgradeable/ImmutableBeaconFactory.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSUpgradeable/ImmutableBeaconFactory.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSUpgradeable/ImmutableBeaconFactory.sol//src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol/interface.IImmutableBeaconFactory.html">IImmutableBeaconFactory</a></p>
 <p><strong>Author:</strong>
@@ -820,7 +810,7 @@ frozen after deployment</p>
 <tr><td><code>beacon</code></td><td><code>address</code></td><td>The address of the deployed immutable beacon</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsupgradeable"><a class="header" href="#tvsupgradeable">TVSUpgradeable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSUpgradeable/TVSUpgradeable.sol//src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.html">ITVSUpgradeable</a>, <a href="src/TVSUpgradeable/TVSUpgradeable.sol//src/components/TVS.sol/abstract.TVS.html">TVS</a></p>
 <p><strong>Author:</strong>
@@ -880,16 +870,6 @@ beneficiary, and beacon address of the TVS</em></p>
 <tr><td><code>newOwner</code></td><td><code>address</code></td><td>The new owner address.</td></tr>
 </tbody></table>
 </div>
-<h3 id="accepttransfer-1"><a class="header" href="#accepttransfer-1">acceptTransfer</a></h3>
-<p>Accepts the ownership transfer.</p>
-<p><em>Only the new owner can call this function.</em></p>
-<pre><code class="language-solidity">function acceptTransfer() external nonReentrant;
-</code></pre>
-<h3 id="canceltransfer-1"><a class="header" href="#canceltransfer-1">cancelTransfer</a></h3>
-<p>Cancels the ownership transfer.</p>
-<p><em>Only the owner can call this function.</em></p>
-<pre><code class="language-solidity">function cancelTransfer() external onlyOwner;
-</code></pre>
 <h3 id="setbeaconunchecked"><a class="header" href="#setbeaconunchecked">setBeaconUnchecked</a></h3>
 <p>This function is used by the <a href="src/TVSUpgradeable/TVSUpgradeable.sol//src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.html#setbeacon">setBeacon</a> function to directly set the beacon address without
 additional checks</p>
@@ -949,9 +929,9 @@ call to the implementation contract, and reverts if the call fails</em></p>
 <li><a href="src/components/TVS.sol/abstract.TVS.html">TVS</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="basesecurity"><a class="header" href="#basesecurity">BaseSecurity</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/components/BaseSecurity.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/components/BaseSecurity.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
-Initializable, Ownable2StepUpgradeable, ReentrancyGuardTransientUpgradeable</p>
+Initializable, OwnableUpgradeable, ReentrancyGuardTransientUpgradeable</p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>This contract uses OpenZeppelin's upgradeable libraries to ensure compatibility
@@ -977,14 +957,9 @@ the different Ownable and ReentrancyGuard implementations.*</li>
 </ul>
 <p><em>Inheriting contracts should call <code>_setupSecurity</code> during their initialization or
 deployment phase to properly configure ownership and reentrancy protection.</em></p>
-<h2 id="state-variables-3"><a class="header" href="#state-variables-3">State Variables</a></h2>
-<h3 id="ownable2stepstoragelocation"><a class="header" href="#ownable2stepstoragelocation">Ownable2StepStorageLocation</a></h3>
-<pre><code class="language-solidity">bytes32 private constant Ownable2StepStorageLocation =
-    0x237e158222e3e6968b72b9db0d8043aacf074ad9f650f0d1606b4d82ee432c00;
-</code></pre>
 <h2 id="functions-12"><a class="header" href="#functions-12">Functions</a></h2>
 <h3 id="renounceownership"><a class="header" href="#renounceownership">renounceOwnership</a></h3>
-<p>Overrides the renounceOwnership function from Ownable2StepUpgradeable to prevent ownership renouncement</p>
+<p>Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement</p>
 <p><em>This function is intentionally left empty to prevent ownership renouncement by mistake</em></p>
 <p><em>Emits an <a href="src/components/BaseSecurity.sol//src/components/BaseSecurity.sol/abstract.BaseSecurity.html#ownershipcannotberenounced">OwnershipCannotBeRenounced</a> error</em></p>
 <p><em>Only callable by the contract owner</em></p>
@@ -999,24 +974,19 @@ deployment phase to properly configure ownership and reentrancy protection.</em>
 <tr><td><code>_owner</code></td><td><code>address</code></td><td>The address to set as the owner of the contract.</td></tr>
 </tbody></table>
 </div>
-<h3 id="_clearpendingowner"><a class="header" href="#_clearpendingowner">_clearPendingOwner</a></h3>
-<p>Internal function to clear the pending owner.</p>
-<p><em>This function is used to clear the pending owner.</em></p>
-<pre><code class="language-solidity">function _clearPendingOwner() internal;
-</code></pre>
 <h2 id="errors-3"><a class="header" href="#errors-3">Errors</a></h2>
 <h3 id="ownershipcannotberenounced"><a class="header" href="#ownershipcannotberenounced">OwnershipCannotBeRenounced</a></h3>
 <p>Error thrown when ownership cannot be renounced.</p>
 <pre><code class="language-solidity">error OwnershipCannotBeRenounced();
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="tvs"><a class="header" href="#tvs">TVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/components/TVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/components/TVS.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/components/TVS.sol//src/interfaces/ITVS.sol/interface.ITVS.html">ITVS</a>, <a href="src/components/TVS.sol//src/components/BaseSecurity.sol/abstract.BaseSecurity.html">BaseSecurity</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>implementation of the TVS</p>
-<h2 id="state-variables-4"><a class="header" href="#state-variables-4">State Variables</a></h2>
+<h2 id="state-variables-3"><a class="header" href="#state-variables-3">State Variables</a></h2>
 <h3 id="withdrawal_contract_address"><a class="header" href="#withdrawal_contract_address">WITHDRAWAL_CONTRACT_ADDRESS</a></h3>
 <p>The address of the pectra EL withdrawal contract.</p>
 <pre><code class="language-solidity">address public immutable WITHDRAWAL_CONTRACT_ADDRESS;
@@ -1131,24 +1101,14 @@ beneficiary contract address.</p>
 <h3 id="_transfer"><a class="header" href="#_transfer">_transfer</a></h3>
 <p>Internal function to transfer the TVS to a new beneficiary and owner.</p>
 <p><em>This function is used to transfer the TVS to a new beneficiary and owner.</em></p>
-<pre><code class="language-solidity">function _transfer(address _beneficiary, address _newOwner) internal;
+<pre><code class="language-solidity">function _transfer(address _beneficiary, address _owner) internal;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>_beneficiary</code></td><td><code>address</code></td><td>The address of the new beneficiary.</td></tr>
-<tr><td><code>_newOwner</code></td><td><code>address</code></td><td>The address of the new owner.</td></tr>
+<tr><td><code>_owner</code></td><td><code>address</code></td><td>The address of the new owner.</td></tr>
 </tbody></table>
 </div>
-<h3 id="_accepttransfer"><a class="header" href="#_accepttransfer">_acceptTransfer</a></h3>
-<p>Internal function to accept the ownership transfer.</p>
-<p><em>This function is used to accept the ownership transfer.</em></p>
-<pre><code class="language-solidity">function _acceptTransfer() internal;
-</code></pre>
-<h3 id="_canceltransfer"><a class="header" href="#_canceltransfer">_cancelTransfer</a></h3>
-<p>Internal function to cancel the ownership transfer.</p>
-<p><em>This function is used to cancel the ownership transfer.</em></p>
-<pre><code class="language-solidity">function _cancelTransfer() internal;
-</code></pre>
 <h3 id="_setbeneficiary"><a class="header" href="#_setbeneficiary">_setBeneficiary</a></h3>
 <p>Internal function to set the beneficiary address.</p>
 <pre><code class="language-solidity">function _setBeneficiary(address _newBeneficiary) internal;
@@ -1156,15 +1116,6 @@ beneficiary contract address.</p>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>_newBeneficiary</code></td><td><code>address</code></td><td>The address of the new beneficiary.</td></tr>
-</tbody></table>
-</div>
-<h3 id="_setpendingbeneficiary"><a class="header" href="#_setpendingbeneficiary">_setPendingBeneficiary</a></h3>
-<p>Internal function to set the pending beneficiary address.</p>
-<pre><code class="language-solidity">function _setPendingBeneficiary(address _newPendingBeneficiary) internal;
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>_newPendingBeneficiary</code></td><td><code>address</code></td><td>The address of the new pending beneficiary.</td></tr>
 </tbody></table>
 </div>
 <h3 id="_refundexcessfee"><a class="header" href="#_refundexcessfee">_refundExcessFee</a></h3>
@@ -1234,7 +1185,7 @@ beneficiary contract address.</p>
 <li><a href="src/interfaces/ITVSSweepBeneficiary.sol/interface.ITVSSweepBeneficiary.html">ITVSSweepBeneficiary</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="itvs"><a class="header" href="#itvs">ITVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/interfaces/ITVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/interfaces/ITVS.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>Interface for the TVS contract.</p>
@@ -1252,7 +1203,7 @@ Alluvial Finance Inc.</p>
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>beneficiary</code></td><td><code>address</code></td><td>Address to which funds will be swept, if zero address, sweeps to the beneficiary address set on the contract</td></tr>
+<tr><td><code>beneficiary</code></td><td><code>address</code></td><td>Address to which funds will be swept, if zero address, sweeps to the  beneficiary address set on the contract</td></tr>
 <tr><td><code>amount</code></td><td><code>uint256</code></td><td>Amount of funds to sweep, if zero, sweeps all funds on contract</td></tr>
 </tbody></table>
 </div>
@@ -1284,7 +1235,7 @@ beneficiary contract address.</p>
 <p>Transfers the ownership of the TVS.</p>
 <p><em>This function sets a new beneficiary, transfers ownership to a new owner.</em></p>
 <p><em>Only the owner can call this function.</em></p>
-<p><em>Emits a {Transferred} event.</em></p>
+<p><em>Emits a <a href="src/interfaces/ITVS.sol//src/interfaces/ITVS.sol/interface.ITVS.html#transferred">Transferred</a> event.</em></p>
 <pre><code class="language-solidity">function transfer(address newBeneficiary, address newOwner) external;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -1293,18 +1244,6 @@ beneficiary contract address.</p>
 <tr><td><code>newOwner</code></td><td><code>address</code></td><td>The new owner address.</td></tr>
 </tbody></table>
 </div>
-<h3 id="accepttransfer-2"><a class="header" href="#accepttransfer-2">acceptTransfer</a></h3>
-<p>Accepts the ownership transfer.</p>
-<p><em>Only the new owner can call this function.</em></p>
-<p><em>Emits a {Transferred} event.</em></p>
-<pre><code class="language-solidity">function acceptTransfer() external;
-</code></pre>
-<h3 id="canceltransfer-2"><a class="header" href="#canceltransfer-2">cancelTransfer</a></h3>
-<p>Cancels the ownership transfer.</p>
-<p><em>Only the owner can call this function.</em></p>
-<p><em>Emits a <a href="src/interfaces/ITVS.sol//src/interfaces/ITVS.sol/interface.ITVS.html#transfercanceled">TransferCanceled</a> event.</em></p>
-<pre><code class="language-solidity">function cancelTransfer() external;
-</code></pre>
 <h3 id="withdraw-1"><a class="header" href="#withdraw-1">withdraw</a></h3>
 <p>Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.</p>
 <p><em>Only the owner can call this function.</em></p>
@@ -1395,9 +1334,9 @@ request could not be refunded to the {excessFeeRecipient} recipient.</p>
 <tr><td><code>excessFee</code></td><td><code>uint256</code></td><td>The amount of excess fee sent.</td></tr>
 </tbody></table>
 </div>
-<h3 id="ownershiptransferaccepted"><a class="header" href="#ownershiptransferaccepted">OwnershipTransferAccepted</a></h3>
+<h3 id="transferred"><a class="header" href="#transferred">Transferred</a></h3>
 <p>Emitted when the ownership of the TVS is transferred to a new owner.</p>
-<pre><code class="language-solidity">event OwnershipTransferAccepted(address indexed newBeneficiary, address indexed newOwner);
+<pre><code class="language-solidity">event Transferred(address indexed newBeneficiary, address indexed newOwner);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
@@ -1405,10 +1344,6 @@ request could not be refunded to the {excessFeeRecipient} recipient.</p>
 <tr><td><code>newOwner</code></td><td><code>address</code></td><td>The address of the new owner.</td></tr>
 </tbody></table>
 </div>
-<h3 id="transfercanceled"><a class="header" href="#transfercanceled">TransferCanceled</a></h3>
-<p>Emitted when the ownership transfer is canceled.</p>
-<pre><code class="language-solidity">event TransferCanceled();
-</code></pre>
 <h3 id="withdrawalrequested"><a class="header" href="#withdrawalrequested">WithdrawalRequested</a></h3>
 <p>Emitted when a withdrawal request is submitted for a validator.</p>
 <pre><code class="language-solidity">event WithdrawalRequested(bytes pubkey, uint64 indexed amount, uint256 indexed fee);
@@ -1525,7 +1460,7 @@ associated pectra EL contracts.</em></p>
 <tr><td><code>targetPubkey</code></td><td><code>bytes</code></td><td>The public key of the validator to consolidate to.</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="itvssweepbeneficiary"><a class="header" href="#itvssweepbeneficiary">ITVSSweepBeneficiary</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/interfaces/ITVSSweepBeneficiary.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/interfaces/ITVSSweepBeneficiary.sol">Git Source</a></p>
 <p>Interface for the TVS beneficiary contract to receive ETH from the TVS.</p>
 <p><em>This interface is used to receive ETH from the TVS contract.</em></p>
 <p><em>This interface should be implemented by a beneficiary contract if the contract is unable to receive direct ETH
@@ -1541,16 +1476,15 @@ function of the TVS.</em></p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="contents-9"><a class="header" href="#contents-9">Contents</a></h1>
 <ul>
 <li><a href="src/state/Beneficiary.sol/library.Beneficiary.html">Beneficiary</a></li>
-<li><a href="src/state/PendingBeneficiary.sol/library.PendingBeneficiary.html">PendingBeneficiary</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="beneficiary"><a class="header" href="#beneficiary">Beneficiary</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/state/Beneficiary.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/0ed375b621418a5056ffaed76786242790abb241/src/state/Beneficiary.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>This library manages the beneficiary address for the TVS proxy contract</p>
 <p><em>The beneficiary address is the address to which all funds are swept to when a {sweep} operation is performed</em></p>
 <p><em>The proxy contract is expected to have a <code>BENEFICIARY_SLOT</code> slot that stores the beneficiary address</em></p>
-<h2 id="state-variables-5"><a class="header" href="#state-variables-5">State Variables</a></h2>
+<h2 id="state-variables-4"><a class="header" href="#state-variables-4">State Variables</a></h2>
 <h3 id="beneficiary_slot"><a class="header" href="#beneficiary_slot">BENEFICIARY_SLOT</a></h3>
 <p>Slot for the beneficiary address</p>
 <p><em>This slot is used to store the beneficiary address for the proxy contract</em></p>
@@ -1573,39 +1507,6 @@ Alluvial Finance Inc.</p>
 <p><strong>Returns</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>&lt;none&gt;</code></td><td><code>address</code></td><td>The beneficiary address</td></tr>
-</tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="pendingbeneficiary"><a class="header" href="#pendingbeneficiary">PendingBeneficiary</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/24564fab475494e20680b31c90e9859ca5e9e67c/src/state/PendingBeneficiary.sol">Git Source</a></p>
-<p><strong>Author:</strong>
-Alluvial Finance Inc.</p>
-<p>This library manages the pending beneficiary address for the TVS proxy contract</p>
-<p><em>The pending beneficiary address is the address to which all funds are swept to when a {sweep} operation is
-performed</em></p>
-<p><em>The proxy contract is expected to have a <code>PENDING_BENEFICIARY_SLOT</code> slot that stores the pending beneficiary
-address</em></p>
-<h2 id="state-variables-6"><a class="header" href="#state-variables-6">State Variables</a></h2>
-<h3 id="pending_beneficiary_slot"><a class="header" href="#pending_beneficiary_slot">PENDING_BENEFICIARY_SLOT</a></h3>
-<p>Slot for the pending beneficiary address</p>
-<p><em>This slot is used to store the pending beneficiary address for the proxy contract</em></p>
-<pre><code class="language-solidity">bytes32 internal constant PENDING_BENEFICIARY_SLOT = bytes32(uint256(keccak256("tvs.state.pendingBeneficiary")) - 1);
-</code></pre>
-<h2 id="functions-17"><a class="header" href="#functions-17">Functions</a></h2>
-<h3 id="set-2"><a class="header" href="#set-2">set</a></h3>
-<p>Set the pending beneficiary address</p>
-<pre><code class="language-solidity">function set(address _newPendingBeneficiary) internal;
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>_newPendingBeneficiary</code></td><td><code>address</code></td><td>The new pending beneficiary address</td></tr>
-</tbody></table>
-</div>
-<h3 id="get-2"><a class="header" href="#get-2">get</a></h3>
-<p>Get the pending beneficiary address</p>
-<pre><code class="language-solidity">function get() internal view returns (address);
-</code></pre>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>&lt;none&gt;</code></td><td><code>address</code></td><td>The pending beneficiary address</td></tr>
 </tbody></table>
 </div>
                     </main>
