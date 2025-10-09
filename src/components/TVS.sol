@@ -167,6 +167,18 @@ abstract contract TVS is ITVS, BaseSecurity {
         transferOwnership(_newOwner);
     }
 
+    /// @inheritdoc ITVS
+    /// @notice This function is not protected by any modifier,
+    /// as it is only callable by the new owner which is enforced by Ownable2Step
+    function acceptTransfer() external nonReentrant {
+        _acceptTransfer();
+    }
+
+    /// @inheritdoc ITVS
+    function cancelTransfer() external onlyOwner {
+        _cancelTransfer();
+    }
+
     /**
      * @notice Internal function to accept the ownership transfer.
      * @dev This function is used to accept the ownership transfer.

@@ -28,16 +28,6 @@ abstract contract TVSImmutableBase is TVS {
     }
 
     /// @inheritdoc ITVS
-    function acceptTransfer() external nonReentrant {
-        _acceptTransfer();
-    }
-
-    /// @inheritdoc ITVS
-    function cancelTransfer() external onlyOwner {
-        _cancelTransfer();
-    }
-
-    /// @inheritdoc ITVS
     function version() external pure returns (string memory) {
         return "1.0.1";
     }

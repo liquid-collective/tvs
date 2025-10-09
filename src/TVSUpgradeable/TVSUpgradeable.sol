@@ -65,16 +65,6 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
         _transfer(newBeneficiary, newOwner);
     }
 
-    /// @inheritdoc ITVS
-    function acceptTransfer() external nonReentrant {
-        _acceptTransfer();
-    }
-
-    /// @inheritdoc ITVS
-    function cancelTransfer() external onlyOwner {
-        _cancelTransfer();
-    }
-
     /**
      * @notice This function is used by the {setBeacon} function to directly set the beacon address without
      *         additional checks
