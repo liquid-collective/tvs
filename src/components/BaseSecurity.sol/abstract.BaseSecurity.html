@@ -182,9 +182,9 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="basesecurity"><a class="header" href="#basesecurity">BaseSecurity</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/665185f34b28b32cd90194daa64bcb8e39fe0351/src/components/BaseSecurity.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/851fe9ce1c81d4b10c5e8434b6fa696b3314ba1a/src/components/BaseSecurity.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
-Initializable, Ownable2StepUpgradeable, ReentrancyGuardTransientUpgradeable</p>
+Initializable, OwnableUpgradeable, ReentrancyGuardTransientUpgradeable</p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>This contract uses OpenZeppelin's upgradeable libraries to ensure compatibility
@@ -193,10 +193,10 @@ the <code>_setupSecurity</code> function is marked as <code>initializer</code>, 
 can only be called once during the initialization phase of an upgradeable contract.
 For non-upgradeable contracts, this function can still be used during deployment
 without any issues, as it does not rely on proxy-specific behavior.</p>
-<p><em>This abstract contract provides a foundational setup for security features,
+<p>This abstract contract provides a foundational setup for security features,
 including ownership management and reentrancy protection. It is designed to
-be inherited by both upgradeable and non-upgradeable contracts.</em></p>
-<p>*Rational for using upgradeable contracts:</p>
+be inherited by both upgradeable and non-upgradeable contracts.</p>
+<p>Rational for using upgradeable contracts:</p>
 <ul>
 <li>Upgradeable contracts require initialization instead of constructors due to the
 proxy pattern. By using OpenZeppelin's upgradeable libraries, this contract ensures
@@ -206,25 +206,20 @@ as the initializer function behaves like a constructor when called during deploy
 <li>This design provides flexibility and reusability, allowing the same security setup
 to be used across all variants of TVS and thus reduces code duplication
 of functions that would otherwise be repeated in each contract simply because of
-the different Ownable and ReentrancyGuard implementations.*</li>
+the different Ownable and ReentrancyGuard implementations.</li>
 </ul>
-<p><em>Inheriting contracts should call <code>_setupSecurity</code> during their initialization or
-deployment phase to properly configure ownership and reentrancy protection.</em></p>
-<h2 id="state-variables"><a class="header" href="#state-variables">State Variables</a></h2>
-<h3 id="ownable2stepstoragelocation"><a class="header" href="#ownable2stepstoragelocation">Ownable2StepStorageLocation</a></h3>
-<pre><code class="language-solidity">bytes32 private constant Ownable2StepStorageLocation =
-    0x237e158222e3e6968b72b9db0d8043aacf074ad9f650f0d1606b4d82ee432c00;
-</code></pre>
+<p>Inheriting contracts should call <code>_setupSecurity</code> during their initialization or
+deployment phase to properly configure ownership and reentrancy protection.</p>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="renounceownership"><a class="header" href="#renounceownership">renounceOwnership</a></h3>
-<p>Overrides the renounceOwnership function from Ownable2StepUpgradeable to prevent ownership renouncement</p>
-<p><em>This function is intentionally left empty to prevent ownership renouncement by mistake</em></p>
-<p><em>Emits an <a href="/src/components/BaseSecurity.sol/abstract.BaseSecurity.html#ownershipcannotberenounced">OwnershipCannotBeRenounced</a> error</em></p>
-<p><em>Only callable by the contract owner</em></p>
+<p>Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement</p>
+<p>This function is intentionally left empty to prevent ownership renouncement by mistake</p>
+<p>Emits an <a href="//home/runner/work/tvs/tvs/docs/src/src/components/BaseSecurity.sol/abstract.BaseSecurity.html#ownershipcannotberenounced">OwnershipCannotBeRenounced</a> error</p>
+<p>Only callable by the contract owner</p>
 <pre><code class="language-solidity">function renounceOwnership() public view override onlyOwner;
 </code></pre>
 <h3 id="_setupsecurity"><a class="header" href="#_setupsecurity">_setupSecurity</a></h3>
-<p><em>Sets up the contract by initializing Ownable and ReentrancyGuard features.</em></p>
+<p>Sets up the contract by initializing Ownable and ReentrancyGuard features.</p>
 <pre><code class="language-solidity">function _setupSecurity(address _owner) internal initializer;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -232,11 +227,6 @@ deployment phase to properly configure ownership and reentrancy protection.</em>
 <tr><td><code>_owner</code></td><td><code>address</code></td><td>The address to set as the owner of the contract.</td></tr>
 </tbody></table>
 </div>
-<h3 id="_clearpendingowner"><a class="header" href="#_clearpendingowner">_clearPendingOwner</a></h3>
-<p>Internal function to clear the pending owner.</p>
-<p><em>This function is used to clear the pending owner.</em></p>
-<pre><code class="language-solidity">function _clearPendingOwner() internal;
-</code></pre>
 <h2 id="errors"><a class="header" href="#errors">Errors</a></h2>
 <h3 id="ownershipcannotberenounced"><a class="header" href="#ownershipcannotberenounced">OwnershipCannotBeRenounced</a></h3>
 <p>Error thrown when ownership cannot be renounced.</p>

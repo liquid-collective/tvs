@@ -182,30 +182,30 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvs"><a class="header" href="#tvs">TVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/665185f34b28b32cd90194daa64bcb8e39fe0351/src/components/TVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/851fe9ce1c81d4b10c5e8434b6fa696b3314ba1a/src/components/TVS.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
-<a href="/src/interfaces/ITVS.sol/interface.ITVS.html">ITVS</a>, <a href="/src/components/BaseSecurity.sol/abstract.BaseSecurity.html">BaseSecurity</a></p>
+<a href="/home/runner/work/tvs/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.html">ITVS</a>, <a href="/home/runner/work/tvs/tvs/docs/src/src/components/BaseSecurity.sol/abstract.BaseSecurity.html">BaseSecurity</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>implementation of the TVS</p>
 <h2 id="state-variables"><a class="header" href="#state-variables">State Variables</a></h2>
 <h3 id="withdrawal_contract_address"><a class="header" href="#withdrawal_contract_address">WITHDRAWAL_CONTRACT_ADDRESS</a></h3>
 <p>The address of the pectra EL withdrawal contract.</p>
-<pre><code class="language-solidity">address public immutable WITHDRAWAL_CONTRACT_ADDRESS;
+<pre><code class="language-solidity">address public immutable WITHDRAWAL_CONTRACT_ADDRESS
 </code></pre>
 <h3 id="consolidation_contract_address"><a class="header" href="#consolidation_contract_address">CONSOLIDATION_CONTRACT_ADDRESS</a></h3>
 <p>The address of the pectra EL consolidation contract.</p>
-<pre><code class="language-solidity">address public immutable CONSOLIDATION_CONTRACT_ADDRESS;
+<pre><code class="language-solidity">address public immutable CONSOLIDATION_CONTRACT_ADDRESS
 </code></pre>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="constructor"><a class="header" href="#constructor">constructor</a></h3>
 <p>Constructor for the TVS contract</p>
-<p><em>Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.</em></p>
-<p><em>The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
-once here in the constructor.</em></p>
-<p><em>All implementation versions of TVS <strong>MUST</strong> have this constructor, to ensure the correct addresses are set,
-and available to the proxy</em></p>
-<pre><code class="language-solidity">constructor(address withdrawalContractAddress, address consolidationContractAddress);
+<p>Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.</p>
+<p>The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+once here in the constructor.</p>
+<p>All implementation versions of TVS <strong>MUST</strong> have this constructor, to ensure the correct addresses are set,
+and available to the proxy</p>
+<pre><code class="language-solidity">constructor(address withdrawalContractAddress, address consolidationContractAddress) ;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
@@ -218,7 +218,7 @@ and available to the proxy</em></p>
 </code></pre>
 <h3 id="withdraw"><a class="header" href="#withdraw">withdraw</a></h3>
 <p>Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.</p>
-<p><em>Only the owner can call this function.</em></p>
+<p>Only the owner can call this function.</p>
 <pre><code class="language-solidity">function withdraw(
     bytes[] memory pubkeys,
     uint64[] calldata amount,
@@ -240,7 +240,7 @@ and available to the proxy</em></p>
 </div>
 <h3 id="consolidate"><a class="header" href="#consolidate">consolidate</a></h3>
 <p>Adds a consolidation request to the pectra EL consolidation contract for the given source validators.</p>
-<p><em>Only the owner can call this function.</em></p>
+<p>Only the owner can call this function.</p>
 <pre><code class="language-solidity">function consolidate(
     ConsolidationRequest[] calldata requests,
     uint256 maxFeePerConsolidation,
@@ -260,7 +260,7 @@ and available to the proxy</em></p>
 </div>
 <h3 id="sweep"><a class="header" href="#sweep">sweep</a></h3>
 <p>Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.</p>
-<p><em>Only the owner can specify a custom beneficiary for the sweep</em></p>
+<p>Only the owner can specify a custom beneficiary for the sweep</p>
 <pre><code class="language-solidity">function sweep(address recipient, uint256 amount) external nonReentrant;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -272,7 +272,7 @@ and available to the proxy</em></p>
 <h3 id="sweeptobeneficiarycontract"><a class="header" href="#sweeptobeneficiarycontract">sweepToBeneficiaryContract</a></h3>
 <p>Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary contract or a specified
 beneficiary contract address.</p>
-<p><em>Only the owner can specify a custom beneficiary for the sweep</em></p>
+<p>Only the owner can specify a custom beneficiary for the sweep</p>
 <pre><code class="language-solidity">function sweepToBeneficiaryContract(address beneficiary, uint256 amount) external nonReentrant;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -283,7 +283,7 @@ beneficiary contract address.</p>
 </div>
 <h3 id="setbeneficiary"><a class="header" href="#setbeneficiary">setBeneficiary</a></h3>
 <p>Sets a new beneficiary address for fund sweeping.</p>
-<p><em>Only the owner can call this function.</em></p>
+<p>Only the owner can call this function.</p>
 <pre><code class="language-solidity">function setBeneficiary(address newBeneficiary) external onlyOwner;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -302,36 +302,15 @@ beneficiary contract address.</p>
 </div>
 <h3 id="_transfer"><a class="header" href="#_transfer">_transfer</a></h3>
 <p>Internal function to transfer the TVS to a new beneficiary and owner.</p>
-<p><em>This function is used to transfer the TVS to a new beneficiary and owner.</em></p>
-<pre><code class="language-solidity">function _transfer(address _beneficiary, address _newOwner) internal;
+<p>This function is used to transfer the TVS to a new beneficiary and owner.</p>
+<pre><code class="language-solidity">function _transfer(address _beneficiary, address _owner) internal;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>_beneficiary</code></td><td><code>address</code></td><td>The address of the new beneficiary.</td></tr>
-<tr><td><code>_newOwner</code></td><td><code>address</code></td><td>The address of the new owner.</td></tr>
+<tr><td><code>_owner</code></td><td><code>address</code></td><td>The address of the new owner.</td></tr>
 </tbody></table>
 </div>
-<h3 id="accepttransfer"><a class="header" href="#accepttransfer">acceptTransfer</a></h3>
-<p>This function is not protected by any modifier,
-as it is only callable by the new owner which is enforced by Ownable2Step</p>
-<p><em>Only the new owner can call this function.</em></p>
-<pre><code class="language-solidity">function acceptTransfer() external nonReentrant;
-</code></pre>
-<h3 id="canceltransfer"><a class="header" href="#canceltransfer">cancelTransfer</a></h3>
-<p>Cancels the ownership transfer.</p>
-<p><em>Only the owner can call this function.</em></p>
-<pre><code class="language-solidity">function cancelTransfer() external onlyOwner;
-</code></pre>
-<h3 id="_accepttransfer"><a class="header" href="#_accepttransfer">_acceptTransfer</a></h3>
-<p>Internal function to accept the ownership transfer.</p>
-<p><em>This function is used to accept the ownership transfer.</em></p>
-<pre><code class="language-solidity">function _acceptTransfer() internal;
-</code></pre>
-<h3 id="_canceltransfer"><a class="header" href="#_canceltransfer">_cancelTransfer</a></h3>
-<p>Internal function to cancel the ownership transfer.</p>
-<p><em>This function is used to cancel the ownership transfer.</em></p>
-<pre><code class="language-solidity">function _cancelTransfer() internal;
-</code></pre>
 <h3 id="_setbeneficiary"><a class="header" href="#_setbeneficiary">_setBeneficiary</a></h3>
 <p>Internal function to set the beneficiary address.</p>
 <pre><code class="language-solidity">function _setBeneficiary(address _newBeneficiary) internal;
@@ -341,18 +320,14 @@ as it is only callable by the new owner which is enforced by Ownable2Step</p>
 <tr><td><code>_newBeneficiary</code></td><td><code>address</code></td><td>The address of the new beneficiary.</td></tr>
 </tbody></table>
 </div>
-<h3 id="_setpendingbeneficiary"><a class="header" href="#_setpendingbeneficiary">_setPendingBeneficiary</a></h3>
-<p>Internal function to set the pending beneficiary address.</p>
-<pre><code class="language-solidity">function _setPendingBeneficiary(address _newPendingBeneficiary) internal;
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>_newPendingBeneficiary</code></td><td><code>address</code></td><td>The address of the new pending beneficiary.</td></tr>
-</tbody></table>
-</div>
 <h3 id="_refundexcessfee"><a class="header" href="#_refundexcessfee">_refundExcessFee</a></h3>
-<p><em>Internal function to refund the excess fee for pectra related operations.</em></p>
-<pre><code class="language-solidity">function _refundExcessFee(uint256 _totalValueReceived, uint256 _totalFeePaid, address _excessFeeRecipient) internal;
+<p>Internal function to refund the excess fee for pectra related operations.</p>
+<pre><code class="language-solidity">function _refundExcessFee(
+    uint256 _totalValueReceived,
+    uint256 _totalFeePaid,
+    address _excessFeeRecipient
+)
+    internal;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
@@ -362,9 +337,15 @@ as it is only callable by the new owner which is enforced by Ownable2Step</p>
 </tbody></table>
 </div>
 <h3 id="_validateandreturnfee"><a class="header" href="#_validateandreturnfee">_validateAndReturnFee</a></h3>
-<p><em>Internal function to validate the fee. Used for pectra related operations.</em></p>
-<p><em>Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.</em></p>
-<pre><code class="language-solidity">function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee);
+<p>Internal function to validate the fee. Used for pectra related operations.</p>
+<p>Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.</p>
+<pre><code class="language-solidity">function _validateAndReturnFee(
+    address feeContract,
+    uint256 _maxAllowedFee
+)
+    internal
+    view
+    returns (uint256 _fee);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
@@ -378,7 +359,7 @@ as it is only callable by the new owner which is enforced by Ownable2Step</p>
 </tbody></table>
 </div>
 <h3 id="_validatesufficientvalueforfee"><a class="header" href="#_validatesufficientvalueforfee">_validateSufficientValueForFee</a></h3>
-<p><em>Internal function to validate the caller sent sufficient value for fee. Used for pectra related operations.</em></p>
+<p>Internal function to validate the caller sent sufficient value for fee. Used for pectra related operations.</p>
 <pre><code class="language-solidity">function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -388,7 +369,7 @@ as it is only callable by the new owner which is enforced by Ownable2Step</p>
 </tbody></table>
 </div>
 <h3 id="_validatepubkeylength"><a class="header" href="#_validatepubkeylength">_validatePubkeyLength</a></h3>
-<p><em>Internal function to validate that a public key is exactly 48 bytes in length</em></p>
+<p>Internal function to validate that a public key is exactly 48 bytes in length</p>
 <pre><code class="language-solidity">function _validatePubkeyLength(bytes memory pubkey) internal pure;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -397,8 +378,13 @@ as it is only callable by the new owner which is enforced by Ownable2Step</p>
 </tbody></table>
 </div>
 <h3 id="_sweep"><a class="header" href="#_sweep">_sweep</a></h3>
-<p><em>Internal function to sweep the TVS.</em></p>
-<pre><code class="language-solidity">function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep);
+<p>Internal function to sweep the TVS.</p>
+<pre><code class="language-solidity">function _sweep(
+    address _beneficiary,
+    uint256 _amount
+)
+    private
+    returns (address _dest, uint256 _amountToSweep);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>

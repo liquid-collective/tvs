@@ -182,16 +182,16 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="itvsflexibleimmutable"><a class="header" href="#itvsflexibleimmutable">ITVSFlexibleImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/665185f34b28b32cd90194daa64bcb8e39fe0351/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/851fe9ce1c81d4b10c5e8434b6fa696b3314ba1a/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Alluvial Finance Inc.</p>
 <p>Interface for the TVSFlexibleImmutable contract</p>
-<p><em>This interface is used to interact with the TVSFlexibleImmutable contract</em></p>
-<p><em>The TVSFlexibleImmutable contract is a flexible immutable implementation of the TVS contract</em></p>
+<p>This interface is used to interact with the TVSFlexibleImmutable contract</p>
+<p>The TVSFlexibleImmutable contract is a flexible immutable implementation of the TVS contract</p>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="executecall"><a class="header" href="#executecall">executeCall</a></h3>
 <p>Executes a low-level call or delegatecall to the specified address.</p>
-<p><em>Bubbles up revert reasons and handles both ETH transfers and data calls.</em></p>
+<p>Bubbles up revert reasons and handles both ETH transfers and data calls.</p>
 <pre><code class="language-solidity">function executeCall(Call calldata call) external payable returns (bytes memory);
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -211,7 +211,7 @@ NOTE:</p>
 <li>when msg.value is passed, only one delegatecall should be made</li>
 <li>when msg.value is passed, any delegatecall to non-payable functions will fail</li>
 </ul>
-<p><em>revert on the first call that fails.</em></p>
+<p>revert on the first call that fails.</p>
 <pre><code class="language-solidity">function executeBatch(Call[] calldata calls) external payable;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -222,7 +222,7 @@ NOTE:</p>
 <h2 id="structs"><a class="header" href="#structs">Structs</a></h2>
 <h3 id="call"><a class="header" href="#call">Call</a></h3>
 <p>Struct to hold call data for the arbitrary executeCall function</p>
-<p><em>The Call struct is used to hold the data required to perform a low-level call or delegatecall.</em></p>
+<p>The Call struct is used to hold the data required to perform a low-level call or delegatecall.</p>
 <pre><code class="language-solidity">struct Call {
     address to;
     uint256 value;
