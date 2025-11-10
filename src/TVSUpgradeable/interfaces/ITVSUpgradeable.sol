@@ -5,7 +5,7 @@ import "../../interfaces/ITVS.sol";
 
 /**
  * @title TVS Interface (Upgradeable)
- * @author Alluvial Finance Inc.
+ * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
  * @notice Interface for the TVS contract.
  * @dev This interface is used to interact with the TVS contract.
  * @dev The TVSUpgradeable contract is an upgradeable implementation of the TVS contract

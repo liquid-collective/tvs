@@ -5,7 +5,7 @@ import "../state/proxy/Beacon.sol";
 
 /**
  * @title TVSBeaconProxy
- * @author Alluvial Finance Inc.
+ * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
  * @notice This is an EIP-1167 minimal proxy that interacts with an upgradable beacon contract
  * @dev It uses the beacon contract to fetch the implementation address and delegate the call.
  * @dev The beacon contract is expected to have an `implementation()` function that returns the address of the
