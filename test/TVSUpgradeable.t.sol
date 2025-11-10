@@ -324,9 +324,9 @@ contract TVSUpgradeableTest is BaseTVSTest {
 
         address invalidImmutableBeaconFactory = address(new MockInvalidImmutableBeaconFactory());
 
-        tvsImplementation = payable(
-            new TVSV1(WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, invalidImmutableBeaconFactory)
-        );
+        tvsImplementation = payable(new TVSV1(
+                WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS, invalidImmutableBeaconFactory
+            ));
         beacon = address(new UpgradeableBeacon(owner, tvsImplementation));
 
         ITVS tvs = deployTVS();
