@@ -2,7 +2,7 @@
 [Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/components/TVS.sol)
 
 **Inherits:**
-[ITVS](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
+[ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
