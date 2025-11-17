@@ -182,11 +182,11 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvs"><a class="header" href="#tvs">TVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/cdcde589fe167421eabd91413fd33eada0b55062/src/components/TVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/a2611db9ef7b62b71ca702c5450779ddfca4b431/src/components/TVS.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="/home/runner/work/tvs/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.html">ITVS</a>, <a href="/home/runner/work/tvs/tvs/docs/src/src/components/BaseSecurity.sol/abstract.BaseSecurity.html">BaseSecurity</a></p>
 <p><strong>Author:</strong>
-Alluvial Finance Inc.</p>
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>implementation of the TVS</p>
 <h2 id="state-variables"><a class="header" href="#state-variables">State Variables</a></h2>
 <h3 id="withdrawal_contract_address"><a class="header" href="#withdrawal_contract_address">WITHDRAWAL_CONTRACT_ADDRESS</a></h3>
@@ -339,7 +339,13 @@ beneficiary contract address.</p>
 <h3 id="_validateandreturnfee"><a class="header" href="#_validateandreturnfee">_validateAndReturnFee</a></h3>
 <p>Internal function to validate the fee. Used for pectra related operations.</p>
 <p>Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.</p>
-<pre><code class="language-solidity">function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee);
+<pre><code class="language-solidity">function _validateAndReturnFee(
+    address feeContract,
+    uint256 _maxAllowedFee
+)
+    internal
+    view
+    returns (uint256 _fee);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
@@ -373,7 +379,12 @@ beneficiary contract address.</p>
 </div>
 <h3 id="_sweep"><a class="header" href="#_sweep">_sweep</a></h3>
 <p>Internal function to sweep the TVS.</p>
-<pre><code class="language-solidity">function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep);
+<pre><code class="language-solidity">function _sweep(
+    address _beneficiary,
+    uint256 _amount
+)
+    private
+    returns (address _dest, uint256 _amountToSweep);
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
