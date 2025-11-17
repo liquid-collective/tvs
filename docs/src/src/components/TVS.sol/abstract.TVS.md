@@ -44,7 +44,7 @@ and available to the proxy
 
 
 ```solidity
-constructor(address withdrawalContractAddress, address consolidationContractAddress) ;
+constructor(address withdrawalContractAddress, address consolidationContractAddress);
 ```
 **Parameters**
 
