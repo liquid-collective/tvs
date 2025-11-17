@@ -40,7 +40,7 @@ Overrides the renounceOwnership function from OwnableUpgradeable to prevent owne
 
 This function is intentionally left empty to prevent ownership renouncement by mistake
 
-Emits an [OwnershipCannotBeRenounced](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#ownershipcannotberenounced) error
+Emits an [OwnershipCannotBeRenounced](#ownershipcannotberenounced) error
 
 Only callable by the contract owner
 
