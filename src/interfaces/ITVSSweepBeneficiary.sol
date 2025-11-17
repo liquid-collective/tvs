@@ -3,6 +3,7 @@ pragma solidity 0.8.29;
 
 /**
  * @title Sweep Beneficiary Interface
+ * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
  * @notice Interface for the TVS beneficiary contract to receive ETH from the TVS.
  * @dev This interface is used to receive ETH from the TVS contract.
  * @dev This interface should be implemented by a beneficiary contract if the contract is unable to receive direct ETH

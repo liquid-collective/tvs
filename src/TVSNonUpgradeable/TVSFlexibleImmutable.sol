@@ -6,7 +6,7 @@ import "./interfaces/ITVSFlexibleImmutable.sol";
 
 /**
  * @title Flexible Immutable TVS (v1)
- * @author Alluvial Finance Inc.
+ * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
  * @notice Non-upgradeable implementation of the TVS with arbitrary executeCall function
  * @dev This contract implements all the functionality of the TVSImmutable contract and adds an additional executeCall
  *      function that allows for arbitrary calls to be made to, and from the contract by the owner only. This provides

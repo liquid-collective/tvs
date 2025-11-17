@@ -7,7 +7,7 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.s
 
 /**
  * @title BaseSecurity
- * @author Alluvial Finance Inc.
+ * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
  * @dev This abstract contract provides a foundational setup for security features,
  *      including ownership management and reentrancy protection. It is designed to
  *      be inherited by both upgradeable and non-upgradeable contracts.

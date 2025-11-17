@@ -13,7 +13,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: nightly
+          version: "v1.4.3"
           
       - name: Generate Coverage Report
         run: forge coverage --no-match-coverage "test|scripts" --report lcov

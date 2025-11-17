@@ -53,8 +53,9 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
      * @return The deployed TVS contract.
      */
     function deployTVS() internal override returns (ITVS) {
-        tvsFlexible =
-            new TVSFlexibleImmutableExt(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS);
+        tvsFlexible = new TVSFlexibleImmutableExt(
+            beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS
+        );
         return tvsFlexible;
     }
 
@@ -119,7 +120,7 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
                 value: i % 2 == 0 ? 1 ether : 0, // Alternate between calls with and without value
                 data: getCallData(i + 1), // Increment state value for each call
                 isDelegateCall: i % 2 == 1 // Alternate between delegate calls and normal calls
-             });
+            });
         }
 
         return calls;

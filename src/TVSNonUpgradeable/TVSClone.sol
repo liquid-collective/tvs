@@ -5,7 +5,7 @@ import "./TVSImmutableBase.sol";
 
 /**
  * @title TVS Clone Implementation (v1)
- * @author Alluvial Finance Inc.
+ * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
  * @notice Non-upgradeable implementation of the TVS with initializer
  * @dev The TVSClone contract is designed with the idea of providing an immutable version that is compatible with
  *      EIP-1167 clone proxy, offering users a way to minimize gas costs during deployment.

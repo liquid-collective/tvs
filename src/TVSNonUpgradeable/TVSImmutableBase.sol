@@ -5,7 +5,7 @@ import "../components/TVS.sol";
 
 /**
  * @title Base for all Immutable TVS Contract
- * @author Alluvial Finance Inc.
+ * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
  * @notice Base contract for TVS Immutable implementations
  * @dev This contract provides the base functionality for immutable TVS implementations
  */
