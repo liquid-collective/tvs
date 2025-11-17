@@ -1,14 +1,14 @@
 # ITVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/interfaces/ITVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/interfaces/ITVS.sol)
 
 **Author:**
-Alluvial Finance Inc.
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 Interface for the TVS contract.
 
-*This interface is used to interact with the TVS contract.*
+This interface is used to interact with the TVS contract.
 
-*The TVS contract is the withdrawal credential of a set of validators in the system.*
+The TVS contract is the withdrawal credential of a set of validators in the system.
 
 
 ## Functions
@@ -23,9 +23,9 @@ receive() external payable;
 
 Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
 
-*Only the owner can specify a custom beneficiary for the sweep*
+Only the owner can specify a custom beneficiary for the sweep
 
-*Emits [Swept](/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.*
+Emits [Swept](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.
 
 
 ```solidity
@@ -44,9 +44,9 @@ function sweep(address beneficiary, uint256 amount) external;
 Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary contract or a specified
 beneficiary contract address.
 
-*Only the owner can specify a custom beneficiary for the sweep*
+Only the owner can specify a custom beneficiary for the sweep
 
-*Emits a [Swept](/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.*
+Emits a [Swept](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.
 
 
 ```solidity
@@ -64,9 +64,9 @@ function sweepToBeneficiaryContract(address beneficiary, uint256 amount) externa
 
 Sets a new beneficiary address for fund sweeping.
 
-*Only the owner can call this function.*
+Only the owner can call this function.
 
-*Emits a [BeneficiaryUpdated](/src/interfaces/ITVS.sol/interface.ITVS.md#beneficiaryupdated) event.*
+Emits a [BeneficiaryUpdated](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#beneficiaryupdated) event.
 
 
 ```solidity
@@ -83,11 +83,11 @@ function setBeneficiary(address beneficiary) external;
 
 Transfers the ownership of the TVS.
 
-*This function sets a new beneficiary, transfers ownership to a new owner.*
+This function sets a new beneficiary, transfers ownership to a new owner.
 
-*Only the owner can call this function.*
+Only the owner can call this function.
 
-*Emits a [Transferred](/src/interfaces/ITVS.sol/interface.ITVS.md#transferred) event.*
+Emits a [Transferred](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#transferred) event.
 
 
 ```solidity
@@ -105,7 +105,7 @@ function transfer(address newBeneficiary, address newOwner) external;
 
 Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.
 
-*Only the owner can call this function.*
+Only the owner can call this function.
 
 
 ```solidity
@@ -132,13 +132,13 @@ function withdraw(
 
 Adds a consolidation request to the pectra EL consolidation contract for the given source validators.
 
-*Only the owner can call this function.*
+Only the owner can call this function.
 
-*Both source and target validators (pubKeys) must be from the same TVS (this TVS).*
+Both source and target validators (pubKeys) must be from the same TVS (this TVS).
 
-*The excess fee is the difference between the maximum fee and the actual fee paid.*
+The excess fee is the difference between the maximum fee and the actual fee paid.
 
-*Emits a [UnsentExcessFee](/src/interfaces/ITVS.sol/interface.ITVS.md#unsentexcessfee) event if the excess fee is not sent.*
+Emits a [UnsentExcessFee](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#unsentexcessfee) event if the excess fee is not sent.
 
 
 ```solidity
@@ -323,7 +323,7 @@ error InsufficientBalance(uint256 available, uint256 required);
 ### FeeTooHigh
 Error thrown when a fee exceeds the maximum allowed.
 
-*This error is associated with the {consolidation} and {withdrawal} functions*
+This error is associated with the {consolidation} and {withdrawal} functions
 
 
 ```solidity
@@ -355,8 +355,8 @@ error LengthMismatch(uint256 expected, uint256 actual);
 ### FeeReadFailed
 Error thrown when reading the fee fails.
 
-*This error is associated with the {consolidation} and {withdrawal} functions, which read the fee from the
-associated pectra EL contracts.*
+This error is associated with the {consolidation} and {withdrawal} functions, which read the fee from the
+associated pectra EL contracts.
 
 
 ```solidity
@@ -374,8 +374,8 @@ error RequestFailed();
 ### InsufficientValueForFee
 Error thrown when the value provided is insufficient for the fee.
 
-*This error is associated with the {consolidation} and {withdrawal} functions, which interact with the
-associated pectra EL contracts.*
+This error is associated with the {consolidation} and {withdrawal} functions, which interact with the
+associated pectra EL contracts.
 
 
 ```solidity

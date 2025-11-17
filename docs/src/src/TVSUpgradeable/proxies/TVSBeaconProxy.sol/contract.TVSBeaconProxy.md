@@ -1,15 +1,15 @@
 # TVSBeaconProxy
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
 
 **Author:**
-Alluvial Finance Inc.
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 This is an EIP-1167 minimal proxy that interacts with an upgradable beacon contract
 
-*It uses the beacon contract to fetch the implementation address and delegate the call.*
+It uses the beacon contract to fetch the implementation address and delegate the call.
 
-*The beacon contract is expected to have an `implementation()` function that returns the address of the
-implementation.*
+The beacon contract is expected to have an `implementation()` function that returns the address of the
+implementation.
 
 
 ## Functions
@@ -17,15 +17,15 @@ implementation.*
 
 Constructs a new TVSBeaconProxy instance
 
-*The constructor will get the implementation address from the beacon, and delegate the initialization call
-to the implementation.*
+The constructor will get the implementation address from the beacon, and delegate the initialization call
+to the implementation.
 
-*This function will revert if the implementation on the beacon is not a contract, or the input data to
-initialize has invalid addresses.*
+This function will revert if the implementation on the beacon is not a contract, or the input data to
+initialize has invalid addresses.
 
 
 ```solidity
-constructor(address beacon, bytes memory initData);
+constructor(address beacon, bytes memory initData) ;
 ```
 **Parameters**
 
@@ -39,9 +39,9 @@ constructor(address beacon, bytes memory initData);
 
 Fallback function that delegates all calls to the implementation address returned by the beacon
 
-*This function uses inline assembly to first fetch the implementation address from the beacon*
+This function uses inline assembly to first fetch the implementation address from the beacon
 
-*and then delegates the call to it.*
+and then delegates the call to it.
 
 
 ```solidity
@@ -52,7 +52,7 @@ fallback() external payable;
 
 Internal function to fetch the implementation address from the beacon
 
-*This function uses inline assembly to fetch the implementation address from the beacon*
+This function uses inline assembly to fetch the implementation address from the beacon
 
 
 ```solidity

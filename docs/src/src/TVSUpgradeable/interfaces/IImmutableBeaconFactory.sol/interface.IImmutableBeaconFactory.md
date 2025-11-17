@@ -1,9 +1,12 @@
 # IImmutableBeaconFactory
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol)
+
+**Author:**
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 Interface for the Immutable Beacon Factory
 
-*This interface is used to deploy new immutable beacon contracts*
+This interface is used to deploy new immutable beacon contracts
 
 
 ## Functions

@@ -1,18 +1,18 @@
 # TVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
 
 **Inherits:**
-[ITVSFlexibleImmutable](/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.md), [TVSImmutable](/src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.md)
+[ITVSFlexibleImmutable](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.md), [TVSImmutable](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.md)
 
 **Author:**
-Alluvial Finance Inc.
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 Non-upgradeable implementation of the TVS with arbitrary executeCall function
 
-*This contract implements all the functionality of the TVSImmutable contract and adds an additional executeCall
+This contract implements all the functionality of the TVSImmutable contract and adds an additional executeCall
 function that allows for arbitrary calls to be made to, and from the contract by the owner only. This provides
 the flexibility to capture, and interact with future functionalities that cannot be added to the TVSImmutable
-contract.*
+contract.
 
 
 ## Functions
@@ -20,10 +20,10 @@ contract.*
 
 Constructor for the TVSFlexibleImmutable contract
 
-*Initializes the contract with all required parameters*
+Initializes the contract with all required parameters
 
-*The withdrawal and consolidation addresses are pectra EL contract addresses, and are stored as immutable
-state variables. They can only be set once here in the constructor.*
+The withdrawal and consolidation addresses are pectra EL contract addresses, and are stored as immutable
+state variables. They can only be set once here in the constructor.
 
 
 ```solidity
@@ -49,7 +49,7 @@ constructor(
 
 Executes a low-level call or delegatecall to the specified address.
 
-*Bubbles up revert reasons and handles both ETH transfers and data calls.*
+Bubbles up revert reasons and handles both ETH transfers and data calls.
 
 
 ```solidity
@@ -75,7 +75,7 @@ NOTE:
 - when msg.value is passed, only one delegatecall should be made
 - when msg.value is passed, any delegatecall to non-payable functions will fail
 
-*revert on the first call that fails.*
+revert on the first call that fails.
 
 
 ```solidity
@@ -92,10 +92,10 @@ function executeBatch(Call[] calldata calls) external payable virtual onlyOwner 
 
 Internal function to execute an arbitrary call
 
-*This function is used to execute an arbitrary call from the TVS contract by the owner only.*
+This function is used to execute an arbitrary call from the TVS contract by the owner only.
 
-*The call is executed using the functionDelegateCall or functionCallWithValue function depending on the
-isDelegateCall flag.*
+The call is executed using the functionDelegateCall or functionCallWithValue function depending on the
+isDelegateCall flag.
 
 
 ```solidity

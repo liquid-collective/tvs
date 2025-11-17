@@ -1,11 +1,11 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/components/TVS.sol)
 
 **Inherits:**
-[ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
+[ITVS](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
 
 **Author:**
-Alluvial Finance Inc.
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 implementation of the TVS
 
@@ -16,7 +16,7 @@ The address of the pectra EL withdrawal contract.
 
 
 ```solidity
-address public immutable WITHDRAWAL_CONTRACT_ADDRESS;
+address public immutable WITHDRAWAL_CONTRACT_ADDRESS
 ```
 
 
@@ -25,7 +25,7 @@ The address of the pectra EL consolidation contract.
 
 
 ```solidity
-address public immutable CONSOLIDATION_CONTRACT_ADDRESS;
+address public immutable CONSOLIDATION_CONTRACT_ADDRESS
 ```
 
 
@@ -34,17 +34,17 @@ address public immutable CONSOLIDATION_CONTRACT_ADDRESS;
 
 Constructor for the TVS contract
 
-*Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.*
+Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
 
-*The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
-once here in the constructor.*
+The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+once here in the constructor.
 
-*All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set,
-and available to the proxy*
+All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set,
+and available to the proxy
 
 
 ```solidity
-constructor(address withdrawalContractAddress, address consolidationContractAddress);
+constructor(address withdrawalContractAddress, address consolidationContractAddress) ;
 ```
 **Parameters**
 
@@ -65,7 +65,7 @@ receive() external payable;
 
 Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.
 
-*Only the owner can call this function.*
+Only the owner can call this function.
 
 
 ```solidity
@@ -94,7 +94,7 @@ function withdraw(
 
 Adds a consolidation request to the pectra EL consolidation contract for the given source validators.
 
-*Only the owner can call this function.*
+Only the owner can call this function.
 
 
 ```solidity
@@ -121,7 +121,7 @@ function consolidate(
 
 Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
 
-*Only the owner can specify a custom beneficiary for the sweep*
+Only the owner can specify a custom beneficiary for the sweep
 
 
 ```solidity
@@ -140,7 +140,7 @@ function sweep(address recipient, uint256 amount) external nonReentrant;
 Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary contract or a specified
 beneficiary contract address.
 
-*Only the owner can specify a custom beneficiary for the sweep*
+Only the owner can specify a custom beneficiary for the sweep
 
 
 ```solidity
@@ -158,7 +158,7 @@ function sweepToBeneficiaryContract(address beneficiary, uint256 amount) externa
 
 Sets a new beneficiary address for fund sweeping.
 
-*Only the owner can call this function.*
+Only the owner can call this function.
 
 
 ```solidity
@@ -190,7 +190,7 @@ function getBeneficiary() public view returns (address);
 
 Internal function to transfer the TVS to a new beneficiary and owner.
 
-*This function is used to transfer the TVS to a new beneficiary and owner.*
+This function is used to transfer the TVS to a new beneficiary and owner.
 
 
 ```solidity
@@ -221,11 +221,16 @@ function _setBeneficiary(address _newBeneficiary) internal;
 
 ### _refundExcessFee
 
-*Internal function to refund the excess fee for pectra related operations.*
+Internal function to refund the excess fee for pectra related operations.
 
 
 ```solidity
-function _refundExcessFee(uint256 _totalValueReceived, uint256 _totalFeePaid, address _excessFeeRecipient) internal;
+function _refundExcessFee(
+    uint256 _totalValueReceived,
+    uint256 _totalFeePaid,
+    address _excessFeeRecipient
+)
+    internal;
 ```
 **Parameters**
 
@@ -238,13 +243,19 @@ function _refundExcessFee(uint256 _totalValueReceived, uint256 _totalFeePaid, ad
 
 ### _validateAndReturnFee
 
-*Internal function to validate the fee. Used for pectra related operations.*
+Internal function to validate the fee. Used for pectra related operations.
 
-*Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.*
+Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.
 
 
 ```solidity
-function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee);
+function _validateAndReturnFee(
+    address feeContract,
+    uint256 _maxAllowedFee
+)
+    internal
+    view
+    returns (uint256 _fee);
 ```
 **Parameters**
 
@@ -262,7 +273,7 @@ function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) inte
 
 ### _validateSufficientValueForFee
 
-*Internal function to validate the caller sent sufficient value for fee. Used for pectra related operations.*
+Internal function to validate the caller sent sufficient value for fee. Used for pectra related operations.
 
 
 ```solidity
@@ -278,7 +289,7 @@ function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) inter
 
 ### _validatePubkeyLength
 
-*Internal function to validate that a public key is exactly 48 bytes in length*
+Internal function to validate that a public key is exactly 48 bytes in length
 
 
 ```solidity
@@ -293,11 +304,16 @@ function _validatePubkeyLength(bytes memory pubkey) internal pure;
 
 ### _sweep
 
-*Internal function to sweep the TVS.*
+Internal function to sweep the TVS.
 
 
 ```solidity
-function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep);
+function _sweep(
+    address _beneficiary,
+    uint256 _amount
+)
+    private
+    returns (address _dest, uint256 _amountToSweep);
 ```
 **Parameters**
 
