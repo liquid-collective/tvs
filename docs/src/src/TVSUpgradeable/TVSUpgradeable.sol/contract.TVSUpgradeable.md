@@ -2,7 +2,7 @@
 [Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/TVSUpgradeable.sol)
 
 **Inherits:**
-[ITVSUpgradeable](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md), [TVS](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/components/TVS.sol/abstract.TVS.md)
+[ITVSUpgradeable](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md), [TVS](/src/components/TVS.sol/abstract.TVS.md)
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
@@ -95,11 +95,11 @@ function transfer(address newBeneficiary, address newOwner) external override on
 
 ### setBeaconUnchecked
 
-This function is used by the [setBeacon](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function to directly set the beacon address without
+This function is used by the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function to directly set the beacon address without
 additional checks
 
-This function should not be called directly, but only through the [setBeacon](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function, it allows the
-[setBeacon](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) perform robust checks before setting the new beacon
+This function should not be called directly, but only through the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function, it allows the
+[setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) perform robust checks before setting the new beacon
 
 Emits a {BeaconUpgraded} event
 

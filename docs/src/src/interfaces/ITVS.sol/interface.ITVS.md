@@ -25,7 +25,7 @@ Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a spec
 
 Only the owner can specify a custom beneficiary for the sweep
 
-Emits [Swept](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.
+Emits [Swept](/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.
 
 
 ```solidity
@@ -46,7 +46,7 @@ beneficiary contract address.
 
 Only the owner can specify a custom beneficiary for the sweep
 
-Emits a [Swept](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.
+Emits a [Swept](/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.
 
 
 ```solidity
@@ -66,7 +66,7 @@ Sets a new beneficiary address for fund sweeping.
 
 Only the owner can call this function.
 
-Emits a [BeneficiaryUpdated](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#beneficiaryupdated) event.
+Emits a [BeneficiaryUpdated](/src/interfaces/ITVS.sol/interface.ITVS.md#beneficiaryupdated) event.
 
 
 ```solidity
@@ -87,7 +87,7 @@ This function sets a new beneficiary, transfers ownership to a new owner.
 
 Only the owner can call this function.
 
-Emits a [Transferred](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#transferred) event.
+Emits a [Transferred](/src/interfaces/ITVS.sol/interface.ITVS.md#transferred) event.
 
 
 ```solidity
@@ -138,7 +138,7 @@ Both source and target validators (pubKeys) must be from the same TVS (this TVS)
 
 The excess fee is the difference between the maximum fee and the actual fee paid.
 
-Emits a [UnsentExcessFee](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md#unsentexcessfee) event if the excess fee is not sent.
+Emits a [UnsentExcessFee](/src/interfaces/ITVS.sol/interface.ITVS.md#unsentexcessfee) event if the excess fee is not sent.
 
 
 ```solidity

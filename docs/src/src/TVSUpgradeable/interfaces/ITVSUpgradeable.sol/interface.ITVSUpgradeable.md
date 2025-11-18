@@ -2,7 +2,7 @@
 [Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol)
 
 **Inherits:**
-[ITVS](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.md)
+[ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md)
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
@@ -21,7 +21,7 @@ Sets a new beacon address for the TVS.
 
 Only the owner can call this function.
 
-Emits a [BeaconUpgraded](//Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md#beaconupgraded) event.
+Emits a [BeaconUpgraded](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md#beaconupgraded) event.
 
 
 ```solidity

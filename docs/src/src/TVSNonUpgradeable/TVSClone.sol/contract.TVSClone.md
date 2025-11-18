@@ -2,7 +2,7 @@
 [Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSNonUpgradeable/TVSClone.sol)
 
 **Inherits:**
-[TVSImmutableBase](/Users/praffulsahu/Documents/GitHub/tvs/docs/src/src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.md)
+[TVSImmutableBase](/src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.md)
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
