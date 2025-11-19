@@ -1,14 +1,14 @@
 # ITVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
 
 **Author:**
-Alluvial Finance Inc.
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 Interface for the TVSFlexibleImmutable contract
 
-*This interface is used to interact with the TVSFlexibleImmutable contract*
+This interface is used to interact with the TVSFlexibleImmutable contract
 
-*The TVSFlexibleImmutable contract is a flexible immutable implementation of the TVS contract*
+The TVSFlexibleImmutable contract is a flexible immutable implementation of the TVS contract
 
 
 ## Functions
@@ -16,7 +16,7 @@ Interface for the TVSFlexibleImmutable contract
 
 Executes a low-level call or delegatecall to the specified address.
 
-*Bubbles up revert reasons and handles both ETH transfers and data calls.*
+Bubbles up revert reasons and handles both ETH transfers and data calls.
 
 
 ```solidity
@@ -42,7 +42,7 @@ NOTE:
 - when msg.value is passed, only one delegatecall should be made
 - when msg.value is passed, any delegatecall to non-payable functions will fail
 
-*revert on the first call that fails.*
+revert on the first call that fails.
 
 
 ```solidity
@@ -59,7 +59,7 @@ function executeBatch(Call[] calldata calls) external payable;
 ### Call
 Struct to hold call data for the arbitrary executeCall function
 
-*The Call struct is used to hold the data required to perform a low-level call or delegatecall.*
+The Call struct is used to hold the data required to perform a low-level call or delegatecall.
 
 
 ```solidity

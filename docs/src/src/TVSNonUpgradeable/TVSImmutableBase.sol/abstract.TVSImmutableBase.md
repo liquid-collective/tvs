@@ -1,15 +1,15 @@
 # TVSImmutableBase
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/TVSNonUpgradeable/TVSImmutableBase.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSNonUpgradeable/TVSImmutableBase.sol)
 
 **Inherits:**
 [TVS](/src/components/TVS.sol/abstract.TVS.md)
 
 **Author:**
-Alluvial Finance Inc.
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 Base contract for TVS Immutable implementations
 
-*This contract provides the base functionality for immutable TVS implementations*
+This contract provides the base functionality for immutable TVS implementations
 
 
 ## Functions
@@ -17,10 +17,10 @@ Base contract for TVS Immutable implementations
 
 Constructor for the TVS Immutable contract
 
-*Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.*
+Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
 
-*The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
-once here in the constructor.*
+The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+once here in the constructor.
 
 
 ```solidity
@@ -42,7 +42,7 @@ constructor(
 
 Transfers the ownership of the TVS.
 
-*This function sets a new beneficiary, transfers ownership to a new owner.*
+This function sets a new beneficiary, transfers ownership to a new owner.
 
 
 ```solidity

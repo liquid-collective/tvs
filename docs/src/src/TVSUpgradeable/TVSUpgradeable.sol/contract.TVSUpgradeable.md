@@ -1,28 +1,28 @@
 # TVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/TVSUpgradeable/TVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/TVSUpgradeable.sol)
 
 **Inherits:**
 [ITVSUpgradeable](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md), [TVS](/src/components/TVS.sol/abstract.TVS.md)
 
 **Author:**
-Alluvial Finance Inc.
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 Upgradeable implementation of the TVS
 
-*This contract provides an upgradeable version of the TVS using a beacon proxy pattern*
+This contract provides an upgradeable version of the TVS using a beacon proxy pattern
 
 
 ## State Variables
 ### immutableBeacon
 The address of the immutable beacon contract
 
-*During a TVS transfer, the beacon is temporarily set to this immutable beacon. This variable ensures that
+During a TVS transfer, the beacon is temporarily set to this immutable beacon. This variable ensures that
 the current TVS Implementation is frozen, preventing the oldOwner from modifying the TVS Implementation in
-the beacon*
+the beacon
 
 
 ```solidity
-address public immutable immutableBeacon;
+address public immutable immutableBeacon
 ```
 
 
@@ -31,11 +31,11 @@ address public immutable immutableBeacon;
 
 Constructs a new TVSUpgradeable instance
 
-*Initializes the contract with Pectra withdrawal and consolidation EL contract addresses, and the immutable
-beacon factory address.*
+Initializes the contract with Pectra withdrawal and consolidation EL contract addresses, and the immutable
+beacon factory address.
 
-*The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
-once here in the constructor.*
+The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+once here in the constructor.
 
 
 ```solidity
@@ -59,8 +59,8 @@ constructor(
 
 Initializes the TVS upgradeable instance
 
-*This function can only be called once during the TVS deployment and sets up the initial security, owner,
-beneficiary, and beacon address of the TVS*
+This function can only be called once during the TVS deployment and sets up the initial security, owner,
+beneficiary, and beacon address of the TVS
 
 
 ```solidity
@@ -79,7 +79,7 @@ function initialize(address beneficiary, address owner, address beaconAddress) e
 
 Transfers the ownership of the TVS.
 
-*This function sets a new beneficiary, transfers ownership to a new owner.*
+This function sets a new beneficiary, transfers ownership to a new owner.
 
 
 ```solidity
@@ -98,12 +98,12 @@ function transfer(address newBeneficiary, address newOwner) external override on
 This function is used by the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function to directly set the beacon address without
 additional checks
 
-*This function should not be called directly, but only through the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function, it allows the
-{setBeacon} perform robust checks before setting the new beacon*
+This function should not be called directly, but only through the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function, it allows the
+[setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) perform robust checks before setting the new beacon
 
-*Emits a {BeaconUpgraded} event*
+Emits a {BeaconUpgraded} event
 
-*Only callable by the contract owner*
+Only callable by the contract owner
 
 
 ```solidity
@@ -120,7 +120,7 @@ function setBeaconUnchecked(address newBeacon) external onlyOwner;
 
 Sets a new beacon address for the TVS.
 
-*Only the owner can call this function.*
+Only the owner can call this function.
 
 
 ```solidity
@@ -167,10 +167,10 @@ function version() external pure returns (string memory);
 
 Internal function to set the beacon address
 
-*This function is used internally to set the beacon address*
+This function is used internally to set the beacon address
 
-*This function uses the functionDelegateCall exposed by the OpenZeppelin Address contract to delegate the
-call to the implementation contract, and reverts if the call fails*
+This function uses the functionDelegateCall exposed by the OpenZeppelin Address contract to delegate the
+call to the implementation contract, and reverts if the call fails
 
 
 ```solidity

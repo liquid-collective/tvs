@@ -1,25 +1,25 @@
 # ImmutableBeacon
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/TVSUpgradeable/ImmutableBeacon.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/ImmutableBeacon.sol)
 
 **Author:**
-Alluvial Finance Inc.
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 An immutable beacon whose implementation can never be altered after deployment
 
-*This contract is used to store the implementation address of a proxy contract*
+This contract is used to store the implementation address of a proxy contract
 
-*The implementation address is set in the constructor and cannot be changed*
+The implementation address is set in the constructor and cannot be changed
 
 
 ## State Variables
 ### implementation
 The proxy implementation address stored in the beacon
 
-*This address is set in the constructor and cannot be changed*
+This address is set in the constructor and cannot be changed
 
 
 ```solidity
-address public immutable implementation;
+address public immutable implementation
 ```
 
 
@@ -28,11 +28,11 @@ address public immutable implementation;
 
 Constructor for the ImmutableBeacon contract
 
-*Sets the proxy implementation address on the beacon*
+Sets the proxy implementation address on the beacon
 
 
 ```solidity
-constructor(address theImplementation);
+constructor(address theImplementation) ;
 ```
 **Parameters**
 

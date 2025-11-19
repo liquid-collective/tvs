@@ -1,30 +1,30 @@
 # Beacon
-[Git Source](https://github.com/liquid-collective/tvs/blob/94694c515bd11d10170311c3c8bd350b25f11fb2/src/TVSUpgradeable/state/proxy/Beacon.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/state/proxy/Beacon.sol)
 
 **Author:**
-Alluvial Finance Inc.
+Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
 This library manages the beacon address for the proxy contract
 
-*The beacon address is the address of the contract that holds the implementation address*
+The beacon address is the address of the contract that holds the implementation address
 
-*The implementation address is the address of the contract that contains the business logic*
+The implementation address is the address of the contract that contains the business logic
 
-*The beacon address is expected to have an `implementation()` function that returns the address of the
-implementation*
+The beacon address is expected to have an `implementation()` function that returns the address of the
+implementation
 
-*The proxy contract is expected to have a `BEACON_SLOT` slot that stores the beacon address*
+The proxy contract is expected to have a `BEACON_SLOT` slot that stores the beacon address
 
 
 ## State Variables
 ### BEACON_SLOT
-*Slot for the beacon address*
+Slot for the beacon address
 
-*The slot is defined using the EIP-1967 standard*
+The slot is defined using the EIP-1967 standard
 
 
 ```solidity
-bytes32 internal constant BEACON_SLOT = bytes32(uint256(keccak256("eip1967.proxy.beacon")) - 1);
+bytes32 internal constant BEACON_SLOT = bytes32(uint256(keccak256("eip1967.proxy.beacon")) - 1)
 ```
 
 
