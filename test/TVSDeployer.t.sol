@@ -7,7 +7,8 @@ import "../src/TVSNonUpgradeable/TVSClone.sol";
 import "../src/TVSNonUpgradeable/TVSImmutable.sol";
 import "../src/TVSNonUpgradeable/TVSFlexibleImmutable.sol";
 import "../src/TVSUpgradeable/TVSUpgradeable.sol";
-import "openzeppelin-contracts/contracts/proxy/beacon/UpgradeableBeacon.sol";
+import "../src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol";
+import "lib/solady/src/utils/UpgradeableBeacon.sol";
 
 contract TVSDeployerTest is Test {
     TVSDeployer public deployer;
@@ -18,9 +19,8 @@ contract TVSDeployerTest is Test {
     address public immutableBeaconFactory;
 
     function setUp() public {
-        // Deploy a dummy implementation for setup
-        TVSClone implementation = new TVSClone(makeAddr("withdrawal"), makeAddr("consolidation"));
-        deployer = new TVSDeployer(address(implementation));
+        // Deploy dummy implementations for setup
+        TVSClone cloneImplementation = new TVSClone(makeAddr("withdrawal"), makeAddr("consolidation"));
         
         beneficiary = makeAddr("beneficiary");
         owner = makeAddr("owner");
@@ -34,14 +34,29 @@ contract TVSDeployerTest is Test {
             abi.encodeWithSelector(IImmutableBeaconFactory.deployBeacon.selector),
             abi.encode(makeAddr("immutableBeacon"))
         );
+        
+        // Deploy upgradeable implementation
+        TVSUpgradeable upgradeableImplementation = new TVSUpgradeable(
+            withdrawalContract,
+            consolidationContract,
+            immutableBeaconFactory
+        );
+        
+        // Deploy deployer with both implementations
+        deployer = new TVSDeployer(address(cloneImplementation), address(upgradeableImplementation));
     }
 
     function testDeployClone() public {
-        // Deploy implementation
-        TVSClone implementation = new TVSClone(withdrawalContract, consolidationContract);
+        // Deploy implementations
+        TVSClone cloneImplementation = new TVSClone(withdrawalContract, consolidationContract);
+        TVSUpgradeable upgradeableImplementation = new TVSUpgradeable(
+            withdrawalContract,
+            consolidationContract,
+            immutableBeaconFactory
+        );
         
-        // Re-deploy deployer with implementation
-        deployer = new TVSDeployer(address(implementation));
+        // Re-deploy deployer with implementations
+        deployer = new TVSDeployer(address(cloneImplementation), address(upgradeableImplementation));
 
         // Deploy clone
         address clone = deployer.deployClone(beneficiary, owner);
@@ -81,15 +96,8 @@ contract TVSDeployerTest is Test {
     }
 
     function testDeployUpgradeable() public {
-        // Deploy implementation
-        TVSUpgradeable implementation = new TVSUpgradeable(
-            withdrawalContract,
-            consolidationContract,
-            immutableBeaconFactory
-        );
-
-        // Deploy beacon
-        UpgradeableBeacon beacon = new UpgradeableBeacon(address(implementation), owner);
+        // Deploy beacon using the upgradeable implementation from deployer
+        UpgradeableBeacon beacon = new UpgradeableBeacon(owner, deployer.upgradeableTVSImplementation());
 
         // Deploy proxy
         address proxy = deployer.deployUpgradeable(address(beacon), beneficiary, owner);
@@ -97,5 +105,26 @@ contract TVSDeployerTest is Test {
         assertTrue(proxy != address(0));
         assertEq(TVSUpgradeable(payable(proxy)).owner(), owner);
         assertEq(TVSUpgradeable(payable(proxy)).beacon(), address(beacon));
+    }
+
+    function testDeployUpgradeableWithZeroBeacon() public {
+        address deployerAddress = address(this);
+        
+        // Deploy proxy with zero beacon - should deploy new beacon automatically
+        address proxy = deployer.deployUpgradeable(address(0), beneficiary, owner);
+
+        assertTrue(proxy != address(0));
+        assertEq(TVSUpgradeable(payable(proxy)).owner(), owner);
+        
+        // Get the beacon address from the proxy
+        address deployedBeacon = TVSUpgradeable(payable(proxy)).beacon();
+        assertTrue(deployedBeacon != address(0));
+        
+        // Verify the beacon was deployed with correct owner (msg.sender, which is this test contract)
+        UpgradeableBeacon beacon = UpgradeableBeacon(payable(deployedBeacon));
+        assertEq(beacon.owner(), deployerAddress);
+        
+        // Verify the beacon has the correct implementation
+        assertEq(beacon.implementation(), deployer.upgradeableTVSImplementation());
     }
 }

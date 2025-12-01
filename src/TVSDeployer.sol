@@ -6,6 +6,7 @@ import { TVSClone } from "./TVSNonUpgradeable/TVSClone.sol";
 import { TVSImmutable } from "./TVSNonUpgradeable/TVSImmutable.sol";
 import { TVSFlexibleImmutable } from "./TVSNonUpgradeable/TVSFlexibleImmutable.sol";
 import { TVSBeaconProxy } from "./TVSUpgradeable/proxies/TVSBeaconProxy.sol";
+import { UpgradeableBeacon } from "solady/utils/UpgradeableBeacon.sol";
 
 /**
  * @title TVS Deployer
@@ -23,12 +24,20 @@ contract TVSDeployer {
     address public immutable cloneImplementation;
 
     /**
+     * @notice The address of the TVSUpgradeable implementation contract
+     */
+    address public immutable upgradeableTVSImplementation;
+
+    /**
      * @notice Constructor for the TVSDeployer contract
      * @param _cloneImplementation The address of the TVSClone implementation contract
+     * @param _upgradeableTVSImplementation The address of the TVSUpgradeable implementation contract
      */
-    constructor(address _cloneImplementation) {
+    constructor(address _cloneImplementation, address _upgradeableTVSImplementation) {
         if (_cloneImplementation == address(0)) revert("Invalid implementation");
+        if (_upgradeableTVSImplementation == address(0)) revert("Invalid implementation");
         cloneImplementation = _cloneImplementation;
+        upgradeableTVSImplementation = _upgradeableTVSImplementation;
     }
 
     /**
@@ -94,7 +103,7 @@ contract TVSDeployer {
 
     /**
      * @notice Deploys a new TVSUpgradeable (Beacon Proxy) and initializes it
-     * @param beacon The address of the UpgradeableBeacon contract
+     * @param beacon The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed.
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
      * @return tvs The address of the deployed TVS proxy
@@ -104,6 +113,11 @@ contract TVSDeployer {
         address beneficiary,
         address owner
     ) external returns (address tvs) {
+        // If beacon is zero address, deploy a new UpgradeableBeacon
+        if (beacon == address(0)) {
+            beacon = address(new UpgradeableBeacon(msg.sender, upgradeableTVSImplementation));
+        }
+        
         bytes memory initData = abi.encodeWithSignature(
             "initialize(address,address,address)",
             beneficiary,
