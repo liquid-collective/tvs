@@ -19,6 +19,16 @@ contract TVSDeployer {
     event TVSUpgradeableDeployed(address indexed tvs, address indexed beacon, address indexed owner);
 
     /**
+     * @notice The address of the pectra EL withdrawal contract
+     */
+    address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x00000961Ef480Eb55e80D19ad83579A64c007002;
+
+    /**
+     * @notice The address of the pectra EL consolidation contract
+     */
+    address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x0000BBdDc7CE488642fb579F8B00f3a590007251;
+
+    /**
      * @notice The address of the TVSClone implementation contract
      */
     address public immutable cloneImplementation;
@@ -46,10 +56,7 @@ contract TVSDeployer {
      * @param owner The address that will have ownership rights over the TVS
      * @return tvs The address of the deployed TVS proxy
      */
-    function deployClone(
-        address beneficiary,
-        address owner
-    ) external returns (address tvs) {
+    function deployClone(address beneficiary, address owner) external returns (address tvs) {
         tvs = Clones.clone(cloneImplementation);
         TVSClone(payable(tvs)).initialize(beneficiary, owner);
         emit TVSCloneDeployed(tvs, cloneImplementation, owner);
@@ -59,22 +66,10 @@ contract TVSDeployer {
      * @notice Deploys a new TVSImmutable contract
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
-     * @param withdrawalContractAddress The address of the withdrawal contract
-     * @param consolidationContractAddress The address of the consolidation contract
      * @return tvs The address of the deployed TVS contract
      */
-    function deployImmutable(
-        address beneficiary,
-        address owner,
-        address withdrawalContractAddress,
-        address consolidationContractAddress
-    ) external returns (address tvs) {
-        tvs = address(new TVSImmutable(
-            beneficiary,
-            owner,
-            withdrawalContractAddress,
-            consolidationContractAddress
-        ));
+    function deployImmutable(address beneficiary, address owner) external returns (address tvs) {
+        tvs = address(new TVSImmutable(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS));
         emit TVSImmutableDeployed(tvs, owner);
     }
 
@@ -82,48 +77,30 @@ contract TVSDeployer {
      * @notice Deploys a new TVSFlexibleImmutable contract
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
-     * @param withdrawalContractAddress The address of the withdrawal contract
-     * @param consolidationContractAddress The address of the consolidation contract
      * @return tvs The address of the deployed TVS contract
      */
-    function deployFlexibleImmutable(
-        address beneficiary,
-        address owner,
-        address withdrawalContractAddress,
-        address consolidationContractAddress
-    ) external returns (address tvs) {
-        tvs = address(new TVSFlexibleImmutable(
-            beneficiary,
-            owner,
-            withdrawalContractAddress,
-            consolidationContractAddress
-        ));
+    function deployFlexibleImmutable(address beneficiary, address owner) external returns (address tvs) {
+        tvs = address(
+            new TVSFlexibleImmutable(beneficiary, owner, WITHDRAWAL_CONTRACT_ADDRESS, CONSOLIDATION_CONTRACT_ADDRESS)
+        );
         emit TVSFlexibleImmutableDeployed(tvs, owner);
     }
 
     /**
      * @notice Deploys a new TVSUpgradeable (Beacon Proxy) and initializes it
-     * @param beacon The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed.
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
+     * @param beacon The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed.
      * @return tvs The address of the deployed TVS proxy
      */
-    function deployUpgradeable(
-        address beacon,
-        address beneficiary,
-        address owner
-    ) external returns (address tvs) {
+    function deployUpgradeable(address beneficiary, address owner, address beacon) external returns (address tvs) {
         // If beacon is zero address, deploy a new UpgradeableBeacon
         if (beacon == address(0)) {
             beacon = address(new UpgradeableBeacon(msg.sender, upgradeableTVSImplementation));
         }
-        
-        bytes memory initData = abi.encodeWithSignature(
-            "initialize(address,address,address)",
-            beneficiary,
-            owner,
-            beacon
-        );
+
+        bytes memory initData =
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
         tvs = address(new TVSBeaconProxy(beacon, initData));
         emit TVSUpgradeableDeployed(tvs, beacon, owner);
     }

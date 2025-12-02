@@ -21,27 +21,24 @@ contract TVSDeployerTest is Test {
     function setUp() public {
         // Deploy dummy implementations for setup
         TVSClone cloneImplementation = new TVSClone(makeAddr("withdrawal"), makeAddr("consolidation"));
-        
+
         beneficiary = makeAddr("beneficiary");
         owner = makeAddr("owner");
         withdrawalContract = makeAddr("withdrawal");
         consolidationContract = makeAddr("consolidation");
         immutableBeaconFactory = makeAddr("immutableBeaconFactory");
-        
+
         // Mock the immutable beacon factory response
         vm.mockCall(
             immutableBeaconFactory,
             abi.encodeWithSelector(IImmutableBeaconFactory.deployBeacon.selector),
             abi.encode(makeAddr("immutableBeacon"))
         );
-        
+
         // Deploy upgradeable implementation
-        TVSUpgradeable upgradeableImplementation = new TVSUpgradeable(
-            withdrawalContract,
-            consolidationContract,
-            immutableBeaconFactory
-        );
-        
+        TVSUpgradeable upgradeableImplementation =
+            new TVSUpgradeable(withdrawalContract, consolidationContract, immutableBeaconFactory);
+
         // Deploy deployer with both implementations
         deployer = new TVSDeployer(address(cloneImplementation), address(upgradeableImplementation));
     }
@@ -49,12 +46,9 @@ contract TVSDeployerTest is Test {
     function testDeployClone() public {
         // Deploy implementations
         TVSClone cloneImplementation = new TVSClone(withdrawalContract, consolidationContract);
-        TVSUpgradeable upgradeableImplementation = new TVSUpgradeable(
-            withdrawalContract,
-            consolidationContract,
-            immutableBeaconFactory
-        );
-        
+        TVSUpgradeable upgradeableImplementation =
+            new TVSUpgradeable(withdrawalContract, consolidationContract, immutableBeaconFactory);
+
         // Re-deploy deployer with implementations
         deployer = new TVSDeployer(address(cloneImplementation), address(upgradeableImplementation));
 
@@ -68,31 +62,26 @@ contract TVSDeployerTest is Test {
     }
 
     function testDeployImmutable() public {
-        address tvs = deployer.deployImmutable(
-            beneficiary,
-            owner,
-            withdrawalContract,
-            consolidationContract
-        );
+        address tvs = deployer.deployImmutable(beneficiary, owner);
 
         assertTrue(tvs != address(0));
         assertEq(TVSImmutable(payable(tvs)).owner(), owner);
-        assertEq(TVSImmutable(payable(tvs)).WITHDRAWAL_CONTRACT_ADDRESS(), withdrawalContract);
-        assertEq(TVSImmutable(payable(tvs)).CONSOLIDATION_CONTRACT_ADDRESS(), consolidationContract);
+        assertEq(TVSImmutable(payable(tvs)).WITHDRAWAL_CONTRACT_ADDRESS(), deployer.WITHDRAWAL_CONTRACT_ADDRESS());
+        assertEq(TVSImmutable(payable(tvs)).CONSOLIDATION_CONTRACT_ADDRESS(), deployer.CONSOLIDATION_CONTRACT_ADDRESS());
     }
 
     function testDeployFlexibleImmutable() public {
-        address tvs = deployer.deployFlexibleImmutable(
-            beneficiary,
-            owner,
-            withdrawalContract,
-            consolidationContract
-        );
+        address tvs = deployer.deployFlexibleImmutable(beneficiary, owner);
 
         assertTrue(tvs != address(0));
         assertEq(TVSFlexibleImmutable(payable(tvs)).owner(), owner);
-        assertEq(TVSFlexibleImmutable(payable(tvs)).WITHDRAWAL_CONTRACT_ADDRESS(), withdrawalContract);
-        assertEq(TVSFlexibleImmutable(payable(tvs)).CONSOLIDATION_CONTRACT_ADDRESS(), consolidationContract);
+        assertEq(
+            TVSFlexibleImmutable(payable(tvs)).WITHDRAWAL_CONTRACT_ADDRESS(), deployer.WITHDRAWAL_CONTRACT_ADDRESS()
+        );
+        assertEq(
+            TVSFlexibleImmutable(payable(tvs)).CONSOLIDATION_CONTRACT_ADDRESS(),
+            deployer.CONSOLIDATION_CONTRACT_ADDRESS()
+        );
     }
 
     function testDeployUpgradeable() public {
@@ -100,7 +89,7 @@ contract TVSDeployerTest is Test {
         UpgradeableBeacon beacon = new UpgradeableBeacon(owner, deployer.upgradeableTVSImplementation());
 
         // Deploy proxy
-        address proxy = deployer.deployUpgradeable(address(beacon), beneficiary, owner);
+        address proxy = deployer.deployUpgradeable(beneficiary, owner, address(beacon));
 
         assertTrue(proxy != address(0));
         assertEq(TVSUpgradeable(payable(proxy)).owner(), owner);
@@ -109,21 +98,21 @@ contract TVSDeployerTest is Test {
 
     function testDeployUpgradeableWithZeroBeacon() public {
         address deployerAddress = address(this);
-        
+
         // Deploy proxy with zero beacon - should deploy new beacon automatically
-        address proxy = deployer.deployUpgradeable(address(0), beneficiary, owner);
+        address proxy = deployer.deployUpgradeable(beneficiary, owner, address(0));
 
         assertTrue(proxy != address(0));
         assertEq(TVSUpgradeable(payable(proxy)).owner(), owner);
-        
+
         // Get the beacon address from the proxy
         address deployedBeacon = TVSUpgradeable(payable(proxy)).beacon();
         assertTrue(deployedBeacon != address(0));
-        
+
         // Verify the beacon was deployed with correct owner (msg.sender, which is this test contract)
         UpgradeableBeacon beacon = UpgradeableBeacon(payable(deployedBeacon));
         assertEq(beacon.owner(), deployerAddress);
-        
+
         // Verify the beacon has the correct implementation
         assertEq(beacon.implementation(), deployer.upgradeableTVSImplementation());
     }
