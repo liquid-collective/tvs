@@ -13,9 +13,34 @@ import { UpgradeableBeacon } from "solady/utils/UpgradeableBeacon.sol";
  * @notice Permissionless deployer for all TVS variants
  */
 contract TVSDeployer {
+    /**
+     * @notice Emitted when a TVSClone contract is deployed
+     * @param tvs The address of the deployed TVSClone contract
+     * @param implementation The address of the TVSClone implementation contract
+     * @param owner The address of the owner of the TVSClone contract
+     */
     event TVSCloneDeployed(address indexed tvs, address indexed implementation, address indexed owner);
+
+    /**
+     * @notice Emitted when a TVSImmutable contract is deployed
+     * @param tvs The address of the deployed TVSImmutable contract
+     * @param owner The address of the owner of the TVSImmutable contract
+     */
     event TVSImmutableDeployed(address indexed tvs, address indexed owner);
+
+    /**
+     * @notice Emitted when a TVSFlexibleImmutable contract is deployed
+     * @param tvs The address of the deployed TVSFlexibleImmutable contract
+     * @param owner The address of the owner of the TVSFlexibleImmutable contract
+     */
     event TVSFlexibleImmutableDeployed(address indexed tvs, address indexed owner);
+
+    /**
+     * @notice Emitted when a TVSUpgradeable contract is deployed
+     * @param tvs The address of the deployed TVSUpgradeable contract
+     * @param beacon The address of the beacon contract
+     * @param owner The address of the owner of the TVSUpgradeable contract
+     */
     event TVSUpgradeableDeployed(address indexed tvs, address indexed beacon, address indexed owner);
 
     /**
