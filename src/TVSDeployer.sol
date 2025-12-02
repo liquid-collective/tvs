@@ -14,6 +14,10 @@ import { UpgradeableBeacon } from "solady/utils/UpgradeableBeacon.sol";
  */
 contract TVSDeployer {
     /**
+     * @notice Error thrown when an invalid implementation is provided
+     */
+    error InvalidImplementation();
+    /**
      * @notice Emitted when a TVSClone contract is deployed
      * @param tvs The address of the deployed TVSClone contract
      * @param implementation The address of the TVSClone implementation contract
@@ -69,8 +73,8 @@ contract TVSDeployer {
      * @param _upgradeableTVSImplementation The address of the TVSUpgradeable implementation contract
      */
     constructor(address _cloneImplementation, address _upgradeableTVSImplementation) {
-        if (_cloneImplementation == address(0)) revert("Invalid implementation");
-        if (_upgradeableTVSImplementation == address(0)) revert("Invalid implementation");
+        if (_cloneImplementation == address(0)) revert InvalidImplementation();
+        if (_upgradeableTVSImplementation == address(0)) revert InvalidImplementation();
         cloneImplementation = _cloneImplementation;
         upgradeableTVSImplementation = _upgradeableTVSImplementation;
     }
