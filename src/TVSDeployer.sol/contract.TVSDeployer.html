@@ -182,17 +182,17 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvsdeployer"><a class="header" href="#tvsdeployer">TVSDeployer</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/dcde88d92792bb32cd29c7f2bb71780ce51ffba1/src/TVSDeployer.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1a9a3da035ebf9707074769d988188dfdb5f0467/src/TVSDeployer.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>Permissionless deployer for all TVS variants</p>
 <h2 id="state-variables"><a class="header" href="#state-variables">State Variables</a></h2>
 <h3 id="withdrawal_contract_address"><a class="header" href="#withdrawal_contract_address">WITHDRAWAL_CONTRACT_ADDRESS</a></h3>
-<p>The address of the pectra EL withdrawal contract</p>
+<p>The address of the Pectra EL withdrawal contract</p>
 <pre><code class="language-solidity">address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x00000961Ef480Eb55e80D19ad83579A64c007002
 </code></pre>
 <h3 id="consolidation_contract_address"><a class="header" href="#consolidation_contract_address">CONSOLIDATION_CONTRACT_ADDRESS</a></h3>
-<p>The address of the pectra EL consolidation contract</p>
+<p>The address of the Pectra EL consolidation contract</p>
 <pre><code class="language-solidity">address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x0000BBdDc7CE488642fb579F8B00f3a590007251
 </code></pre>
 <h3 id="clone_implementation"><a class="header" href="#clone_implementation">CLONE_IMPLEMENTATION</a></h3>
@@ -261,6 +261,7 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 </div>
 <h3 id="deployupgradeable"><a class="header" href="#deployupgradeable">deployUpgradeable</a></h3>
 <p>Deploys a new TVSUpgradeable (Beacon Proxy) and initializes it</p>
+<p>the new beacon will be deployed with the sender as the owner</p>
 <pre><code class="language-solidity">function deployUpgradeable(address beneficiary, address owner, address beacon) external returns (address tvs);
 </code></pre>
 <p><strong>Parameters</strong></p>

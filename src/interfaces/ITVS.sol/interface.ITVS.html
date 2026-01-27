@@ -182,7 +182,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="itvs"><a class="header" href="#itvs">ITVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/dcde88d92792bb32cd29c7f2bb71780ce51ffba1/src/interfaces/ITVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1a9a3da035ebf9707074769d988188dfdb5f0467/src/interfaces/ITVS.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>Interface for the TVS contract.</p>
@@ -246,7 +246,7 @@ beneficiary contract address.</p>
 <p>Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.</p>
 <p>Only the owner can call this function.</p>
 <pre><code class="language-solidity">function withdraw(
-    bytes[] memory pubkeys,
+    bytes[] calldata pubkeys,
     uint64[] calldata amount,
     uint256 maxFeePerWithdrawal,
     address excessFeeRecipient
