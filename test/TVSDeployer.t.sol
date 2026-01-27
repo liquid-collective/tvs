@@ -59,6 +59,8 @@ contract TVSDeployerTest is Test {
         // Re-deploy deployer with implementations
         deployer = new TVSDeployer(address(cloneImplementation), address(upgradeableImplementation));
 
+        vm.expectEmit(false, true, true, true);
+        emit TVSDeployer.TVSCloneDeployed(address(0), address(cloneImplementation), owner);
         // Deploy clone
         address clone = deployer.deployClone(beneficiary, owner);
 
@@ -66,18 +68,24 @@ contract TVSDeployerTest is Test {
         assertTrue(clone != address(0));
         assertEq(TVSClone(payable(clone)).owner(), owner);
         // Check beneficiary if possible, or other initialized state
+        assertEq(TVSClone(payable(clone)).getBeneficiary(), beneficiary);
     }
 
     function testDeployImmutable() public {
+        vm.expectEmit(false, true, true, true);
+        emit TVSDeployer.TVSImmutableDeployed(address(0), owner);
         address tvs = deployer.deployImmutable(beneficiary, owner);
 
         assertTrue(tvs != address(0));
         assertEq(TVSImmutable(payable(tvs)).owner(), owner);
         assertEq(TVSImmutable(payable(tvs)).WITHDRAWAL_CONTRACT_ADDRESS(), deployer.WITHDRAWAL_CONTRACT_ADDRESS());
         assertEq(TVSImmutable(payable(tvs)).CONSOLIDATION_CONTRACT_ADDRESS(), deployer.CONSOLIDATION_CONTRACT_ADDRESS());
+        assertEq(TVSImmutable(payable(tvs)).getBeneficiary(), beneficiary);
     }
 
     function testDeployFlexibleImmutable() public {
+        vm.expectEmit(false, true, true, true);
+        emit TVSDeployer.TVSFlexibleImmutableDeployed(address(0), owner);
         address tvs = deployer.deployFlexibleImmutable(beneficiary, owner);
 
         assertTrue(tvs != address(0));
@@ -89,29 +97,34 @@ contract TVSDeployerTest is Test {
             TVSFlexibleImmutable(payable(tvs)).CONSOLIDATION_CONTRACT_ADDRESS(),
             deployer.CONSOLIDATION_CONTRACT_ADDRESS()
         );
+        assertEq(TVSImmutable(payable(tvs)).getBeneficiary(), beneficiary);
     }
 
     function testDeployUpgradeable() public {
         // Deploy beacon using the upgradeable implementation from deployer
         UpgradeableBeacon beacon = new UpgradeableBeacon(owner, deployer.UPGRADEABLE_TVS_IMPLEMENTATION());
-
+        vm.expectEmit(false, true, true, true);
+        emit TVSDeployer.TVSUpgradeableDeployed(address(0), address(beacon), owner);
         // Deploy proxy
         address proxy = deployer.deployUpgradeable(beneficiary, owner, address(beacon));
 
         assertTrue(proxy != address(0));
         assertEq(TVSUpgradeable(payable(proxy)).owner(), owner);
         assertEq(TVSUpgradeable(payable(proxy)).beacon(), address(beacon));
+        assertEq(TVSImmutable(payable(proxy)).getBeneficiary(), beneficiary);
     }
 
     function testDeployUpgradeableWithZeroBeacon() public {
         address deployerAddress = address(this);
 
+        vm.expectEmit(false, false, true, true);
+        emit TVSDeployer.TVSUpgradeableDeployed(address(0), address(0), owner);
         // Deploy proxy with zero beacon - should deploy new beacon automatically
         address proxy = deployer.deployUpgradeable(beneficiary, owner, address(0));
 
         assertTrue(proxy != address(0));
         assertEq(TVSUpgradeable(payable(proxy)).owner(), owner);
-
+        assertEq(TVSImmutable(payable(proxy)).getBeneficiary(), beneficiary);
         // Get the beacon address from the proxy
         address deployedBeacon = TVSUpgradeable(payable(proxy)).beacon();
         assertTrue(deployedBeacon != address(0));

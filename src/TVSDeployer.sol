@@ -20,12 +20,12 @@ error InvalidImplementation();
  */
 contract TVSDeployer {
     /**
-     * @notice The address of the pectra EL withdrawal contract
+     * @notice The address of the Pectra EL withdrawal contract
      */
     address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x00000961Ef480Eb55e80D19ad83579A64c007002;
 
     /**
-     * @notice The address of the pectra EL consolidation contract
+     * @notice The address of the Pectra EL consolidation contract
      */
     address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x0000BBdDc7CE488642fb579F8B00f3a590007251;
 
@@ -122,6 +122,7 @@ contract TVSDeployer {
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
      * @param beacon The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed.
+     * @dev the new beacon will be deployed with the sender as the owner
      * @return tvs The address of the deployed TVS proxy
      */
     function deployUpgradeable(address beneficiary, address owner, address beacon) external returns (address tvs) {
