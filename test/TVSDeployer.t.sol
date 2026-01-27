@@ -93,7 +93,7 @@ contract TVSDeployerTest is Test {
 
     function testDeployUpgradeable() public {
         // Deploy beacon using the upgradeable implementation from deployer
-        UpgradeableBeacon beacon = new UpgradeableBeacon(owner, deployer.upgradeableTVSImplementation());
+        UpgradeableBeacon beacon = new UpgradeableBeacon(owner, deployer.UPGRADEABLE_TVS_IMPLEMENTATION());
 
         // Deploy proxy
         address proxy = deployer.deployUpgradeable(beneficiary, owner, address(beacon));
@@ -121,6 +121,6 @@ contract TVSDeployerTest is Test {
         assertEq(beacon.owner(), deployerAddress);
 
         // Verify the beacon has the correct implementation
-        assertEq(beacon.implementation(), deployer.upgradeableTVSImplementation());
+        assertEq(beacon.implementation(), deployer.UPGRADEABLE_TVS_IMPLEMENTATION());
     }
 }

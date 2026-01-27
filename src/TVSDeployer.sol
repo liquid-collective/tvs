@@ -9,14 +9,36 @@ import { TVSBeaconProxy } from "./TVSUpgradeable/proxies/TVSBeaconProxy.sol";
 import { UpgradeableBeacon } from "solady/utils/UpgradeableBeacon.sol";
 
 /**
+ * @notice Error thrown when an invalid implementation is provided
+ */
+error InvalidImplementation();
+
+/**
  * @title TVS Deployer
+ * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
  * @notice Permissionless deployer for all TVS variants
  */
 contract TVSDeployer {
     /**
-     * @notice Error thrown when an invalid implementation is provided
+     * @notice The address of the pectra EL withdrawal contract
      */
-    error InvalidImplementation();
+    address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x00000961Ef480Eb55e80D19ad83579A64c007002;
+
+    /**
+     * @notice The address of the pectra EL consolidation contract
+     */
+    address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x0000BBdDc7CE488642fb579F8B00f3a590007251;
+
+    /**
+     * @notice The address of the TVSClone implementation contract
+     */
+    address public immutable CLONE_IMPLEMENTATION;
+
+    /**
+     * @notice The address of the TVSUpgradeable implementation contract
+     */
+    address public immutable UPGRADEABLE_TVS_IMPLEMENTATION;
+
     /**
      * @notice Emitted when a TVSClone contract is deployed
      * @param tvs The address of the deployed TVSClone contract
@@ -48,26 +70,6 @@ contract TVSDeployer {
     event TVSUpgradeableDeployed(address indexed tvs, address indexed beacon, address indexed owner);
 
     /**
-     * @notice The address of the pectra EL withdrawal contract
-     */
-    address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x00000961Ef480Eb55e80D19ad83579A64c007002;
-
-    /**
-     * @notice The address of the pectra EL consolidation contract
-     */
-    address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x0000BBdDc7CE488642fb579F8B00f3a590007251;
-
-    /**
-     * @notice The address of the TVSClone implementation contract
-     */
-    address public immutable cloneImplementation;
-
-    /**
-     * @notice The address of the TVSUpgradeable implementation contract
-     */
-    address public immutable upgradeableTVSImplementation;
-
-    /**
      * @notice Constructor for the TVSDeployer contract
      * @param _cloneImplementation The address of the TVSClone implementation contract
      * @param _upgradeableTVSImplementation The address of the TVSUpgradeable implementation contract
@@ -75,8 +77,8 @@ contract TVSDeployer {
     constructor(address _cloneImplementation, address _upgradeableTVSImplementation) {
         if (_cloneImplementation == address(0)) revert InvalidImplementation();
         if (_upgradeableTVSImplementation == address(0)) revert InvalidImplementation();
-        cloneImplementation = _cloneImplementation;
-        upgradeableTVSImplementation = _upgradeableTVSImplementation;
+        CLONE_IMPLEMENTATION = _cloneImplementation;
+        UPGRADEABLE_TVS_IMPLEMENTATION = _upgradeableTVSImplementation;
     }
 
     /**
@@ -86,9 +88,9 @@ contract TVSDeployer {
      * @return tvs The address of the deployed TVS proxy
      */
     function deployClone(address beneficiary, address owner) external returns (address tvs) {
-        tvs = Clones.clone(cloneImplementation);
+        tvs = Clones.clone(CLONE_IMPLEMENTATION);
         TVSClone(payable(tvs)).initialize(beneficiary, owner);
-        emit TVSCloneDeployed(tvs, cloneImplementation, owner);
+        emit TVSCloneDeployed(tvs, CLONE_IMPLEMENTATION, owner);
     }
 
     /**
@@ -125,7 +127,7 @@ contract TVSDeployer {
     function deployUpgradeable(address beneficiary, address owner, address beacon) external returns (address tvs) {
         // If beacon is zero address, deploy a new UpgradeableBeacon
         if (beacon == address(0)) {
-            beacon = address(new UpgradeableBeacon(msg.sender, upgradeableTVSImplementation));
+            beacon = address(new UpgradeableBeacon(msg.sender, UPGRADEABLE_TVS_IMPLEMENTATION));
         }
 
         bytes memory initData =

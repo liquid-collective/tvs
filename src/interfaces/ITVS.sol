@@ -130,7 +130,7 @@ interface ITVS {
 
     // Setters
 
-    /*
+    /**
      * @notice Fallback function to receive funds.
      */
     receive() external payable;

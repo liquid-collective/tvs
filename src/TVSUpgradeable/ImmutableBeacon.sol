@@ -13,7 +13,7 @@ contract ImmutableBeacon {
      * @notice The proxy implementation address stored in the beacon
      * @dev This address is set in the constructor and cannot be changed
      */
-    address public immutable implementation;
+    address public immutable implementation; // solhint-disable-line
 
     /**
      * @notice Emitted when the implementation address is invalid

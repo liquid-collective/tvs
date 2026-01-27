@@ -13,15 +13,15 @@ interface ITVSFlexibleImmutable {
      * @notice Struct to hold call data for the arbitrary executeCall function
      * @dev The Call struct is used to hold the data required to perform a low-level call or delegatecall.
      * @param to The target address for the call.
-     * @param data The calldata to pass to the target address.
-     * @param value The amount of ETH (in wei) to transfer. Pass 0 for non-payable calls.
      * @param isDelegateCall Boolean flag to indicate whether to perform a delegatecall (true) or a call (false).
+     * @param value The amount of ETH (in wei) to transfer. Pass 0 for non-payable calls.
+     * @param data The calldata to pass to the target address.
      */
     struct Call {
         address to;
+        bool isDelegateCall;
         uint256 value;
         bytes data;
-        bool isDelegateCall;
     }
 
     /**
