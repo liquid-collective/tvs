@@ -182,7 +182,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvsupgradeable"><a class="header" href="#tvsupgradeable">TVSUpgradeable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/12f772ac46bf4e7c7b34d888e69fec7b05ef1fd7/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/dcde88d92792bb32cd29c7f2bb71780ce51ffba1/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="/home/runner/work/tvs/tvs/docs/src/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.html">ITVSUpgradeable</a>, <a href="/home/runner/work/tvs/tvs/docs/src/src/components/TVS.sol/abstract.TVS.html">TVS</a></p>
 <p><strong>Author:</strong>
@@ -190,12 +190,12 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 <p>Upgradeable implementation of the TVS</p>
 <p>This contract provides an upgradeable version of the TVS using a beacon proxy pattern</p>
 <h2 id="state-variables"><a class="header" href="#state-variables">State Variables</a></h2>
-<h3 id="immutablebeacon"><a class="header" href="#immutablebeacon">immutableBeacon</a></h3>
+<h3 id="immutable_beacon"><a class="header" href="#immutable_beacon">IMMUTABLE_BEACON</a></h3>
 <p>The address of the immutable beacon contract</p>
 <p>During a TVS transfer, the beacon is temporarily set to this immutable beacon. This variable ensures that
 the current TVS Implementation is frozen, preventing the oldOwner from modifying the TVS Implementation in
 the beacon</p>
-<pre><code class="language-solidity">address public immutable immutableBeacon
+<pre><code class="language-solidity">address public immutable IMMUTABLE_BEACON
 </code></pre>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="constructor"><a class="header" href="#constructor">constructor</a></h3>

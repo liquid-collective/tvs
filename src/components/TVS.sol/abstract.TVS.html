@@ -182,7 +182,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvs"><a class="header" href="#tvs">TVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/12f772ac46bf4e7c7b34d888e69fec7b05ef1fd7/src/components/TVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/dcde88d92792bb32cd29c7f2bb71780ce51ffba1/src/components/TVS.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="/home/runner/work/tvs/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.html">ITVS</a>, <a href="/home/runner/work/tvs/tvs/docs/src/src/components/BaseSecurity.sol/abstract.BaseSecurity.html">BaseSecurity</a></p>
 <p><strong>Author:</strong>
@@ -214,13 +214,14 @@ and available to the proxy</p>
 </tbody></table>
 </div>
 <h3 id="receive"><a class="header" href="#receive">receive</a></h3>
+<p>Fallback function to receive funds.</p>
 <pre><code class="language-solidity">receive() external payable;
 </code></pre>
 <h3 id="withdraw"><a class="header" href="#withdraw">withdraw</a></h3>
 <p>Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.</p>
 <p>Only the owner can call this function.</p>
 <pre><code class="language-solidity">function withdraw(
-    bytes[] memory pubkeys,
+    bytes[] calldata pubkeys,
     uint64[] calldata amount,
     uint256 maxFeePerWithdrawal,
     address excessFeeRecipient
@@ -359,7 +360,8 @@ beneficiary contract address.</p>
 </tbody></table>
 </div>
 <h3 id="_validatesufficientvalueforfee"><a class="header" href="#_validatesufficientvalueforfee">_validateSufficientValueForFee</a></h3>
-<p>Internal function to validate the caller sent sufficient value for fee. Used for pectra related operations.</p>
+<p>Internal function to validate the caller sent sufficient value for fee. Used for pectra related
+operations.</p>
 <pre><code class="language-solidity">function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure;
 </code></pre>
 <p><strong>Parameters</strong></p>
