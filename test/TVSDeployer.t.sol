@@ -136,4 +136,9 @@ contract TVSDeployerTest is Test {
         // Verify the beacon has the correct implementation
         assertEq(beacon.implementation(), deployer.UPGRADEABLE_TVS_IMPLEMENTATION());
     }
+
+    function testDeployUpgradeableWithInvalidBeacon() public {
+        vm.expectRevert(abi.encodeWithSignature("InvalidImplementation()"));
+        deployer.deployUpgradeable(beneficiary, owner, address(0x01));
+    }
 }
