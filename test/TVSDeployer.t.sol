@@ -48,6 +48,9 @@ contract TVSDeployerTest is Test {
         new TVSDeployer(address(0), address(0));
         vm.expectRevert(abi.encodeWithSignature("InvalidImplementation()"));
         new TVSDeployer(address(0x01), address(0));
+        TVSClone cloneImplementation = new TVSClone(withdrawalContract, consolidationContract);
+        vm.expectRevert(abi.encodeWithSignature("InvalidImplementation()"));
+        new TVSDeployer(address(cloneImplementation), address(0));
     }
 
     function testDeployClone() public {
