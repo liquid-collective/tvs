@@ -182,7 +182,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="itvsflexibleimmutable"><a class="header" href="#itvsflexibleimmutable">ITVSFlexibleImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>Interface for the TVSFlexibleImmutable contract</p>
@@ -225,17 +225,17 @@ NOTE:</p>
 <p>The Call struct is used to hold the data required to perform a low-level call or delegatecall.</p>
 <pre><code class="language-solidity">struct Call {
     address to;
-    bool isDelegateCall;
     uint256 value;
     bytes data;
+    bool isDelegateCall;
 }
 </code></pre>
 <p><strong>Properties</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>to</code></td><td><code>address</code></td><td>The target address for the call.</td></tr>
-<tr><td><code>isDelegateCall</code></td><td><code>bool</code></td><td>Boolean flag to indicate whether to perform a delegatecall (true) or a call (false).</td></tr>
 <tr><td><code>value</code></td><td><code>uint256</code></td><td>The amount of ETH (in wei) to transfer. Pass 0 for non-payable calls.</td></tr>
 <tr><td><code>data</code></td><td><code>bytes</code></td><td>The calldata to pass to the target address.</td></tr>
+<tr><td><code>isDelegateCall</code></td><td><code>bool</code></td><td>Boolean flag to indicate whether to perform a delegatecall (true) or a call (false).</td></tr>
 </tbody></table>
 </div>
                     </main>

@@ -339,7 +339,7 @@ yarn install
 <li><a href="src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.html">ITVSFlexibleImmutable</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="itvsflexibleimmutable"><a class="header" href="#itvsflexibleimmutable">ITVSFlexibleImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>Interface for the TVSFlexibleImmutable contract</p>
@@ -382,20 +382,20 @@ NOTE:</p>
 <p>The Call struct is used to hold the data required to perform a low-level call or delegatecall.</p>
 <pre><code class="language-solidity">struct Call {
     address to;
-    bool isDelegateCall;
     uint256 value;
     bytes data;
+    bool isDelegateCall;
 }
 </code></pre>
 <p><strong>Properties</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>to</code></td><td><code>address</code></td><td>The target address for the call.</td></tr>
-<tr><td><code>isDelegateCall</code></td><td><code>bool</code></td><td>Boolean flag to indicate whether to perform a delegatecall (true) or a call (false).</td></tr>
 <tr><td><code>value</code></td><td><code>uint256</code></td><td>The amount of ETH (in wei) to transfer. Pass 0 for non-payable calls.</td></tr>
 <tr><td><code>data</code></td><td><code>bytes</code></td><td>The calldata to pass to the target address.</td></tr>
+<tr><td><code>isDelegateCall</code></td><td><code>bool</code></td><td>Boolean flag to indicate whether to perform a delegatecall (true) or a call (false).</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsclone"><a class="header" href="#tvsclone">TVSClone</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSNonUpgradeable/TVSClone.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSNonUpgradeable/TVSClone.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSNonUpgradeable/TVSClone.sol//home/runner/work/tvs/tvs/docs/src/src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.html">TVSImmutableBase</a></p>
 <p><strong>Author:</strong>
@@ -426,7 +426,7 @@ non-upgradeable.</p>
 <tr><td><code>owner</code></td><td><code>address</code></td><td>The address that will have ownership rights over the TVS</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsflexibleimmutable"><a class="header" href="#tvsflexibleimmutable">TVSFlexibleImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSNonUpgradeable/TVSFlexibleImmutable.sol//home/runner/work/tvs/tvs/docs/src/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.html">ITVSFlexibleImmutable</a>, <a href="src/TVSNonUpgradeable/TVSFlexibleImmutable.sol//home/runner/work/tvs/tvs/docs/src/src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.html">TVSImmutable</a></p>
 <p><strong>Author:</strong>
@@ -505,7 +505,7 @@ isDelegateCall flag.</p>
 <tr><td><code>_returnData</code></td><td><code>bytes</code></td><td>The return data from the call</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsimmutable"><a class="header" href="#tvsimmutable">TVSImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSNonUpgradeable/TVSImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSNonUpgradeable/TVSImmutable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSNonUpgradeable/TVSImmutable.sol//home/runner/work/tvs/tvs/docs/src/src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.html">TVSImmutableBase</a></p>
 <p><strong>Author:</strong>
@@ -540,7 +540,7 @@ the new addresses due to the immutability of this contract.</p>
 <tr><td><code>consolidationContractAddress</code></td><td><code>address</code></td><td>The address of the consolidation contract</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsimmutablebase"><a class="header" href="#tvsimmutablebase">TVSImmutableBase</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSNonUpgradeable/TVSImmutableBase.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSNonUpgradeable/TVSImmutableBase.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSNonUpgradeable/TVSImmutableBase.sol//home/runner/work/tvs/tvs/docs/src/src/components/TVS.sol/abstract.TVS.html">TVS</a></p>
 <p><strong>Author:</strong>
@@ -599,7 +599,7 @@ once here in the constructor.</p>
 <li><a href="src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.html">ITVSUpgradeable</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="iimmutablebeaconfactory"><a class="header" href="#iimmutablebeaconfactory">IImmutableBeaconFactory</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>Interface for the Immutable Beacon Factory</p>
@@ -619,7 +619,7 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 <tr><td><code>beacon</code></td><td><code>address</code></td><td>The address of the deployed immutable beacon</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="itvsupgradeable"><a class="header" href="#itvsupgradeable">ITVSUpgradeable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol//home/runner/work/tvs/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.html">ITVS</a></p>
 <p><strong>Author:</strong>
@@ -668,7 +668,7 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 <li><a href="src/TVSUpgradeable/proxies/TVSBeaconProxy.sol/contract.TVSBeaconProxy.html">TVSBeaconProxy</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="tvsbeaconproxy"><a class="header" href="#tvsbeaconproxy">TVSBeaconProxy</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>This is an EIP-1167 minimal proxy that interacts with an upgradable beacon contract</p>
@@ -727,7 +727,7 @@ initialize has invalid addresses.</p>
 <li><a href="src/TVSUpgradeable/state/proxy/Beacon.sol/library.Beacon.html">Beacon</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="beacon-1"><a class="header" href="#beacon-1">Beacon</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSUpgradeable/state/proxy/Beacon.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSUpgradeable/state/proxy/Beacon.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>This library manages the beacon address for the proxy contract</p>
@@ -761,7 +761,7 @@ implementation</p>
 <tr><td><code>&lt;none&gt;</code></td><td><code>address</code></td><td>The beacon address</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="immutablebeacon"><a class="header" href="#immutablebeacon">ImmutableBeacon</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSUpgradeable/ImmutableBeacon.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSUpgradeable/ImmutableBeacon.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>An immutable beacon whose implementation can never be altered after deployment</p>
@@ -790,7 +790,7 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 <pre><code class="language-solidity">error InvalidImplementation();
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="immutablebeaconfactory"><a class="header" href="#immutablebeaconfactory">ImmutableBeaconFactory</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSUpgradeable/ImmutableBeaconFactory.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSUpgradeable/ImmutableBeaconFactory.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSUpgradeable/ImmutableBeaconFactory.sol//home/runner/work/tvs/tvs/docs/src/src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol/interface.IImmutableBeaconFactory.html">IImmutableBeaconFactory</a></p>
 <p><strong>Author:</strong>
@@ -812,7 +812,7 @@ frozen after deployment</p>
 <tr><td><code>beacon</code></td><td><code>address</code></td><td>The address of the deployed immutable beacon</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="tvsupgradeable"><a class="header" href="#tvsupgradeable">TVSUpgradeable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/TVSUpgradeable/TVSUpgradeable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/TVSUpgradeable/TVSUpgradeable.sol//home/runner/work/tvs/tvs/docs/src/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.html">ITVSUpgradeable</a>, <a href="src/TVSUpgradeable/TVSUpgradeable.sol//home/runner/work/tvs/tvs/docs/src/src/components/TVS.sol/abstract.TVS.html">TVS</a></p>
 <p><strong>Author:</strong>
@@ -820,12 +820,12 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 <p>Upgradeable implementation of the TVS</p>
 <p>This contract provides an upgradeable version of the TVS using a beacon proxy pattern</p>
 <h2 id="state-variables-2"><a class="header" href="#state-variables-2">State Variables</a></h2>
-<h3 id="immutable_beacon"><a class="header" href="#immutable_beacon">IMMUTABLE_BEACON</a></h3>
+<h3 id="immutablebeacon-1"><a class="header" href="#immutablebeacon-1">immutableBeacon</a></h3>
 <p>The address of the immutable beacon contract</p>
 <p>During a TVS transfer, the beacon is temporarily set to this immutable beacon. This variable ensures that
 the current TVS Implementation is frozen, preventing the oldOwner from modifying the TVS Implementation in
 the beacon</p>
-<pre><code class="language-solidity">address public immutable IMMUTABLE_BEACON
+<pre><code class="language-solidity">address public immutable immutableBeacon
 </code></pre>
 <h2 id="functions-11"><a class="header" href="#functions-11">Functions</a></h2>
 <h3 id="constructor-6"><a class="header" href="#constructor-6">constructor</a></h3>
@@ -931,7 +931,7 @@ call to the implementation contract, and reverts if the call fails</p>
 <li><a href="src/components/TVS.sol/abstract.TVS.html">TVS</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="basesecurity"><a class="header" href="#basesecurity">BaseSecurity</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/components/BaseSecurity.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/components/BaseSecurity.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 Initializable, OwnableUpgradeable, ReentrancyGuardTransientUpgradeable</p>
 <p><strong>Author:</strong>
@@ -982,7 +982,7 @@ deployment phase to properly configure ownership and reentrancy protection.</p>
 <pre><code class="language-solidity">error OwnershipCannotBeRenounced();
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="tvs"><a class="header" href="#tvs">TVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/components/TVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/components/TVS.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="src/components/TVS.sol//home/runner/work/tvs/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.html">ITVS</a>, <a href="src/components/TVS.sol//home/runner/work/tvs/tvs/docs/src/src/components/BaseSecurity.sol/abstract.BaseSecurity.html">BaseSecurity</a></p>
 <p><strong>Author:</strong>
@@ -1014,14 +1014,13 @@ and available to the proxy</p>
 </tbody></table>
 </div>
 <h3 id="receive"><a class="header" href="#receive">receive</a></h3>
-<p>Fallback function to receive funds.</p>
 <pre><code class="language-solidity">receive() external payable;
 </code></pre>
 <h3 id="withdraw"><a class="header" href="#withdraw">withdraw</a></h3>
 <p>Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.</p>
 <p>Only the owner can call this function.</p>
 <pre><code class="language-solidity">function withdraw(
-    bytes[] calldata pubkeys,
+    bytes[] memory pubkeys,
     uint64[] calldata amount,
     uint256 maxFeePerWithdrawal,
     address excessFeeRecipient
@@ -1160,8 +1159,7 @@ beneficiary contract address.</p>
 </tbody></table>
 </div>
 <h3 id="_validatesufficientvalueforfee"><a class="header" href="#_validatesufficientvalueforfee">_validateSufficientValueForFee</a></h3>
-<p>Internal function to validate the caller sent sufficient value for fee. Used for pectra related
-operations.</p>
+<p>Internal function to validate the caller sent sufficient value for fee. Used for pectra related operations.</p>
 <pre><code class="language-solidity">function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -1205,7 +1203,7 @@ operations.</p>
 <li><a href="src/interfaces/ITVSSweepBeneficiary.sol/interface.ITVSSweepBeneficiary.html">ITVSSweepBeneficiary</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="itvs"><a class="header" href="#itvs">ITVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/interfaces/ITVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/interfaces/ITVS.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>Interface for the TVS contract.</p>
@@ -1213,7 +1211,6 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 <p>The TVS contract is the withdrawal credential of a set of validators in the system.</p>
 <h2 id="functions-14"><a class="header" href="#functions-14">Functions</a></h2>
 <h3 id="receive-1"><a class="header" href="#receive-1">receive</a></h3>
-<p>Fallback function to receive funds.</p>
 <pre><code class="language-solidity">receive() external payable;
 </code></pre>
 <h3 id="sweep-1"><a class="header" href="#sweep-1">sweep</a></h3>
@@ -1269,7 +1266,7 @@ beneficiary contract address.</p>
 <p>Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.</p>
 <p>Only the owner can call this function.</p>
 <pre><code class="language-solidity">function withdraw(
-    bytes[] calldata pubkeys,
+    bytes[] memory pubkeys,
     uint64[] calldata amount,
     uint256 maxFeePerWithdrawal,
     address excessFeeRecipient
@@ -1481,7 +1478,7 @@ associated pectra EL contracts.</p>
 <tr><td><code>targetPubkey</code></td><td><code>bytes</code></td><td>The public key of the validator to consolidate to.</td></tr>
 </tbody></table>
 </div><div style="break-before: page; page-break-before: always;"></div><h1 id="itvssweepbeneficiary"><a class="header" href="#itvssweepbeneficiary">ITVSSweepBeneficiary</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/interfaces/ITVSSweepBeneficiary.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/interfaces/ITVSSweepBeneficiary.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>Interface for the TVS beneficiary contract to receive ETH from the TVS.</p>
@@ -1501,7 +1498,7 @@ function of the TVS.</p>
 <li><a href="src/state/Beneficiary.sol/library.Beneficiary.html">Beneficiary</a></li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="beneficiary"><a class="header" href="#beneficiary">Beneficiary</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/state/Beneficiary.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/1122b79b6ab0ebc92ba40242d074487ed1113ae3/src/state/Beneficiary.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>This library manages the beneficiary address for the TVS proxy contract</p>
@@ -1530,148 +1527,6 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 <p><strong>Returns</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>&lt;none&gt;</code></td><td><code>address</code></td><td>The beneficiary address</td></tr>
-</tbody></table>
-</div><div style="break-before: page; page-break-before: always;"></div><h1 id="invalidimplementation-1"><a class="header" href="#invalidimplementation-1">InvalidImplementation</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSDeployer.sol">Git Source</a></p>
-<p>Error thrown when an invalid implementation is provided</p>
-<pre><code class="language-solidity">error InvalidImplementation();
-</code></pre>
-<div style="break-before: page; page-break-before: always;"></div><h1 id="tvsdeployer"><a class="header" href="#tvsdeployer">TVSDeployer</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/08b16ff33a04507b406b0e642c5bfe446af0434c/src/TVSDeployer.sol">Git Source</a></p>
-<p><strong>Author:</strong>
-Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
-<p>Permissionless deployer for all TVS variants</p>
-<h2 id="state-variables-5"><a class="header" href="#state-variables-5">State Variables</a></h2>
-<h3 id="withdrawal_contract_address-1"><a class="header" href="#withdrawal_contract_address-1">WITHDRAWAL_CONTRACT_ADDRESS</a></h3>
-<p>The address of the Pectra EL withdrawal contract</p>
-<pre><code class="language-solidity">address public constant WITHDRAWAL_CONTRACT_ADDRESS = 0x00000961Ef480Eb55e80D19ad83579A64c007002
-</code></pre>
-<h3 id="consolidation_contract_address-1"><a class="header" href="#consolidation_contract_address-1">CONSOLIDATION_CONTRACT_ADDRESS</a></h3>
-<p>The address of the Pectra EL consolidation contract</p>
-<pre><code class="language-solidity">address public constant CONSOLIDATION_CONTRACT_ADDRESS = 0x0000BBdDc7CE488642fb579F8B00f3a590007251
-</code></pre>
-<h3 id="clone_implementation"><a class="header" href="#clone_implementation">CLONE_IMPLEMENTATION</a></h3>
-<p>The address of the TVSClone implementation contract</p>
-<pre><code class="language-solidity">address public immutable CLONE_IMPLEMENTATION
-</code></pre>
-<h3 id="upgradeable_tvs_implementation"><a class="header" href="#upgradeable_tvs_implementation">UPGRADEABLE_TVS_IMPLEMENTATION</a></h3>
-<p>The address of the TVSUpgradeable implementation contract</p>
-<pre><code class="language-solidity">address public immutable UPGRADEABLE_TVS_IMPLEMENTATION
-</code></pre>
-<h2 id="functions-17"><a class="header" href="#functions-17">Functions</a></h2>
-<h3 id="constructor-8"><a class="header" href="#constructor-8">constructor</a></h3>
-<p>Constructor for the TVSDeployer contract</p>
-<pre><code class="language-solidity">constructor(address _cloneImplementation, address _upgradeableTVSImplementation) ;
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>_cloneImplementation</code></td><td><code>address</code></td><td>The address of the TVSClone implementation contract</td></tr>
-<tr><td><code>_upgradeableTVSImplementation</code></td><td><code>address</code></td><td>The address of the TVSUpgradeable implementation contract</td></tr>
-</tbody></table>
-</div>
-<h3 id="deployclone"><a class="header" href="#deployclone">deployClone</a></h3>
-<p>Deploys a new TVSClone proxy and initializes it</p>
-<pre><code class="language-solidity">function deployClone(address beneficiary, address owner) external returns (address tvs);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>beneficiary</code></td><td><code>address</code></td><td>The address that will receive all ETH swept from the TVS</td></tr>
-<tr><td><code>owner</code></td><td><code>address</code></td><td>The address that will have ownership rights over the TVS</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>tvs</code></td><td><code>address</code></td><td>The address of the deployed TVS proxy</td></tr>
-</tbody></table>
-</div>
-<h3 id="deployimmutable"><a class="header" href="#deployimmutable">deployImmutable</a></h3>
-<p>Deploys a new TVSImmutable contract</p>
-<pre><code class="language-solidity">function deployImmutable(address beneficiary, address owner) external returns (address tvs);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>beneficiary</code></td><td><code>address</code></td><td>The address that will receive all ETH swept from the TVS</td></tr>
-<tr><td><code>owner</code></td><td><code>address</code></td><td>The address that will have ownership rights over the TVS</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>tvs</code></td><td><code>address</code></td><td>The address of the deployed TVS contract</td></tr>
-</tbody></table>
-</div>
-<h3 id="deployflexibleimmutable"><a class="header" href="#deployflexibleimmutable">deployFlexibleImmutable</a></h3>
-<p>Deploys a new TVSFlexibleImmutable contract</p>
-<pre><code class="language-solidity">function deployFlexibleImmutable(address beneficiary, address owner) external returns (address tvs);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>beneficiary</code></td><td><code>address</code></td><td>The address that will receive all ETH swept from the TVS</td></tr>
-<tr><td><code>owner</code></td><td><code>address</code></td><td>The address that will have ownership rights over the TVS</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>tvs</code></td><td><code>address</code></td><td>The address of the deployed TVS contract</td></tr>
-</tbody></table>
-</div>
-<h3 id="deployupgradeable"><a class="header" href="#deployupgradeable">deployUpgradeable</a></h3>
-<p>Deploys a new TVSUpgradeable (Beacon Proxy) and initializes it</p>
-<p>the new beacon will be deployed with the sender as the owner</p>
-<pre><code class="language-solidity">function deployUpgradeable(address beneficiary, address owner, address beacon) external returns (address tvs);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>beneficiary</code></td><td><code>address</code></td><td>The address that will receive all ETH swept from the TVS</td></tr>
-<tr><td><code>owner</code></td><td><code>address</code></td><td>The address that will have ownership rights over the TVS</td></tr>
-<tr><td><code>beacon</code></td><td><code>address</code></td><td>The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed.</td></tr>
-</tbody></table>
-</div>
-<p><strong>Returns</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>tvs</code></td><td><code>address</code></td><td>The address of the deployed TVS proxy</td></tr>
-</tbody></table>
-</div>
-<h2 id="events-2"><a class="header" href="#events-2">Events</a></h2>
-<h3 id="tvsclonedeployed"><a class="header" href="#tvsclonedeployed">TVSCloneDeployed</a></h3>
-<p>Emitted when a TVSClone contract is deployed</p>
-<pre><code class="language-solidity">event TVSCloneDeployed(address indexed tvs, address indexed implementation, address indexed owner);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>tvs</code></td><td><code>address</code></td><td>The address of the deployed TVSClone contract</td></tr>
-<tr><td><code>implementation</code></td><td><code>address</code></td><td>The address of the TVSClone implementation contract</td></tr>
-<tr><td><code>owner</code></td><td><code>address</code></td><td>The address of the owner of the TVSClone contract</td></tr>
-</tbody></table>
-</div>
-<h3 id="tvsimmutabledeployed"><a class="header" href="#tvsimmutabledeployed">TVSImmutableDeployed</a></h3>
-<p>Emitted when a TVSImmutable contract is deployed</p>
-<pre><code class="language-solidity">event TVSImmutableDeployed(address indexed tvs, address indexed owner);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>tvs</code></td><td><code>address</code></td><td>The address of the deployed TVSImmutable contract</td></tr>
-<tr><td><code>owner</code></td><td><code>address</code></td><td>The address of the owner of the TVSImmutable contract</td></tr>
-</tbody></table>
-</div>
-<h3 id="tvsflexibleimmutabledeployed"><a class="header" href="#tvsflexibleimmutabledeployed">TVSFlexibleImmutableDeployed</a></h3>
-<p>Emitted when a TVSFlexibleImmutable contract is deployed</p>
-<pre><code class="language-solidity">event TVSFlexibleImmutableDeployed(address indexed tvs, address indexed owner);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>tvs</code></td><td><code>address</code></td><td>The address of the deployed TVSFlexibleImmutable contract</td></tr>
-<tr><td><code>owner</code></td><td><code>address</code></td><td>The address of the owner of the TVSFlexibleImmutable contract</td></tr>
-</tbody></table>
-</div>
-<h3 id="tvsupgradeabledeployed"><a class="header" href="#tvsupgradeabledeployed">TVSUpgradeableDeployed</a></h3>
-<p>Emitted when a TVSUpgradeable contract is deployed</p>
-<pre><code class="language-solidity">event TVSUpgradeableDeployed(address indexed tvs, address indexed beacon, address indexed owner);
-</code></pre>
-<p><strong>Parameters</strong></p>
-<div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>tvs</code></td><td><code>address</code></td><td>The address of the deployed TVSUpgradeable contract</td></tr>
-<tr><td><code>beacon</code></td><td><code>address</code></td><td>The address of the beacon contract</td></tr>
-<tr><td><code>owner</code></td><td><code>address</code></td><td>The address of the owner of the TVSUpgradeable contract</td></tr>
 </tbody></table>
 </div>
                     </main>
