@@ -408,7 +408,7 @@ contract TVSDeployerTest is Test {
         assertEq(ITVS(flexibleTvs).version(), expectedVersion);
         assertEq(ITVS(upgradeableTvs).version(), expectedVersion);
     }
-    
+
     function testDeployUpgradeableWithInvalidBeacon() public {
         vm.expectRevert(abi.encodeWithSignature("InvalidImplementation()"));
         deployer.deployUpgradeable(beneficiary, owner, address(0x01));
