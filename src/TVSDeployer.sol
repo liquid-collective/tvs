@@ -75,8 +75,13 @@ contract TVSDeployer {
      * @param _upgradeableTVSImplementation The address of the TVSUpgradeable implementation contract
      */
     constructor(address _cloneImplementation, address _upgradeableTVSImplementation) {
-        if (_cloneImplementation == address(0)) revert InvalidImplementation();
-        if (_upgradeableTVSImplementation == address(0)) revert InvalidImplementation();
+        if (_cloneImplementation == address(0) || _cloneImplementation.code.length == 0) {
+            revert InvalidImplementation();
+        }
+        if (_upgradeableTVSImplementation == address(0) || _upgradeableTVSImplementation.code.length == 0) {
+            revert InvalidImplementation();
+        }
+
         CLONE_IMPLEMENTATION = _cloneImplementation;
         UPGRADEABLE_TVS_IMPLEMENTATION = _upgradeableTVSImplementation;
     }
@@ -129,6 +134,8 @@ contract TVSDeployer {
         // If beacon is zero address, deploy a new UpgradeableBeacon
         if (beacon == address(0)) {
             beacon = address(new UpgradeableBeacon(msg.sender, UPGRADEABLE_TVS_IMPLEMENTATION));
+        } else if (beacon.code.length == 0) {
+            revert InvalidImplementation();
         }
 
         bytes memory initData =

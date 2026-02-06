@@ -51,6 +51,9 @@ contract TVSDeployerTest is Test {
         new TVSDeployer(address(0), address(0));
         vm.expectRevert(abi.encodeWithSignature("InvalidImplementation()"));
         new TVSDeployer(address(0x01), address(0));
+        TVSClone cloneImplementation = new TVSClone(withdrawalContract, consolidationContract);
+        vm.expectRevert(abi.encodeWithSignature("InvalidImplementation()"));
+        new TVSDeployer(address(cloneImplementation), address(0));
     }
 
     function testDeployerConstructorRevertsWithZeroCloneImplementation() public {
@@ -404,5 +407,10 @@ contract TVSDeployerTest is Test {
         assertEq(ITVS(immutableTvs).version(), expectedVersion);
         assertEq(ITVS(flexibleTvs).version(), expectedVersion);
         assertEq(ITVS(upgradeableTvs).version(), expectedVersion);
+    }
+    
+    function testDeployUpgradeableWithInvalidBeacon() public {
+        vm.expectRevert(abi.encodeWithSignature("InvalidImplementation()"));
+        deployer.deployUpgradeable(beneficiary, owner, address(0x01));
     }
 }
