@@ -1,5 +1,8 @@
 # ITVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/4ac2b74c6a3425c037c24fec5693ed6e51456b86/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
+
+**Title:**
+ITVSFlexibleImmutable Interface
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
@@ -65,9 +68,9 @@ The Call struct is used to hold the data required to perform a low-level call or
 ```solidity
 struct Call {
     address to;
+    bool isDelegateCall;
     uint256 value;
     bytes data;
-    bool isDelegateCall;
 }
 ```
 
@@ -76,7 +79,7 @@ struct Call {
 |Name|Type|Description|
 |----|----|-----------|
 |`to`|`address`|The target address for the call.|
+|`isDelegateCall`|`bool`|Boolean flag to indicate whether to perform a delegatecall (true) or a call (false).|
 |`value`|`uint256`|The amount of ETH (in wei) to transfer. Pass 0 for non-payable calls.|
 |`data`|`bytes`|The calldata to pass to the target address.|
-|`isDelegateCall`|`bool`|Boolean flag to indicate whether to perform a delegatecall (true) or a call (false).|
 

@@ -1,8 +1,11 @@
 # ITVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/4ac2b74c6a3425c037c24fec5693ed6e51456b86/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md)
+
+**Title:**
+TVS Interface (Upgradeable)
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation

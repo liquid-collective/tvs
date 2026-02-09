@@ -1,5 +1,8 @@
 # TVSBeaconProxy
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/4ac2b74c6a3425c037c24fec5693ed6e51456b86/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
+
+**Title:**
+TVSBeaconProxy
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation

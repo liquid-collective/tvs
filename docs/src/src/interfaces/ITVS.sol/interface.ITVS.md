@@ -1,5 +1,8 @@
 # ITVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/interfaces/ITVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/4ac2b74c6a3425c037c24fec5693ed6e51456b86/src/interfaces/ITVS.sol)
+
+**Title:**
+TVS Interface
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
@@ -13,6 +16,8 @@ The TVS contract is the withdrawal credential of a set of validators in the syst
 
 ## Functions
 ### receive
+
+Fallback function to receive funds.
 
 
 ```solidity
@@ -110,7 +115,7 @@ Only the owner can call this function.
 
 ```solidity
 function withdraw(
-    bytes[] memory pubkeys,
+    bytes[] calldata pubkeys,
     uint64[] calldata amount,
     uint256 maxFeePerWithdrawal,
     address excessFeeRecipient

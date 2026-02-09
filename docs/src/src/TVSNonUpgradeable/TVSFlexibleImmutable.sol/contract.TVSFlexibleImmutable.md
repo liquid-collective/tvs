@@ -1,8 +1,11 @@
 # TVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/4ac2b74c6a3425c037c24fec5693ed6e51456b86/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
 
 **Inherits:**
 [ITVSFlexibleImmutable](/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.md), [TVSImmutable](/src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.md)
+
+**Title:**
+Flexible Immutable TVS (v1)
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
