@@ -49,7 +49,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
     /// @inheritdoc ITVS
     function withdraw(
-        bytes[] memory pubkeys,
+        bytes[] calldata pubkeys,
         uint64[] calldata amount,
         uint256 maxFeePerWithdrawal,
         address excessFeeRecipient
@@ -105,6 +105,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
         // Calculate total number of consolidation operations
         uint256 totalNumOfConsolidationOperations = 0;
+
         for (uint256 i = 0; i < requests.length; i++) {
             totalNumOfConsolidationOperations += requests[i].srcPubkeys.length;
         }
@@ -113,6 +114,7 @@ abstract contract TVS is ITVS, BaseSecurity {
         _validateSufficientValueForFee(msg.value, totalFeeRequired);
 
         // Perform the consolidation requests
+
         for (uint256 i = 0; i < requests.length; i++) {
             _validatePubkeyLength(requests[i].targetPubkey);
 
@@ -178,7 +180,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to refund the excess fee for pectra related operations.
+     * @notice Internal function to refund the excess fee for pectra related operations.
      * @param _totalValueReceived The total value received.
      * @param _totalFeePaid The total fee paid.
      * @param _excessFeeRecipient The address of the excess fee recipient.
@@ -200,7 +202,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to validate the fee. Used for pectra related operations.
+     * @notice Internal function to validate the fee. Used for pectra related operations.
      * @param feeContract The address of the fee contract.
      * @param _maxAllowedFee The maximum allowed fee.
      * @return _fee The fee.
@@ -227,7 +229,8 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to validate the caller sent sufficient value for fee. Used for pectra related operations.
+     * @notice Internal function to validate the caller sent sufficient value for fee. Used for pectra related
+     * operations.
      * @param _value The value.
      * @param _totalFee The total fee.
      */
@@ -238,7 +241,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to validate that a public key is exactly 48 bytes in length
+     * @notice Internal function to validate that a public key is exactly 48 bytes in length
      * @param pubkey The public key to validate
      */
     function _validatePubkeyLength(bytes memory pubkey) internal pure {
@@ -248,7 +251,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to sweep the TVS.
+     * @notice Internal function to sweep the TVS.
      * @param _beneficiary The address of the beneficiary.
      * @param _amount The amount to sweep.
      * @return _dest The address of the _destination.

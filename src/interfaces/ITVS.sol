@@ -130,7 +130,7 @@ interface ITVS {
 
     // Setters
 
-    /*
+    /**
      * @notice Fallback function to receive funds.
      */
     receive() external payable;
@@ -185,7 +185,7 @@ interface ITVS {
      * @param excessFeeRecipient The address to which excess fees will be sent.
      */
     function withdraw(
-        bytes[] memory pubkeys,
+        bytes[] calldata pubkeys,
         uint64[] calldata amount,
         uint256 maxFeePerWithdrawal,
         address excessFeeRecipient

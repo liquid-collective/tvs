@@ -22,7 +22,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      *      the current TVS Implementation is frozen, preventing the oldOwner from modifying the TVS Implementation in
      *      the beacon
      */
-    address public immutable immutableBeacon;
+    address public immutable IMMUTABLE_BEACON;
 
     /**
      * @notice Constructs a new TVSUpgradeable instance
@@ -43,7 +43,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     )
         TVS(withdrawalContractAddress, consolidationContractAddress)
     {
-        immutableBeacon = IImmutableBeaconFactory(immutableBeaconFactory).deployBeacon(address(this));
+        IMMUTABLE_BEACON = IImmutableBeaconFactory(immutableBeaconFactory).deployBeacon(address(this));
         _disableInitializers();
     }
 
@@ -65,7 +65,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
 
     /// @inheritdoc ITVS
     function transfer(address newBeneficiary, address newOwner) external override onlyOwner nonReentrant {
-        _setBeacon(immutableBeacon);
+        _setBeacon(IMMUTABLE_BEACON);
         _transfer(newBeneficiary, newOwner);
     }
 
