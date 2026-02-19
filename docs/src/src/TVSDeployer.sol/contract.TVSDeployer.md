@@ -54,7 +54,7 @@ Constructor for the TVSDeployer contract
 
 
 ```solidity
-constructor(address _cloneImplementation, address _upgradeableTVSImplementation) ;
+constructor(address _cloneImplementation, address _upgradeableTVSImplementation);
 ```
 **Parameters**
 
