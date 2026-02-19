@@ -1,5 +1,5 @@
 # IImmutableBeaconFactory
-[Git Source](https://github.com/liquid-collective/tvs/blob/4ac2b74c6a3425c037c24fec5693ed6e51456b86/src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSUpgradeable/interfaces/IImmutableBeaconFactory.sol)
 
 **Title:**
 IImmutableBeaconFactory

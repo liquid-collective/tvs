@@ -1,5 +1,5 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/4ac2b74c6a3425c037c24fec5693ed6e51456b86/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/components/TVS.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
@@ -47,7 +47,7 @@ and available to the proxy
 
 
 ```solidity
-constructor(address withdrawalContractAddress, address consolidationContractAddress);
+constructor(address withdrawalContractAddress, address consolidationContractAddress) ;
 ```
 **Parameters**
 
