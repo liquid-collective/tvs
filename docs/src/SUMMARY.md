@@ -28,3 +28,5 @@
     - [ITVSSweepBeneficiary](src/interfaces/ITVSSweepBeneficiary.sol/interface.ITVSSweepBeneficiary.md)
   - [❱ state](src/state/README.md)
     - [Beneficiary](src/state/Beneficiary.sol/library.Beneficiary.md)
+  - [InvalidImplementation](src/TVSDeployer.sol/error.InvalidImplementation.md)
+  - [TVSDeployer](src/TVSDeployer.sol/contract.TVSDeployer.md)

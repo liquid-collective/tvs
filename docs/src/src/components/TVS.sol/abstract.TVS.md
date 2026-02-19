@@ -1,8 +1,11 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/components/TVS.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
+
+**Title:**
+Transferable Validator Set (TVS - v1)
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
@@ -44,7 +47,7 @@ and available to the proxy
 
 
 ```solidity
-constructor(address withdrawalContractAddress, address consolidationContractAddress);
+constructor(address withdrawalContractAddress, address consolidationContractAddress) ;
 ```
 **Parameters**
 
@@ -55,6 +58,8 @@ constructor(address withdrawalContractAddress, address consolidationContractAddr
 
 
 ### receive
+
+Fallback function to receive funds.
 
 
 ```solidity
@@ -70,7 +75,7 @@ Only the owner can call this function.
 
 ```solidity
 function withdraw(
-    bytes[] memory pubkeys,
+    bytes[] calldata pubkeys,
     uint64[] calldata amount,
     uint256 maxFeePerWithdrawal,
     address excessFeeRecipient
@@ -249,13 +254,7 @@ Reverts if the fee is higher than the maximum allowed fee, or if the fee read fa
 
 
 ```solidity
-function _validateAndReturnFee(
-    address feeContract,
-    uint256 _maxAllowedFee
-)
-    internal
-    view
-    returns (uint256 _fee);
+function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee);
 ```
 **Parameters**
 
@@ -273,7 +272,8 @@ function _validateAndReturnFee(
 
 ### _validateSufficientValueForFee
 
-Internal function to validate the caller sent sufficient value for fee. Used for pectra related operations.
+Internal function to validate the caller sent sufficient value for fee. Used for pectra related
+operations.
 
 
 ```solidity
@@ -308,12 +308,7 @@ Internal function to sweep the TVS.
 
 
 ```solidity
-function _sweep(
-    address _beneficiary,
-    uint256 _amount
-)
-    private
-    returns (address _dest, uint256 _amountToSweep);
+function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep);
 ```
 **Parameters**
 

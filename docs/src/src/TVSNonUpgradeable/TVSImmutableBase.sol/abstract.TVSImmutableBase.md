@@ -1,8 +1,11 @@
 # TVSImmutableBase
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSNonUpgradeable/TVSImmutableBase.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSNonUpgradeable/TVSImmutableBase.sol)
 
 **Inherits:**
 [TVS](/src/components/TVS.sol/abstract.TVS.md)
+
+**Title:**
+Base for all Immutable TVS Contract
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation

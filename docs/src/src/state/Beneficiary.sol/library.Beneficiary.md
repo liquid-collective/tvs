@@ -1,5 +1,8 @@
 # Beneficiary
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/state/Beneficiary.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/state/Beneficiary.sol)
+
+**Title:**
+Beneficiary
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
