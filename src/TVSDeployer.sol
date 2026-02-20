@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import { Clones } from "openzeppelin-contracts/contracts/proxy/Clones.sol";
 import { TVSClone } from "./TVSNonUpgradeable/TVSClone.sol";
