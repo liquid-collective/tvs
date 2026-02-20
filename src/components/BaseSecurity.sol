@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardTransientUpgradeable.sol";

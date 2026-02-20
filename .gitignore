@@ -14,3 +14,7 @@ lcov.info
 .wake
 .vscode
 .idea
+
+
+# claude
+.claude
