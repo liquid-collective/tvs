@@ -208,14 +208,7 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @return _fee The fee.
      * @dev Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.
      */
-    function _validateAndReturnFee(
-        address feeContract,
-        uint256 _maxAllowedFee
-    )
-        internal
-        view
-        returns (uint256 _fee)
-    {
+    function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee) {
         // Read current fee from the contract
         (bool readOK, bytes memory feeData) = feeContract.staticcall("");
         if (!readOK) {
@@ -257,13 +250,7 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @return _dest The address of the destination.
      * @return _amountToSweep The amount to sweep.
      */
-    function _sweep(
-        address _beneficiary,
-        uint256 _amount
-    )
-        private
-        returns (address _dest, uint256 _amountToSweep)
-    {
+    function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep) {
         // Only require owner for custom beneficiary
         if (_beneficiary != address(0)) {
             _checkOwner();
