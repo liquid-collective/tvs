@@ -19,7 +19,7 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.s
  *         For non-upgradeable contracts, this function can still be used during deployment
  *         without any issues, as it does not rely on proxy-specific behavior.
  *
- * @dev Rational for using upgradeable contracts:
+ * @dev Rationale for using upgradeable contracts:
  *      - Upgradeable contracts require initialization instead of constructors due to the
  *        proxy pattern. By using OpenZeppelin's upgradeable libraries, this contract ensures
  *        compatibility with such patterns.
@@ -41,8 +41,8 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
 
     /**
      * @notice Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement
-     * @dev This function is intentionally left empty to prevent ownership renouncement by mistake
-     * @dev Emits an {OwnershipCannotBeRenounced} error
+     * @dev This function reverts unconditionally to prevent ownership renouncement by mistake
+     * @dev Reverts with {OwnershipCannotBeRenounced}
      * @dev Only callable by the contract owner
      */
     function renounceOwnership() public view override onlyOwner {

@@ -18,7 +18,7 @@ contract TVSImmutable is TVSImmutableBase {
      *      They can only be set once here in the constructor.
      * @dev NOTE: If for any reason the withdrawal, and consolidation addresses changes on a chain where the TVS is
      * already deployed, consolidation,
-     * and partial withdrawals might not work as expected, except the validators tied to the TVS is exited, and a new
+     * and partial withdrawals might not work as expected, except the validators tied to the TVS are exited, and a new
      * TVS is deployed with
      * the new addresses due to the immutability of this contract.
      * @param beneficiary The default address that will receive all ETH swept from the TVS contract

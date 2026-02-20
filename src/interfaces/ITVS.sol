@@ -128,8 +128,6 @@ interface ITVS {
      */
     error InvalidPubkeyLength(uint256 length);
 
-    // Setters
-
     /**
      * @notice Fallback function to receive funds.
      */
@@ -139,7 +137,7 @@ interface ITVS {
      * @notice Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
      * @dev Only the owner can specify a custom beneficiary for the sweep
      * @dev Emits {Swept} event.
-     * @param beneficiary Address to which funds will be swept, if zero address, sweeps to the  beneficiary address set
+     * @param beneficiary Address to which funds will be swept, if zero address, sweeps to the beneficiary address set
      * on the contract
      * @param amount Amount of funds to sweep, if zero, sweeps all funds on contract
      */

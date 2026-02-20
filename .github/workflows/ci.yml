@@ -22,7 +22,7 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
         with:
-          version: "v1.4.3"
+          version: "v1.5.1"
 
       - name: Install deps
         run: forge install
@@ -65,7 +65,7 @@ jobs:
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
         with:
-          version: "v1.4.3"
+          version: "v1.5.1"
 
       - name: Install deps
         run: forge install
@@ -90,7 +90,7 @@ jobs:
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: "v1.4.3"
+          version: "v1.5.1"
 
       - name: Install deps
         run: forge install

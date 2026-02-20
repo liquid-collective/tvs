@@ -195,11 +195,11 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         // Prepare mock data for consolidation
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] = hex"1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         bytes memory targetPubkey =
             hex"abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890abcdef12"; // 48-byte
-            // example
+        // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -223,11 +223,11 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] =
         hex"1234567890abcdef1234567890abcdef1234567890abcd12345678ef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         bytes memory targetPubkey =
             hex"1234567890abcdef1234567890abcdef1234567890abcdef123412345678567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -261,11 +261,11 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         bytes memory targetPubkey =
             hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -301,11 +301,11 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         bytes memory targetPubkey =
             hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -337,11 +337,11 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         bytes memory targetPubkey =
             hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -435,11 +435,11 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         bytes memory targetPubkey =
             hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -474,11 +474,11 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         bytes memory targetPubkey =
             hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -568,11 +568,11 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         bytes memory targetPubkey =
             hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
         requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
@@ -597,7 +597,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -625,7 +625,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -656,7 +656,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -687,7 +687,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -721,7 +721,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -759,7 +759,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -844,7 +844,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -935,7 +935,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -958,7 +958,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
         hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
-            // example
+        // example
 
         uint64[] memory amounts; // length is zero(0)
 

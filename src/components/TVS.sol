@@ -10,26 +10,26 @@ import "openzeppelin-contracts/contracts/utils/Address.sol";
 /**
  * @title Transferable Validator Set (TVS - v1)
  * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
- * @notice implementation of the TVS
+ * @notice Implementation of the TVS
  */
 abstract contract TVS is ITVS, BaseSecurity {
     using Address for address payable;
     using Address for address;
 
     /**
-     * @notice The address of the pectra EL withdrawal contract.
+     * @notice The address of the Pectra EL withdrawal contract.
      */
     address public immutable WITHDRAWAL_CONTRACT_ADDRESS;
 
     /**
-     * @notice The address of the pectra EL consolidation contract.
+     * @notice The address of the Pectra EL consolidation contract.
      */
     address public immutable CONSOLIDATION_CONTRACT_ADDRESS;
 
     /**
      * @notice Constructor for the TVS contract
      * @dev Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
-     * @dev The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+     * @dev The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
      * once here in the constructor.
      * @dev All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set,
      * and available to the proxy
@@ -85,7 +85,7 @@ abstract contract TVS is ITVS, BaseSecurity {
             emit WithdrawalRequested(pubkeys[i], amount[i], fee);
         }
 
-        // Refund any access value back to the excessFeeRecipient
+        // Refund any excess value back to the excessFeeRecipient
         _refundExcessFee(msg.value, totalFeePaid, excessFeeRecipient);
     }
 
@@ -208,14 +208,7 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @return _fee The fee.
      * @dev Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.
      */
-    function _validateAndReturnFee(
-        address feeContract,
-        uint256 _maxAllowedFee
-    )
-        internal
-        view
-        returns (uint256 _fee)
-    {
+    function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee) {
         // Read current fee from the contract
         (bool readOK, bytes memory feeData) = feeContract.staticcall("");
         if (!readOK) {
@@ -254,16 +247,10 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @notice Internal function to sweep the TVS.
      * @param _beneficiary The address of the beneficiary.
      * @param _amount The amount to sweep.
-     * @return _dest The address of the _destination.
+     * @return _dest The address of the destination.
      * @return _amountToSweep The amount to sweep.
      */
-    function _sweep(
-        address _beneficiary,
-        uint256 _amount
-    )
-        private
-        returns (address _dest, uint256 _amountToSweep)
-    {
+    function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep) {
         // Only require owner for custom beneficiary
         if (_beneficiary != address(0)) {
             _checkOwner();

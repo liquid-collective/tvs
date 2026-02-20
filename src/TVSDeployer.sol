@@ -127,7 +127,7 @@ contract TVSDeployer {
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
      * @param beacon The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed.
-     * @dev the new beacon will be deployed with the sender as the owner
+     * @dev The new beacon will be deployed with the sender as the owner
      * @return tvs The address of the deployed TVS proxy
      */
     function deployUpgradeable(address beneficiary, address owner, address beacon) external returns (address tvs) {
