@@ -182,7 +182,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvsflexibleimmutable"><a class="header" href="#tvsflexibleimmutable">TVSFlexibleImmutable</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/a4cdbf3401c01fb8d5ddd020a5d6c67fd088ede8/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/a93fc08f33f78ae4feda4b057814e3f56e451b93/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="/home/runner/work/tvs/tvs/docs/src/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.html">ITVSFlexibleImmutable</a>, <a href="/home/runner/work/tvs/tvs/docs/src/src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.html">TVSImmutable</a></p>
 <p><strong>Author:</strong>
@@ -236,7 +236,7 @@ NOTE:</p>
 <li>when msg.value is passed, only one delegatecall should be made</li>
 <li>when msg.value is passed, any delegatecall to non-payable functions will fail</li>
 </ul>
-<p>Reverts on the first call that fails.</p>
+<p>revert on the first call that fails.</p>
 <pre><code class="language-solidity">function executeBatch(Call[] calldata calls) external payable virtual onlyOwner nonReentrant;
 </code></pre>
 <p><strong>Parameters</strong></p>
