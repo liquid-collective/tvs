@@ -182,7 +182,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="itvssweepbeneficiary"><a class="header" href="#itvssweepbeneficiary">ITVSSweepBeneficiary</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/9ce8edcef4341942df7ed4eff9478f3c4c46b94d/src/interfaces/ITVSSweepBeneficiary.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/afea4d58a64b6538006d67d13f9cbadd5eef9b98/src/interfaces/ITVSSweepBeneficiary.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
 <p>Interface for the TVS beneficiary contract to receive ETH from the TVS.</p>
@@ -192,9 +192,9 @@ transfers</p>
 <p>The TVS contract is the withdrawal credential of a set of validators in the system.</p>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="receiveethfromtvs"><a class="header" href="#receiveethfromtvs">receiveETHFromTVS</a></h3>
-<p>Allows a contract to receive ETH from TVS via the <code>sweepToContract</code> function.</p>
-<p>This function MUST be implemented by the TVS beneficiary contract, in order to use the <code>sweepToContract</code>
-function of the TVS.</p>
+<p>Allows a contract to receive ETH from TVS via the <code>sweepToBeneficiaryContract</code> function.</p>
+<p>This function MUST be implemented by the TVS beneficiary contract, in order to use the
+<code>sweepToBeneficiaryContract</code> function of the TVS.</p>
 <pre><code class="language-solidity">function receiveETHFromTVS() external payable;
 </code></pre>
 
