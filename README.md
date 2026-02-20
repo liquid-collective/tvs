@@ -17,7 +17,7 @@ Every TVS contract:
 - Acts as the **withdrawal credential** for one or more Ethereum validators.
 - Has an **owner** who can trigger Pectra EL withdrawal and consolidation requests, sweep ETH, and transfer ownership.
 - Has a **beneficiary** address that receives swept ETH.
-- Supports **Pectra EL operations**: partial/full withdrawals via the EL withdrawal contract (`0x00000961...`) and validator consolidations via the EL consolidation contract (`0x0000BBdD...`).
+- Supports **Pectra EL operations**: partial/full withdrawals via the EL withdrawal contract (`0x00000961Ef480Eb55e80D19ad83579A64c007002`) and validator consolidations via the EL consolidation contract (`0x0000BBdDc7CE488642fb579F8B00f3a590007251`).
 - Implements `sweep` / `sweepToBeneficiaryContract` to move ETH out of the TVS.
 - Implements `transfer` to atomically change both the beneficiary and the owner.
 - Prevents accidental ownership renouncement.
