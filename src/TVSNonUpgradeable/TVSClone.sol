@@ -14,7 +14,7 @@ import "./TVSImmutableBase.sol";
  *      non-upgradeable.
  */
 contract TVSClone is TVSImmutableBase {
-    // @inheritdoc TVSImmutableBase
+    /// @inheritdoc TVSImmutableBase
     constructor(
         address withdrawalContractAddress,
         address consolidationContractAddress

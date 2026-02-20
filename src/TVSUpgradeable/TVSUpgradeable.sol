@@ -28,7 +28,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @notice Constructs a new TVSUpgradeable instance
      * @dev Initializes the contract with Pectra withdrawal and consolidation EL contract addresses, and the immutable
      *      beacon factory address.
-     * @dev The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+     * @dev The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
      *      once here in the constructor.
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
@@ -51,6 +51,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @notice Initializes the TVS upgradeable instance
      * @dev This function can only be called once during the TVS deployment and sets up the initial security, owner,
      *      beneficiary, and beacon address of the TVS
+     * @dev No {BeneficiaryUpdated} event is emitted during initialization
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
      * @param beaconAddress The address of the beacon contract
@@ -72,8 +73,8 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     /**
      * @notice This function is used by the {setBeacon} function to directly set the beacon address without
      *         additional checks
-     * @dev This function should not be called directly, but only through the {setBeacon} function, it allows the
-     *      {setBeacon} perform robust checks before setting the new beacon
+     * @dev WARNING: This function should only be invoked via delegatecall from {_setBeacon}. Direct calls bypass
+     *      validation. It allows the {setBeacon} function to perform robust checks before setting the new beacon.
      * @dev Emits a {BeaconUpgraded} event
      * @dev Only callable by the contract owner
      * @param newBeacon The new beacon address

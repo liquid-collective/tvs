@@ -37,7 +37,7 @@ interface ITVSFlexibleImmutable {
      * NOTE:
      *  - when msg.value is passed, only one delegatecall should be made
      *  - when msg.value is passed, any delegatecall to non-payable functions will fail
-     * @dev revert on the first call that fails.
+     * @dev Reverts on the first call that fails.
      * @param calls An array of Call structs containing the target address, value, data, and call type.
      */
     function executeBatch(Call[] calldata calls) external payable;
