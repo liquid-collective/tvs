@@ -402,7 +402,7 @@ contract TVSDeployerTest is Test {
         UpgradeableBeacon beacon = new UpgradeableBeacon(owner, deployer.UPGRADEABLE_TVS_IMPLEMENTATION());
         address payable upgradeableTvs = payable(deployer.deployUpgradeable(beneficiary, owner, address(beacon)));
 
-        string memory expectedVersion = "1.0.2";
+        string memory expectedVersion = "1.0.3";
         assertEq(ITVS(clone).version(), expectedVersion);
         assertEq(ITVS(immutableTvs).version(), expectedVersion);
         assertEq(ITVS(flexibleTvs).version(), expectedVersion);
