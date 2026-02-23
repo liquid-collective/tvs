@@ -3,7 +3,7 @@ pragma solidity 0.8.34;
 
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
 import "openzeppelin-contracts/contracts/utils/ReentrancyGuardTransient.sol";
-import "openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
+import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 /**
  * @title BaseSecurity
