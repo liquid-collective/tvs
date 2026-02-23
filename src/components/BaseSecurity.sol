@@ -2,8 +2,8 @@
 pragma solidity 0.8.34;
 
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardTransientUpgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
+import "openzeppelin-contracts/contracts/utils/ReentrancyGuardTransient.sol";
+import "openzeppelin-contracts/contracts/proxy/utils/Initializable.sol";
 
 /**
  * @title BaseSecurity
@@ -33,7 +33,7 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.s
  * @dev Inheriting contracts should call `_setupSecurity` during their initialization or
  *      deployment phase to properly configure ownership and reentrancy protection.
  */
-abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyGuardTransientUpgradeable {
+abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyGuardTransient {
     /**
      * @notice Error thrown when ownership cannot be renounced.
      */
@@ -55,6 +55,5 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
      */
     function _setupSecurity(address _owner) internal initializer {
         __Ownable_init(_owner);
-        __ReentrancyGuardTransient_init();
     }
 }
