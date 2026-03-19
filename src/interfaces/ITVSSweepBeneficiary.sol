@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 /**
  * @title Sweep Beneficiary Interface
@@ -12,9 +12,9 @@ pragma solidity 0.8.29;
  */
 interface ITVSSweepBeneficiary {
     /**
-     * @notice Allows a contract to receive ETH from TVS via the `sweepToContract` function.
-     * @dev This function MUST be implemented by the TVS beneficiary contract, in order to use the `sweepToContract`
-     * function of the TVS.
+     * @notice Allows a contract to receive ETH from TVS via the `sweepToBeneficiaryContract` function.
+     * @dev This function MUST be implemented by the TVS beneficiary contract, in order to use the
+     * `sweepToBeneficiaryContract` function of the TVS.
      */
     function receiveETHFromTVS() external payable;
 }

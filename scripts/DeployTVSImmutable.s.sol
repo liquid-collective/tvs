@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import "forge-std/Script.sol";
 import "../src/TVSNonUpgradeable/TVSImmutable.sol";

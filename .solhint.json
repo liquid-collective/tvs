@@ -1,6 +1,19 @@
 {
   "extends": "solhint:recommended",
   "rules": {
-    "ordering": "error"
+    "ordering": "error",
+    "no-inline-assembly": "off",
+    "gas-increment-by-one": "off",
+    "no-global-import": "off",
+    "avoid-low-level-calls": "off",
+    "no-complex-fallback": "off",
+    "gas-small-strings": "off",
+    "import-path-check": "off",
+    "func-visibility": [
+      "warn",
+      {
+        "ignoreConstructors": true
+      }
+    ]
   }
 }

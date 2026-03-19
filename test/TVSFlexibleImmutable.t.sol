@@ -217,7 +217,7 @@ contract TVSFlexibleImmutableTest is TVSImmutableBaseTest {
 
         // Expect revert on the second call
         vm.expectRevert(); // Not concerned with the exact reason, we care only that one bad call should fail the whole
-            // batch
+        // batch
         tvsFlexible.executeBatch(calls);
     }
 

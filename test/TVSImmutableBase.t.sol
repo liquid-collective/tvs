@@ -1,6 +1,6 @@
 //SPDX-License-Identifier: Proprietary
 
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import "forge-std/Test.sol";
 
@@ -32,6 +32,6 @@ abstract contract TVSImmutableBaseTest is BaseTVSTest {
         string memory returnedVersion = tvs.version();
 
         // Assert that the returned version matches the expected value
-        assertEq(returnedVersion, "1.0.2", "Version string does not match expected value");
+        assertEq(returnedVersion, "1.0.3", "Version string does not match expected value");
     }
 }

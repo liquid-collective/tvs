@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import "./state/proxy/Beacon.sol";
 import "./interfaces/ITVSUpgradeable.sol";
@@ -22,13 +22,13 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      *      the current TVS Implementation is frozen, preventing the oldOwner from modifying the TVS Implementation in
      *      the beacon
      */
-    address public immutable immutableBeacon;
+    address public immutable IMMUTABLE_BEACON;
 
     /**
      * @notice Constructs a new TVSUpgradeable instance
      * @dev Initializes the contract with Pectra withdrawal and consolidation EL contract addresses, and the immutable
      *      beacon factory address.
-     * @dev The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+     * @dev The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
      *      once here in the constructor.
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
@@ -43,7 +43,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
     )
         TVS(withdrawalContractAddress, consolidationContractAddress)
     {
-        immutableBeacon = IImmutableBeaconFactory(immutableBeaconFactory).deployBeacon(address(this));
+        IMMUTABLE_BEACON = IImmutableBeaconFactory(immutableBeaconFactory).deployBeacon(address(this));
         _disableInitializers();
     }
 
@@ -51,6 +51,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @notice Initializes the TVS upgradeable instance
      * @dev This function can only be called once during the TVS deployment and sets up the initial security, owner,
      *      beneficiary, and beacon address of the TVS
+     * @dev No {BeneficiaryUpdated} event is emitted during initialization
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
      * @param beaconAddress The address of the beacon contract
@@ -65,15 +66,15 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
 
     /// @inheritdoc ITVS
     function transfer(address newBeneficiary, address newOwner) external override onlyOwner nonReentrant {
-        _setBeacon(immutableBeacon);
+        _setBeacon(IMMUTABLE_BEACON);
         _transfer(newBeneficiary, newOwner);
     }
 
     /**
      * @notice This function is used by the {setBeacon} function to directly set the beacon address without
      *         additional checks
-     * @dev This function should not be called directly, but only through the {setBeacon} function, it allows the
-     *      {setBeacon} perform robust checks before setting the new beacon
+     * @dev WARNING: This function should only be invoked via delegatecall from {_setBeacon}. Direct calls bypass
+     *      validation. It allows the {setBeacon} function to perform robust checks before setting the new beacon.
      * @dev Emits a {BeaconUpgraded} event
      * @dev Only callable by the contract owner
      * @param newBeacon The new beacon address
@@ -95,7 +96,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
 
     /// @inheritdoc ITVS
     function version() external pure returns (string memory) {
-        return "1.0.2";
+        return "1.0.3";
     }
 
     /**

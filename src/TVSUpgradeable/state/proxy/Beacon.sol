@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import "openzeppelin-contracts/contracts/utils/StorageSlot.sol";
 
@@ -15,7 +15,7 @@ import "openzeppelin-contracts/contracts/utils/StorageSlot.sol";
  */
 library Beacon {
     /**
-     * @dev Slot for the beacon address
+     * @notice Slot for the beacon address
      * @dev The slot is defined using the EIP-1967 standard
      */
     bytes32 internal constant BEACON_SLOT = bytes32(uint256(keccak256("eip1967.proxy.beacon")) - 1); // from the

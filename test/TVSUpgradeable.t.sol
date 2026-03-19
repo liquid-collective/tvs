@@ -1,6 +1,6 @@
 //SPDX-License-Identifier: Proprietary
 
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import "forge-std/Test.sol";
 
@@ -92,7 +92,7 @@ contract TVSUpgradeableInitializationTest is Test, PectraAddress {
         // This check is to ensure that the implementation code is not empty because it was set while the implementation
         // was being deployed
         assertNotEq(
-            ImmutableBeacon(TVSV1(tvsImplementation).immutableBeacon()).implementation().code.length,
+            ImmutableBeacon(TVSV1(tvsImplementation).IMMUTABLE_BEACON()).implementation().code.length,
             0,
             "immutableBeacon implementation code not correct"
         );
@@ -309,7 +309,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
         assertNotEq(tvsV1.beacon(), oldBeacon, "Beacon did not change after transfer");
         assertEq(
             tvsV1.beacon(),
-            TVSV1(tvsImplementation).immutableBeacon(),
+            TVSV1(tvsImplementation).IMMUTABLE_BEACON(),
             "Beacon address not updated to the immutableBeacon"
         );
         assertEq(tvsV1.owner(), newOwner, "Owner address not updated");
@@ -390,7 +390,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
         string memory returnedVersion = tvs.version();
 
         // Assert that the returned version matches the expected value
-        assertEq(returnedVersion, "1.0.2", "Version string does not match expected value");
+        assertEq(returnedVersion, "1.0.3", "Version string does not match expected value");
     }
 
     /**

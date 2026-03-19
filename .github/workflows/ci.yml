@@ -15,14 +15,14 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           submodules: recursive
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
         with:
-          version: "v1.4.3"
+          version: "v1.5.1"
 
       - name: Install deps
         run: forge install
@@ -39,7 +39,7 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           submodules: recursive
 
@@ -58,14 +58,14 @@ jobs:
     runs-on: "ubuntu-latest"
     steps:
       - name: "Check out the repo"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           submodules: recursive
 
       - name: "Install Foundry"
         uses: "foundry-rs/foundry-toolchain@v1"
         with:
-          version: "v1.4.3"
+          version: "v1.5.1"
 
       - name: Install deps
         run: forge install
@@ -83,14 +83,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Check out the repo"
-        uses: "actions/checkout@v4"
+        uses: "actions/checkout@v6"
         with:
           submodules: recursive
 
       - name: Install Foundry
         uses: foundry-rs/foundry-toolchain@v1
         with:
-          version: "v1.4.3"
+          version: "v1.5.1"
 
       - name: Install deps
         run: forge install

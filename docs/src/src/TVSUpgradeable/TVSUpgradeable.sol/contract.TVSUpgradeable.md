@@ -1,8 +1,11 @@
 # TVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/TVSUpgradeable/TVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSUpgradeable/TVSUpgradeable.sol)
 
 **Inherits:**
 [ITVSUpgradeable](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md), [TVS](/src/components/TVS.sol/abstract.TVS.md)
+
+**Title:**
+Upgradeable TVS (v1)
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
@@ -13,7 +16,7 @@ This contract provides an upgradeable version of the TVS using a beacon proxy pa
 
 
 ## State Variables
-### immutableBeacon
+### IMMUTABLE_BEACON
 The address of the immutable beacon contract
 
 During a TVS transfer, the beacon is temporarily set to this immutable beacon. This variable ensures that
@@ -22,7 +25,7 @@ the beacon
 
 
 ```solidity
-address public immutable immutableBeacon
+address public immutable IMMUTABLE_BEACON
 ```
 
 

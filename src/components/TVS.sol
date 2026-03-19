@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import "../state/Beneficiary.sol";
 import "../interfaces/ITVSSweepBeneficiary.sol";
@@ -10,26 +10,26 @@ import "openzeppelin-contracts/contracts/utils/Address.sol";
 /**
  * @title Transferable Validator Set (TVS - v1)
  * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
- * @notice implementation of the TVS
+ * @notice Implementation of the TVS
  */
 abstract contract TVS is ITVS, BaseSecurity {
     using Address for address payable;
     using Address for address;
 
     /**
-     * @notice The address of the pectra EL withdrawal contract.
+     * @notice The address of the Pectra EL withdrawal contract.
      */
     address public immutable WITHDRAWAL_CONTRACT_ADDRESS;
 
     /**
-     * @notice The address of the pectra EL consolidation contract.
+     * @notice The address of the Pectra EL consolidation contract.
      */
     address public immutable CONSOLIDATION_CONTRACT_ADDRESS;
 
     /**
      * @notice Constructor for the TVS contract
      * @dev Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
-     * @dev The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+     * @dev The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
      * once here in the constructor.
      * @dev All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set,
      * and available to the proxy
@@ -49,7 +49,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
     /// @inheritdoc ITVS
     function withdraw(
-        bytes[] memory pubkeys,
+        bytes[] calldata pubkeys,
         uint64[] calldata amount,
         uint256 maxFeePerWithdrawal,
         address excessFeeRecipient
@@ -85,7 +85,7 @@ abstract contract TVS is ITVS, BaseSecurity {
             emit WithdrawalRequested(pubkeys[i], amount[i], fee);
         }
 
-        // Refund any access value back to the excessFeeRecipient
+        // Refund any excess value back to the excessFeeRecipient
         _refundExcessFee(msg.value, totalFeePaid, excessFeeRecipient);
     }
 
@@ -105,6 +105,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
         // Calculate total number of consolidation operations
         uint256 totalNumOfConsolidationOperations = 0;
+
         for (uint256 i = 0; i < requests.length; i++) {
             totalNumOfConsolidationOperations += requests[i].srcPubkeys.length;
         }
@@ -113,6 +114,7 @@ abstract contract TVS is ITVS, BaseSecurity {
         _validateSufficientValueForFee(msg.value, totalFeeRequired);
 
         // Perform the consolidation requests
+
         for (uint256 i = 0; i < requests.length; i++) {
             _validatePubkeyLength(requests[i].targetPubkey);
 
@@ -162,6 +164,7 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @param _owner The address of the new owner.
      */
     function _transfer(address _beneficiary, address _owner) internal {
+        if (_owner == address(0)) revert InvalidAddress();
         _setBeneficiary(_beneficiary);
         _transferOwnership(_owner);
         emit Transferred(_beneficiary, _owner);
@@ -178,7 +181,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to refund the excess fee for pectra related operations.
+     * @notice Internal function to refund the excess fee for pectra related operations.
      * @param _totalValueReceived The total value received.
      * @param _totalFeePaid The total fee paid.
      * @param _excessFeeRecipient The address of the excess fee recipient.
@@ -200,7 +203,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to validate the fee. Used for pectra related operations.
+     * @notice Internal function to validate the fee. Used for pectra related operations.
      * @param feeContract The address of the fee contract.
      * @param _maxAllowedFee The maximum allowed fee.
      * @return _fee The fee.
@@ -220,7 +223,8 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to validate the caller sent sufficient value for fee. Used for pectra related operations.
+     * @notice Internal function to validate the caller sent sufficient value for fee. Used for pectra related
+     * operations.
      * @param _value The value.
      * @param _totalFee The total fee.
      */
@@ -231,7 +235,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to validate that a public key is exactly 48 bytes in length
+     * @notice Internal function to validate that a public key is exactly 48 bytes in length
      * @param pubkey The public key to validate
      */
     function _validatePubkeyLength(bytes memory pubkey) internal pure {
@@ -241,10 +245,10 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @dev Internal function to sweep the TVS.
+     * @notice Internal function to sweep the TVS.
      * @param _beneficiary The address of the beneficiary.
      * @param _amount The amount to sweep.
-     * @return _dest The address of the _destination.
+     * @return _dest The address of the destination.
      * @return _amountToSweep The amount to sweep.
      */
     function _sweep(address _beneficiary, uint256 _amount) private returns (address _dest, uint256 _amountToSweep) {

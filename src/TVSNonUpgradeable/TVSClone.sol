@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import "./TVSImmutableBase.sol";
 
@@ -14,7 +14,7 @@ import "./TVSImmutableBase.sol";
  *      non-upgradeable.
  */
 contract TVSClone is TVSImmutableBase {
-    // @inheritdoc TVSImmutableBase
+    /// @notice Constructor that disables initializers to prevent direct use of the implementation contract
     constructor(
         address withdrawalContractAddress,
         address consolidationContractAddress

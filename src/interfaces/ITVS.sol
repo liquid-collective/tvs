@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 /**
  * @title TVS Interface
@@ -128,9 +128,7 @@ interface ITVS {
      */
     error InvalidPubkeyLength(uint256 length);
 
-    // Setters
-
-    /*
+    /**
      * @notice Fallback function to receive funds.
      */
     receive() external payable;
@@ -139,7 +137,7 @@ interface ITVS {
      * @notice Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
      * @dev Only the owner can specify a custom beneficiary for the sweep
      * @dev Emits {Swept} event.
-     * @param beneficiary Address to which funds will be swept, if zero address, sweeps to the  beneficiary address set
+     * @param beneficiary Address to which funds will be swept, if zero address, sweeps to the beneficiary address set
      * on the contract
      * @param amount Amount of funds to sweep, if zero, sweeps all funds on contract
      */
@@ -185,7 +183,7 @@ interface ITVS {
      * @param excessFeeRecipient The address to which excess fees will be sent.
      */
     function withdraw(
-        bytes[] memory pubkeys,
+        bytes[] calldata pubkeys,
         uint64[] calldata amount,
         uint256 maxFeePerWithdrawal,
         address excessFeeRecipient

@@ -1,8 +1,11 @@
 # BaseSecurity
-[Git Source](https://github.com/liquid-collective/tvs/blob/03c48a2bf3813d683a089f40751b05bbe6f7f34c/src/components/BaseSecurity.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/components/BaseSecurity.sol)
 
 **Inherits:**
 Initializable, OwnableUpgradeable, ReentrancyGuardTransientUpgradeable
+
+**Title:**
+BaseSecurity
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
@@ -40,7 +43,7 @@ Overrides the renounceOwnership function from OwnableUpgradeable to prevent owne
 
 This function is intentionally left empty to prevent ownership renouncement by mistake
 
-Emits an [OwnershipCannotBeRenounced](#ownershipcannotberenounced) error
+Emits an [OwnershipCannotBeRenounced](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#ownershipcannotberenounced) error
 
 Only callable by the contract owner
 

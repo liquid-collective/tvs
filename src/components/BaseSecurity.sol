@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: Proprietary
-pragma solidity 0.8.29;
+pragma solidity 0.8.34;
 
 import "openzeppelin-contracts-upgradeable/contracts/access/OwnableUpgradeable.sol";
-import "openzeppelin-contracts-upgradeable/contracts/utils/ReentrancyGuardTransientUpgradeable.sol";
+import "openzeppelin-contracts/contracts/utils/ReentrancyGuardTransient.sol";
 import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.sol";
 
 /**
@@ -19,7 +19,7 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.s
  *         For non-upgradeable contracts, this function can still be used during deployment
  *         without any issues, as it does not rely on proxy-specific behavior.
  *
- * @dev Rational for using upgradeable contracts:
+ * @dev Rationale for using upgradeable contracts:
  *      - Upgradeable contracts require initialization instead of constructors due to the
  *        proxy pattern. By using OpenZeppelin's upgradeable libraries, this contract ensures
  *        compatibility with such patterns.
@@ -33,7 +33,7 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.s
  * @dev Inheriting contracts should call `_setupSecurity` during their initialization or
  *      deployment phase to properly configure ownership and reentrancy protection.
  */
-abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyGuardTransientUpgradeable {
+abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyGuardTransient {
     /**
      * @notice Error thrown when ownership cannot be renounced.
      */
@@ -49,8 +49,8 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
 
     /**
      * @notice Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement
-     * @dev This function is intentionally left empty to prevent ownership renouncement by mistake
-     * @dev Emits an {OwnershipCannotBeRenounced} error
+     * @dev This function reverts unconditionally to prevent ownership renouncement by mistake
+     * @dev Reverts with {OwnershipCannotBeRenounced}
      * @dev Only callable by the contract owner
      */
     function renounceOwnership() public view override onlyOwner {
@@ -73,6 +73,5 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
      */
     function _setupSecurity(address _owner) internal initializer {
         __Ownable_init(_owner);
-        __ReentrancyGuardTransient_init();
     }
 }
