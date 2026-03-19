@@ -999,7 +999,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     function testWithdrawRevertsIfExcessFeeRecipientIsZeroAddress() public {
         bytes[] memory pubkeys = new bytes[](1);
         pubkeys[0] =
-            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
 
         uint64[] memory amounts = new uint64[](1);
         amounts[0] = 1 ether;
@@ -1024,7 +1024,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     function testConsolidateRevertsIfExcessFeeRecipientIsZeroAddress() public {
         bytes[] memory srcPubkeys = new bytes[](1);
         srcPubkeys[0] =
-            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
 
         bytes memory targetPubkey =
             hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
