@@ -59,7 +59,7 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
 
     /**
      * @notice Overrides transferOwnership to prevent direct ownership transfers that bypass protocol invariants.
-     * @dev Direct calls to transferOwnership skip the beneficiary update, beacon freeze, and Transferred event
+     * @dev Direct calls to transferOwnership skip the beneficiary update, and Transferred event
      *      enforced by the transfer() function. All ownership transfers must go through transfer().
      * @dev Reverts with {UseTransferFunction}
      */
