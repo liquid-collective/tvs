@@ -192,6 +192,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     )
         internal
     {
+        if (_excessFeeRecipient == address(0)) revert InvalidAddress();
         // send excess value back to _excessFeeRecipient
         if (_totalValueReceived > _totalFeePaid) {
             (bool success,) = payable(_excessFeeRecipient).call{ value: _totalValueReceived - _totalFeePaid }("");
