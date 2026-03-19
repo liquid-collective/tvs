@@ -336,6 +336,52 @@ contract TVSUpgradeableTest is BaseTVSTest {
     }
 
     /**
+     * @notice Tests that transferOwnership reverts to enforce use of transfer().
+     * @dev Calling transferOwnership directly bypasses beneficiary update, beacon freeze, and
+     *      the Transferred event. It must revert with UseTransferFunction().
+     */
+    function testTransferOwnershipReverts() public {
+        address newOwner = makeAddr("newOwner");
+
+        vm.prank(owner);
+        vm.expectRevert(abi.encodeWithSignature("UseTransferFunction()"));
+        tvsV1.transferOwnership(newOwner);
+    }
+
+    /**
+     * @notice Tests that a non-owner calling transferOwnership also reverts (unauthorized, not UseTransferFunction).
+     */
+    function testTransferOwnershipRevertsForNonOwner() public {
+        address nonOwner = makeAddr("nonOwner");
+        address newOwner = makeAddr("newOwner");
+
+        vm.prank(nonOwner);
+        vm.expectRevert(abi.encodeWithSignature("OwnableUnauthorizedAccount(address)", nonOwner));
+        tvsV1.transferOwnership(newOwner);
+    }
+
+    /**
+     * @notice Tests that the secure transfer() path still correctly updates owner, beneficiary, and beacon.
+     * @dev Regression guard: the internal _transferOwnership call inside _transfer() must still work
+     *      despite the public transferOwnership override.
+     */
+    function testTransferViaSecurePathSucceeds() public {
+        address newBeneficiary = makeAddr("newBeneficiary2");
+        address newOwner = makeAddr("newOwner2");
+
+        vm.prank(owner);
+        tvsV1.transfer(newBeneficiary, newOwner);
+
+        assertEq(tvsV1.owner(), newOwner, "Owner not updated via transfer()");
+        assertEq(tvsV1.getBeneficiary(), newBeneficiary, "Beneficiary not updated via transfer()");
+        assertEq(
+            tvsV1.beacon(),
+            TVSV1(tvsImplementation).IMMUTABLE_BEACON(),
+            "Beacon not frozen to immutable beacon via transfer()"
+        );
+    }
+
+    /**
      * @notice Tests the version function.
      * @dev Ensures that the version function returns the correct version string.
      */

@@ -40,6 +40,14 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
     error OwnershipCannotBeRenounced();
 
     /**
+     * @notice Error thrown when transferOwnership is called directly.
+     * @dev Ownership transfers must go through the secure transfer() function, which enforces
+     *      all protocol invariants (updating the beneficiary, freezing the beacon, emitting
+     *      the Transferred event). Calling transferOwnership directly bypasses these invariants.
+     */
+    error UseTransferFunction();
+
+    /**
      * @notice Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement
      * @dev This function is intentionally left empty to prevent ownership renouncement by mistake
      * @dev Emits an {OwnershipCannotBeRenounced} error
@@ -50,7 +58,17 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
     }
 
     /**
-     * @dev Sets up the contract by initializing Ownable and ReentrancyGuard features.
+     * @notice Overrides transferOwnership to prevent direct ownership transfers that bypass protocol invariants.
+     * @dev Direct calls to transferOwnership skip the beneficiary update, beacon freeze, and Transferred event
+     *      enforced by the transfer() function. All ownership transfers must go through transfer().
+     * @dev Reverts with {UseTransferFunction}
+     */
+    function transferOwnership(address) public view override onlyOwner {
+        revert UseTransferFunction();
+    }
+
+    /**
+     * @notice Sets up the contract by initializing Ownable and ReentrancyGuard features.
      * @param _owner The address to set as the owner of the contract.
      */
     function _setupSecurity(address _owner) internal initializer {
