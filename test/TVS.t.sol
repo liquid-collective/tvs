@@ -992,4 +992,57 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         vm.expectRevert(abi.encodeWithSignature("OwnershipCannotBeRenounced()")); // Expect the specific revert error
         Ownable(address(tvs)).renounceOwnership();
     }
+
+    /**
+     * @notice Tests that the withdraw function reverts when address(0) is passed as the excessFeeRecipient.
+     */
+    function testWithdrawRevertsIfExcessFeeRecipientIsZeroAddress() public {
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal);
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        bytes memory callData = abi.encodePacked(pubkeys[0], amounts[0]);
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, callData, abi.encodePacked(""));
+
+        vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
+        vm.prank(owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, address(0));
+    }
+
+    /**
+     * @notice Tests that the consolidate function reverts when address(0) is passed as the excessFeeRecipient.
+     */
+    function testConsolidateRevertsIfExcessFeeRecipientIsZeroAddress() public {
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation);
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        bytes memory callData = bytes.concat(srcPubkeys[0], targetPubkey);
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, callData, abi.encodePacked(""));
+
+        vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, address(0));
+    }
 }
