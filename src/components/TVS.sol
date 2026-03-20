@@ -164,8 +164,9 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @param _owner The address of the new owner.
      */
     function _transfer(address _beneficiary, address _owner) internal {
+        if (_owner == address(0)) revert InvalidAddress();
         _setBeneficiary(_beneficiary);
-        transferOwnership(_owner);
+        _transferOwnership(_owner);
         emit Transferred(_beneficiary, _owner);
     }
 
