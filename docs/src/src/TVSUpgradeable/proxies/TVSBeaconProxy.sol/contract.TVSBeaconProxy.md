@@ -1,5 +1,5 @@
 # TVSBeaconProxy
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
 
 **Title:**
 TVSBeaconProxy
@@ -7,7 +7,7 @@ TVSBeaconProxy
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
-This is an EIP-1167 minimal proxy that interacts with an upgradable beacon contract
+This is an EIP-1167 minimal proxy that interacts with an upgradeable beacon contract
 
 It uses the beacon contract to fetch the implementation address and delegate the call.
 
@@ -76,12 +76,16 @@ function _getImplementation(address _beacon) internal view returns (address _imp
 
 ## Errors
 ### InitializationFailed
+Error thrown when the proxy initialization fails
+
 
 ```solidity
 error InitializationFailed();
 ```
 
 ### InvalidBeacon
+Error thrown when the beacon address is invalid
+
 
 ```solidity
 error InvalidBeacon();

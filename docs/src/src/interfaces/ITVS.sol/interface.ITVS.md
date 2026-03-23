@@ -1,5 +1,5 @@
 # ITVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/interfaces/ITVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/interfaces/ITVS.sol)
 
 **Title:**
 TVS Interface
@@ -40,7 +40,7 @@ function sweep(address beneficiary, uint256 amount) external;
 
 |Name|Type|Description|
 |----|----|-----------|
-|`beneficiary`|`address`|Address to which funds will be swept, if zero address, sweeps to the  beneficiary address set on the contract|
+|`beneficiary`|`address`|Address to which funds will be swept, if zero address, sweeps to the beneficiary address set on the contract|
 |`amount`|`uint256`|Amount of funds to sweep, if zero, sweeps all funds on contract|
 
 

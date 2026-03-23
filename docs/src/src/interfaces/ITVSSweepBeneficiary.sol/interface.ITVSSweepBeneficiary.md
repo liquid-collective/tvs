@@ -1,5 +1,5 @@
 # ITVSSweepBeneficiary
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/interfaces/ITVSSweepBeneficiary.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/interfaces/ITVSSweepBeneficiary.sol)
 
 **Title:**
 Sweep Beneficiary Interface
@@ -20,10 +20,10 @@ The TVS contract is the withdrawal credential of a set of validators in the syst
 ## Functions
 ### receiveETHFromTVS
 
-Allows a contract to receive ETH from TVS via the `sweepToContract` function.
+Allows a contract to receive ETH from TVS via the `sweepToBeneficiaryContract` function.
 
-This function MUST be implemented by the TVS beneficiary contract, in order to use the `sweepToContract`
-function of the TVS.
+This function MUST be implemented by the TVS beneficiary contract, in order to use the
+`sweepToBeneficiaryContract` function of the TVS.
 
 
 ```solidity

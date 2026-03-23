@@ -1,5 +1,5 @@
 # ITVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md)
