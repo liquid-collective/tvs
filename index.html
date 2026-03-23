@@ -204,7 +204,7 @@
 <div class="table-wrapper"><table><thead><tr><th>Contract</th><th>Description</th></tr></thead><tbody>
 <tr><td><strong><code>TVSImmutable</code></strong></td><td>Fully immutable TVS. All parameters (beneficiary, owner, withdrawal/consolidation addresses) are set in the constructor. Cheapest to interact with post-deployment.</td></tr>
 <tr><td><strong><code>TVSFlexibleImmutable</code></strong></td><td>Extends <code>TVSImmutable</code> with an <code>executeCall</code> / <code>executeBatch</code> interface that lets the owner perform arbitrary low-level calls and delegate calls. Provides forward-compatibility with future on-chain features without upgradeability.</td></tr>
-<tr><td><strong><code>TVSClone</code></strong></td><td>An EIP-1167 minimal-proxy-compatible implementation. A single <code>TVSClone</code> implementation is deployed once, and cheap clones are created from it. Each clone is initialised with its own beneficiary and owner via <code>initialize()</code>. Non-upgradeable despite using the proxy pattern.</td></tr>
+<tr><td><strong><code>TVSClone</code></strong></td><td>An EIP-1167 minimal-proxy-compatible implementation. A single <code>TVSClone</code> implementation is deployed once, and cheap clones are created from it. Each clone is initialized with its own beneficiary and owner via <code>initialize()</code>. Non-upgradeable despite using the proxy pattern.</td></tr>
 </tbody></table>
 </div>
 <h3 id="upgradeable"><a class="header" href="#upgradeable">Upgradeable</a></h3>
