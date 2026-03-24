@@ -1,11 +1,11 @@
 # TVSImmutableBase
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSNonUpgradeable/TVSImmutableBase.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/TVSNonUpgradeable/TVSImmutableBase.sol)
 
 **Inherits:**
 [TVS](/src/components/TVS.sol/abstract.TVS.md)
 
 **Title:**
-Base for all Immutable TVS Contract
+Base for all Immutable TVS Contracts
 
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
@@ -22,7 +22,7 @@ Constructor for the TVS Immutable contract
 
 Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
 
-The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
 once here in the constructor.
 
 

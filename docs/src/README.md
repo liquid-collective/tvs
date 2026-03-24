@@ -1,21 +1,121 @@
 # <h1 align="center"> TVS Reference Implementation </h1>
 
-**A Transferable Validator Set (TVS) is a smart contract used as the withdrawal credential for a set of `n` validators, whose ownership can be transferred to a new owner.**
+**A Transferable Validator Set (TVS) is a smart contract used as the withdrawal credential for a set of Ethereum validators, whose ownership can be transferred to a new owner.**
 
-This repository provides multiple implementations of Transferable Validator Set (TVS) smart contracts, including both immutable and upgradeable versions.
+This repository provides multiple implementations of TVS smart contracts covering a range of deployment patterns: immutable, clone (minimal proxy), flexible immutable, and upgradeable (beacon proxy). A permissionless `TVSDeployer` factory contract is included for deploying any variant in a single call.
 
 ---
 
-## Audits 
+## Audits
 
 These smart contracts have been audited by Certora and Quantstamp. The audit reports can be found in the [audits directory](./audits).
 
-## Features
+## Core Concepts
 
-- **Immutable Beacon Factory**: Deploys and manages immutable beacon proxies.
-- **Upgradeable Contracts**: Supports upgradeable implementations for flexibility.
-- **Deployment Scripts**: Automates deployment and ensures reusability across different networks.
-- **Integration with Foundry**: Uses Foundry for testing, deployment, and cheat codes.
+Every TVS contract:
+
+- Acts as the **withdrawal credential** for one or more Ethereum validators.
+- Has an **owner** who can trigger Pectra EL withdrawal and consolidation requests, sweep ETH, and transfer ownership.
+- Has a **beneficiary** address that receives swept ETH.
+- Supports **Pectra EL operations**: partial/full withdrawals via the EL withdrawal contract (`0x00000961Ef480Eb55e80D19ad83579A64c007002`) and validator consolidations via the EL consolidation contract (`0x0000BBdDc7CE488642fb579F8B00f3a590007251`).
+- Implements `sweep` / `sweepToBeneficiaryContract` to move ETH out of the TVS.
+- Implements `transfer` to atomically change both the beneficiary and the owner.
+- Prevents accidental ownership renouncement.
+
+---
+
+## Contract Variants
+
+### Non-Upgradeable
+
+| Contract | Description |
+|---|---|
+| **`TVSImmutable`** | Fully immutable TVS. All parameters (beneficiary, owner, withdrawal/consolidation addresses) are set in the constructor. Cheapest to interact with post-deployment. |
+| **`TVSFlexibleImmutable`** | Extends `TVSImmutable` with an `executeCall` / `executeBatch` interface that lets the owner perform arbitrary low-level calls and delegate calls. Provides forward-compatibility with future on-chain features without upgradeability. |
+| **`TVSClone`** | An EIP-1167 minimal-proxy-compatible implementation. A single `TVSClone` implementation is deployed once, and cheap clones are created from it. Each clone is initialized with its own beneficiary and owner via `initialize()`. Non-upgradeable despite using the proxy pattern. |
+
+### Upgradeable
+
+| Contract | Description |
+|---|---|
+| **`TVSUpgradeable`** | Upgradeable TVS implementation using the **beacon proxy** pattern. Each instance is a `TVSBeaconProxy` that delegates to a shared `UpgradeableBeacon`, which in turn points to the `TVSUpgradeable` implementation. The beacon owner can upgrade all proxies at once by changing the beacon's implementation pointer. |
+| **`TVSBeaconProxy`** | A lightweight proxy (similar to EIP-1167) that reads its implementation address from a beacon contract at runtime. Deployed per-TVS instance. |
+
+### Beacon & Factory Contracts
+
+| Contract | Description |
+|---|---|
+| **`ImmutableBeacon`** | A beacon whose implementation address is set once in the constructor and **can never be changed**. Used during `TVSUpgradeable.transfer()` to freeze the implementation so that the previous owner cannot swap it out mid-transfer. |
+| **`ImmutableBeaconFactory`** | A factory that deploys new `ImmutableBeacon` instances. Called by the `TVSUpgradeable` constructor to create the frozen beacon used during transfers. Implements `IImmutableBeaconFactory`. |
+
+### TVSDeployer (Permissionless Factory)
+
+The **`TVSDeployer`** contract is a single entry-point for deploying any TVS variant. It is constructed with references to the `TVSClone` implementation and the `TVSUpgradeable` implementation, and exposes:
+
+| Function | Deploys |
+|---|---|
+| `deployClone(beneficiary, owner)` | A new EIP-1167 clone of the `TVSClone` implementation, initialized in the same transaction. |
+| `deployImmutable(beneficiary, owner)` | A new `TVSImmutable` instance. |
+| `deployFlexibleImmutable(beneficiary, owner)` | A new `TVSFlexibleImmutable` instance. |
+| `deployUpgradeable(beneficiary, owner, beacon)` | A new `TVSBeaconProxy` pointing to the given beacon. If `beacon` is the zero address, a new `UpgradeableBeacon` is deployed automatically with `msg.sender` as the beacon owner. |
+
+### Shared Components
+
+| Contract / Library | Description |
+|---|---|
+| **`TVS`** (abstract) | Core TVS logic: withdraw, consolidate, sweep, setBeneficiary, transfer. Inherited by all variants. |
+| **`BaseSecurity`** (abstract) | Ownership (OwnableUpgradeable) + reentrancy guard (transient storage). Works for both upgradeable and non-upgradeable variants. |
+| **`TVSImmutableBase`** (abstract) | Base for all non-upgradeable variants. Adds `transfer()` and `version()`. |
+| **`Beneficiary`** (library) | Manages the beneficiary address in a dedicated storage slot. |
+| **`Beacon`** (library) | Manages the beacon address in an EIP-1967-compatible storage slot. |
+
+### Interfaces
+
+| Interface | Purpose |
+|---|---|
+| `ITVS` | Core TVS interface (sweep, withdraw, consolidate, transfer, setBeneficiary). |
+| `ITVSUpgradeable` | Extends `ITVS` with `setBeacon()` and `beacon()`. |
+| `ITVSFlexibleImmutable` | Adds `executeCall()` and `executeBatch()` for arbitrary calls. |
+| `IImmutableBeaconFactory` | Interface for deploying new `ImmutableBeacon` instances. |
+| `ITVSSweepBeneficiary` | Interface a beneficiary contract must implement to receive ETH via `sweepToBeneficiaryContract()`. |
+
+---
+
+## Project Structure
+
+```
+src/
+  components/
+    TVS.sol                          # Core TVS logic (abstract)
+    BaseSecurity.sol                 # Ownership + reentrancy guard (abstract)
+  interfaces/
+    ITVS.sol                         # Core TVS interface
+    ITVSSweepBeneficiary.sol         # Beneficiary contract interface
+  state/
+    Beneficiary.sol                  # Beneficiary storage library
+  TVSNonUpgradeable/
+    TVSImmutableBase.sol             # Base for non-upgradeable variants
+    TVSImmutable.sol                 # Immutable TVS
+    TVSFlexibleImmutable.sol         # Immutable TVS + arbitrary calls
+    TVSClone.sol                     # EIP-1167 clone implementation
+    interfaces/
+      ITVSFlexibleImmutable.sol
+  TVSUpgradeable/
+    TVSUpgradeable.sol               # Upgradeable TVS (beacon proxy pattern)
+    ImmutableBeacon.sol              # Frozen beacon (used during transfer)
+    ImmutableBeaconFactory.sol       # Factory for ImmutableBeacon
+    proxies/
+      TVSBeaconProxy.sol             # Lightweight beacon proxy
+    state/proxy/
+      Beacon.sol                     # Beacon address storage library
+    interfaces/
+      ITVSUpgradeable.sol
+      IImmutableBeaconFactory.sol
+  TVSDeployer.sol                    # Permissionless deployer for all variants
+scripts/                             # Foundry deployment scripts
+test/                                # Foundry test suite
+audits/                              # Certora & Quantstamp audit reports
+```
 
 ---
 
@@ -23,121 +123,125 @@ These smart contracts have been audited by Certora and Quantstamp. The audit rep
 
 ### Prerequisites
 
-- Install [Foundry](https://book.getfoundry.sh/getting-started/installation.html)
-- Ensure you have a local Ethereum node or RPC URL for deployment and testing.
+- [Foundry](https://book.getfoundry.sh/getting-started/installation.html)
+- An RPC URL for the target network
 
 ### Installation
 
-To install dependencies:
 ```bash
-git clone https://github.com/your-repo/tvs-reference-implementation.git
-cd tvs-reference-implementation
+git clone <repo-url>
+cd tvs
 forge install
-yarn install
 ```
 
-### Run Tests
-```bash 
+### Build
+
+```bash
+forge build
+```
+
+### Test
+
+```bash
 forge test
 ```
 
-### Deployment
+### Coverage
 
-1. Configure Environment Variables: Update the .env file with the necessary details:
+```bash
+make coverage
+```
 
-- BENEFICIARY: Address to receive validator rewards.
-- OWNER: Address of the contract owner.
-- RPC_URL: RPC URL for the blockchain network.
-- PRIVATE_KEY: Private key for deployment.
+### Documentation
 
-    Optionally, specify addresses for pre-deployed contracts:
+```bash
+make docs
+```
 
-- IMMUTABLE_BEACON_FACTORY
-- TVS_CLONE_IMPLEMENTATION
-- TVS_UPGRADEABLE_IMPLEMENTATION
-- UPGRADEABLE_BEACON
+---
 
-    If these are not specified, the deployment script will use the last deployment address from the broadcast folder.
+## Deployment
 
+### Environment Variables
 
-### Deployment Order and Dependencies
+Create a `.env` file (see the Makefile for full usage):
 
-1. Deploy Immutable Beacon Factory:
+| Variable | Required | Description |
+|---|---|---|
+| `RPC_URL` | Yes | RPC endpoint for the target chain |
+| `PRIVATE_KEY` | Yes | Deployer private key |
+| `BENEFICIARY` | Yes | Default beneficiary address |
+| `OWNER` | Yes | Contract owner address |
+| `ETHERSCAN_API_KEY` | No | For contract verification |
+| `ETHERSCAN_API` | No | Custom verifier URL |
+| `IMMUTABLE_BEACON_FACTORY` | No | Pre-deployed factory address (overrides broadcast lookup) |
+| `TVS_CLONE_IMPLEMENTATION` | No | Pre-deployed clone implementation address |
+| `TVS_UPGRADEABLE_IMPLEMENTATION` | No | Pre-deployed upgradeable implementation address |
+| `UPGRADEABLE_BEACON` | No | Pre-deployed beacon address |
+
+### Deployment Steps
+
+Contracts should be deployed in the following order. Each step depends on the one before it (where noted).
+
+#### 1. Deploy ImmutableBeaconFactory
+
 ```bash
 make deploy-ImmutableBeaconFactory
 ```
+No dependencies. Deploys the `ImmutableBeaconFactory`, required by `TVSUpgradeable`.
 
-- Dependency: None.
-- Purpose: Deploys the `ImmutableBeaconFactory` contract, which is required for deploying other contracts like `TVSUpgradeable`.
-
-2. Deploy TVS Upgradeable Implementation:
-
-```bash
-make deploy-TVSUpgradeableImplementation
-```
-- Dependency: `ImmutableBeaconFactory` must be deployed first or env `IMMUTABLE_BEACON_FACTORY` should be set.
-- Purpose: Deploys the `TVSUpgradeable` implementation contract, which is used by the `UpgradeableBeacon`
-
-3. Deploy Upgradeable Beacon:
-
-```bash
-make deploy-UpgradeableBeacon
-```
-
-- Dependency: `TVSUpgradeableImplementation` must be deployed first or env `TVS_UPGRADEABLE_IMPLEMENTATION` should be set.
-- Purpose: Deploys the `UpgradeableBeacon` implementation contract, which points to the `TVSUpgradeable` implementation
-
-4. Deploy TVS Upgradeable:
-
-```bash
-make deploy-TVSUpgradeable
-```
-
-- Dependency: `UpgradeableBeacon` must be deployed first or env `UPGRADEABLE_BEACON` should be set.
-- Deploys the `TVSBeaconProxy` contract, which uses the `UpgradeableBeacon` for upgradeable functionality.
-
-5. Deploy TVS Clone Implementation:
+#### 2. Deploy TVSClone Implementation
 
 ```bash
 make deploy-TVSCloneImplementation
 ```
+No dependencies. Deploys the `TVSClone` implementation used by clone proxies.
 
-- Dependency: None.
-- Purpose: Deploys the `TVSClone` implementation contract, which is used for creating clone proxies.
+#### 3. Deploy TVSUpgradeable Implementation
 
-
-6. Deploy Immutable Beacon Factory:
 ```bash
-make clone-TVS
+make deploy-TVSUpgradeableImplementation
 ```
+Depends on: `ImmutableBeaconFactory` (or set `IMMUTABLE_BEACON_FACTORY` env var).
 
-- Dependency: `TVSCloneImplementation` must be deployed first or env for `TVS_CLONE_IMPLEMENTATION` set.
-- Purpose: Deploys a clone proxy of the `TVSClone` implementation using the minimal proxy pattern.
-
-
-7. Deploy TVS Flexible Immutable:
+#### 4. Deploy UpgradeableBeacon
 
 ```bash
+make deploy-UpgradeableBeacon
+```
+Depends on: `TVSUpgradeableImplementation` (or set `TVS_UPGRADEABLE_IMPLEMENTATION` env var).
+
+#### 5. Deploy a TVS Instance
+
+Pick the variant you need:
+
+```bash
+# Upgradeable (beacon proxy)
+make deploy-TVSUpgradeable
+
+# Clone (EIP-1167 minimal proxy)
+make clone-TVS
+
+# Immutable
+make deploy-TVSImmutable
+
+# Flexible Immutable
 make deploy-TVSFlexibleImmutable
 ```
 
-- Dependency: None.
-- Purpose: Deploys a flexible immutable contract.
+- `deploy-TVSUpgradeable` depends on `UpgradeableBeacon` (or set `UPGRADEABLE_BEACON` env var).
+- `clone-TVS` depends on `TVSCloneImplementation` (or set `TVS_CLONE_IMPLEMENTATION` env var).
+- The immutable variants have no deployment dependencies.
 
-### Deployment Notes
-- ImmutableBeaconFactory: This contract is a foundational component and must be deployed first if TVSUpgradeable or other contracts depend on it.
-- UpgradeableBeacon: Acts as a pointer to the TVSUpgradeableImplementation and must be deployed before deploying the TVSBeaconProxy.
-- TVSClone: Uses the minimal proxy pattern and requires the TVSCloneImplementation to be deployed first.
-- Environment Variables: Ensure all required variables are set in the .env file before running the deployment scripts.
+---
 
-## Folder Structure
-- src/: Contains the core smart contracts
-- script/: Deployment scripts for automating contract deployment.
-- test/: Unit tests for the smart contracts.
-- broadcast/: Stores deployment artifacts and addresses for reuse.
+## Dependencies
 
-## Contributing
-Contributions are welcome! Please fork the repository and submit a pull request with your changes.
+- [OpenZeppelin Contracts](https://github.com/OpenZeppelin/openzeppelin-contracts)
+- [OpenZeppelin Contracts Upgradeable](https://github.com/OpenZeppelin/openzeppelin-contracts-upgradeable)
+- [Solady](https://github.com/Vectorized/solady) (UpgradeableBeacon)
+- [Forge Std](https://github.com/foundry-rs/forge-std)
 
 ## License
+
 See the [LICENSE](./LICENSE) file for details.

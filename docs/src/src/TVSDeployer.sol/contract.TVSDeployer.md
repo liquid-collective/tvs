@@ -1,5 +1,5 @@
 # TVSDeployer
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSDeployer.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/TVSDeployer.sol)
 
 **Title:**
 TVS Deployer
@@ -134,7 +134,7 @@ function deployFlexibleImmutable(address beneficiary, address owner) external re
 
 Deploys a new TVSUpgradeable (Beacon Proxy) and initializes it
 
-the new beacon will be deployed with the sender as the owner
+The new beacon will be deployed with the sender as the owner
 
 
 ```solidity

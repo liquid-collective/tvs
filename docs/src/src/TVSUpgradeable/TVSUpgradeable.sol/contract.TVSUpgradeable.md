@@ -1,5 +1,5 @@
 # TVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSUpgradeable/TVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/TVSUpgradeable/TVSUpgradeable.sol)
 
 **Inherits:**
 [ITVSUpgradeable](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md), [TVS](/src/components/TVS.sol/abstract.TVS.md)
@@ -37,7 +37,7 @@ Constructs a new TVSUpgradeable instance
 Initializes the contract with Pectra withdrawal and consolidation EL contract addresses, and the immutable
 beacon factory address.
 
-The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
 once here in the constructor.
 
 
@@ -64,6 +64,8 @@ Initializes the TVS upgradeable instance
 
 This function can only be called once during the TVS deployment and sets up the initial security, owner,
 beneficiary, and beacon address of the TVS
+
+No {BeneficiaryUpdated} event is emitted during initialization
 
 
 ```solidity
@@ -101,8 +103,8 @@ function transfer(address newBeneficiary, address newOwner) external override on
 This function is used by the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function to directly set the beacon address without
 additional checks
 
-This function should not be called directly, but only through the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function, it allows the
-[setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) perform robust checks before setting the new beacon
+WARNING: This function should only be invoked via delegatecall from [_setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#_setbeacon). Direct calls bypass
+validation. It allows the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function to perform robust checks before setting the new beacon.
 
 Emits a {BeaconUpgraded} event
 

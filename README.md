@@ -32,7 +32,7 @@ Every TVS contract:
 |---|---|
 | **`TVSImmutable`** | Fully immutable TVS. All parameters (beneficiary, owner, withdrawal/consolidation addresses) are set in the constructor. Cheapest to interact with post-deployment. |
 | **`TVSFlexibleImmutable`** | Extends `TVSImmutable` with an `executeCall` / `executeBatch` interface that lets the owner perform arbitrary low-level calls and delegate calls. Provides forward-compatibility with future on-chain features without upgradeability. |
-| **`TVSClone`** | An EIP-1167 minimal-proxy-compatible implementation. A single `TVSClone` implementation is deployed once, and cheap clones are created from it. Each clone is initialised with its own beneficiary and owner via `initialize()`. Non-upgradeable despite using the proxy pattern. |
+| **`TVSClone`** | An EIP-1167 minimal-proxy-compatible implementation. A single `TVSClone` implementation is deployed once, and cheap clones are created from it. Each clone is initialized with its own beneficiary and owner via `initialize()`. Non-upgradeable despite using the proxy pattern. |
 
 ### Upgradeable
 

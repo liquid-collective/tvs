@@ -1,5 +1,5 @@
 # TVSImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSNonUpgradeable/TVSImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/TVSNonUpgradeable/TVSImmutable.sol)
 
 **Inherits:**
 [TVSImmutableBase](/src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.md)
@@ -28,7 +28,7 @@ They can only be set once here in the constructor.
 
 NOTE: If for any reason the withdrawal, and consolidation addresses changes on a chain where the TVS is
 already deployed, consolidation,
-and partial withdrawals might not work as expected, except the validators tied to the TVS is exited, and a new
+and partial withdrawals might not work as expected, except the validators tied to the TVS are exited, and a new
 TVS is deployed with
 the new addresses due to the immutability of this contract.
 

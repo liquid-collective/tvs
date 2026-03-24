@@ -1,8 +1,8 @@
 # BaseSecurity
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/components/BaseSecurity.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/components/BaseSecurity.sol)
 
 **Inherits:**
-Initializable, OwnableUpgradeable, ReentrancyGuardTransientUpgradeable
+Initializable, OwnableUpgradeable, ReentrancyGuardTransient
 
 **Title:**
 BaseSecurity
@@ -21,7 +21,7 @@ This abstract contract provides a foundational setup for security features,
 including ownership management and reentrancy protection. It is designed to
 be inherited by both upgradeable and non-upgradeable contracts.
 
-Rational for using upgradeable contracts:
+Rationale for using upgradeable contracts:
 - Upgradeable contracts require initialization instead of constructors due to the
 proxy pattern. By using OpenZeppelin's upgradeable libraries, this contract ensures
 compatibility with such patterns.
@@ -41,9 +41,9 @@ deployment phase to properly configure ownership and reentrancy protection.
 
 Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement
 
-This function is intentionally left empty to prevent ownership renouncement by mistake
+This function reverts unconditionally to prevent ownership renouncement by mistake
 
-Emits an [OwnershipCannotBeRenounced](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#ownershipcannotberenounced) error
+Reverts with [OwnershipCannotBeRenounced](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#ownershipcannotberenounced)
 
 Only callable by the contract owner
 

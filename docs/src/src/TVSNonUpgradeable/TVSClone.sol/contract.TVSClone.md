@@ -1,5 +1,5 @@
 # TVSClone
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSNonUpgradeable/TVSClone.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/TVSNonUpgradeable/TVSClone.sol)
 
 **Inherits:**
 [TVSImmutableBase](/src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.md)
@@ -22,6 +22,8 @@ non-upgradeable.
 
 ## Functions
 ### constructor
+
+Constructor that disables initializers to prevent direct use of the implementation contract
 
 
 ```solidity

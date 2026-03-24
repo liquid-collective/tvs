@@ -1,5 +1,5 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/components/TVS.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
@@ -10,12 +10,12 @@ Transferable Validator Set (TVS - v1)
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
-implementation of the TVS
+Implementation of the TVS
 
 
 ## State Variables
 ### WITHDRAWAL_CONTRACT_ADDRESS
-The address of the pectra EL withdrawal contract.
+The address of the Pectra EL withdrawal contract.
 
 
 ```solidity
@@ -24,7 +24,7 @@ address public immutable WITHDRAWAL_CONTRACT_ADDRESS
 
 
 ### CONSOLIDATION_CONTRACT_ADDRESS
-The address of the pectra EL consolidation contract.
+The address of the Pectra EL consolidation contract.
 
 
 ```solidity
@@ -39,7 +39,7 @@ Constructor for the TVS contract
 
 Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
 
-The withdrawal and consolidation addresses are stored as immutable state variables. they can only be set
+The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
 once here in the constructor.
 
 All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set,
@@ -321,7 +321,7 @@ function _sweep(address _beneficiary, uint256 _amount) private returns (address 
 
 |Name|Type|Description|
 |----|----|-----------|
-|`_dest`|`address`|The address of the _destination.|
+|`_dest`|`address`|The address of the destination.|
 |`_amountToSweep`|`uint256`|The amount to sweep.|
 
 

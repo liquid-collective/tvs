@@ -1,5 +1,5 @@
 # ITVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/9228fb100dc1005549bee23394065bfb29d5257e/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
 
 **Title:**
 ITVSFlexibleImmutable Interface
@@ -45,7 +45,7 @@ NOTE:
 - when msg.value is passed, only one delegatecall should be made
 - when msg.value is passed, any delegatecall to non-payable functions will fail
 
-revert on the first call that fails.
+Reverts on the first call that fails.
 
 
 ```solidity
