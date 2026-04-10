@@ -1,5 +1,5 @@
 # BaseSecurity
-[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/components/BaseSecurity.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/components/BaseSecurity.sol)
 
 **Inherits:**
 Initializable, OwnableUpgradeable, ReentrancyGuardTransient
@@ -52,6 +52,20 @@ Only callable by the contract owner
 function renounceOwnership() public view override onlyOwner;
 ```
 
+### transferOwnership
+
+Overrides transferOwnership to prevent direct ownership transfers that bypass protocol invariants.
+
+Direct calls to transferOwnership skip the beneficiary update, and Transferred event
+enforced by the transfer() function. All ownership transfers must go through transfer().
+
+Reverts with [UseTransferFunction](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#usetransferfunction)
+
+
+```solidity
+function transferOwnership(address) public view override onlyOwner;
+```
+
 ### _setupSecurity
 
 Sets up the contract by initializing Ownable and ReentrancyGuard features.
@@ -74,5 +88,17 @@ Error thrown when ownership cannot be renounced.
 
 ```solidity
 error OwnershipCannotBeRenounced();
+```
+
+### UseTransferFunction
+Error thrown when transferOwnership is called directly.
+
+Ownership transfers must go through the secure transfer() function, which enforces
+all protocol invariants (updating the beneficiary, freezing the beacon, emitting
+the Transferred event). Calling transferOwnership directly bypasses these invariants.
+
+
+```solidity
+error UseTransferFunction();
 ```
 
