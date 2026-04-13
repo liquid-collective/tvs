@@ -1,5 +1,5 @@
 # TVSImmutableBase
-[Git Source](https://github.com/liquid-collective/tvs/blob/49bf642e2c057529754ea63119411e6fa24bfdd1/src/TVSNonUpgradeable/TVSImmutableBase.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSNonUpgradeable/TVSImmutableBase.sol)
 
 **Inherits:**
 [TVS](/src/components/TVS.sol/abstract.TVS.md)
