@@ -19,7 +19,7 @@ jobs:
         run: forge coverage --no-match-coverage "test|scripts" --report lcov
         
       - name: Upload Coverage to Codecov
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: ./lcov.info
