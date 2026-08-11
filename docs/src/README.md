@@ -75,7 +75,7 @@ The **`TVSDeployer`** contract is a single entry-point for deploying any TVS var
 |---|---|
 | `ITVS` | Core TVS interface (sweep, withdraw, consolidate, transfer, setBeneficiary). |
 | `ITVSUpgradeable` | Extends `ITVS` with `setBeacon()` and `beacon()`. |
-| `ITVSFlexibleImmutable` | Extends `ITVS` with `executeCall()` and `executeBatch()` for arbitrary calls. |
+| `ITVSFlexibleImmutable` | Standalone interface declaring `executeCall()` and `executeBatch()` for arbitrary calls. It does not inherit `ITVS` — `TVSFlexibleImmutable` implements both independently. |
 | `IImmutableBeaconFactory` | Interface for deploying new `ImmutableBeacon` instances. |
 | `ITVSSweepBeneficiary` | Interface a beneficiary contract must implement to receive ETH via `sweepToBeneficiaryContract()`. |
 

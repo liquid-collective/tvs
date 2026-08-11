@@ -1,5 +1,5 @@
 # TVSBeaconProxy
-[Git Source](https://github.com/liquid-collective/tvs/blob/1bf363e8aab5490523d3f7e0ccba11b5e058d641/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/ec61e0de7686fd76f32b89e56f6a3ecf6bf520ed/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
 
 **Title:**
 TVSBeaconProxy
