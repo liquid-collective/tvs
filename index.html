@@ -241,7 +241,7 @@
 <div class="table-wrapper"><table><thead><tr><th>Interface</th><th>Purpose</th></tr></thead><tbody>
 <tr><td><code>ITVS</code></td><td>Core TVS interface (sweep, withdraw, consolidate, transfer, setBeneficiary).</td></tr>
 <tr><td><code>ITVSUpgradeable</code></td><td>Extends <code>ITVS</code> with <code>setBeacon()</code> and <code>beacon()</code>.</td></tr>
-<tr><td><code>ITVSFlexibleImmutable</code></td><td>Extends <code>ITVS</code> with <code>executeCall()</code> and <code>executeBatch()</code> for arbitrary calls.</td></tr>
+<tr><td><code>ITVSFlexibleImmutable</code></td><td>Standalone interface declaring <code>executeCall()</code> and <code>executeBatch()</code> for arbitrary calls. It does not inherit <code>ITVS</code> — <code>TVSFlexibleImmutable</code> implements both independently.</td></tr>
 <tr><td><code>IImmutableBeaconFactory</code></td><td>Interface for deploying new <code>ImmutableBeacon</code> instances.</td></tr>
 <tr><td><code>ITVSSweepBeneficiary</code></td><td>Interface a beneficiary contract must implement to receive ETH via <code>sweepToBeneficiaryContract()</code>.</td></tr>
 </tbody></table>
