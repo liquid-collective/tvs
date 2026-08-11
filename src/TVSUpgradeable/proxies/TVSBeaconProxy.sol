@@ -6,10 +6,11 @@ import "../state/proxy/Beacon.sol";
 /**
  * @title TVSBeaconProxy
  * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
- * @notice This is an EIP-1167 minimal proxy that interacts with an upgradeable beacon contract
- * @dev It uses the beacon contract to fetch the implementation address and delegate the call.
+ * @notice This is a lightweight beacon proxy that resolves its implementation from an upgradeable beacon contract
+ * @dev It uses the beacon contract to fetch the implementation address and delegate the call
+ * @dev The beacon address is read from the EIP-1967 beacon slot managed by the {Beacon} library
  * @dev The beacon contract is expected to have an `implementation()` function that returns the address of the
- *      implementation.
+ *      implementation
  */
 contract TVSBeaconProxy {
     /**
@@ -25,9 +26,9 @@ contract TVSBeaconProxy {
     /**
      * @notice Constructs a new TVSBeaconProxy instance
      * @dev The constructor will get the implementation address from the beacon, and delegate the initialization call
-     *      to the implementation.
-     * @dev This function will revert if the implementation on the beacon is not a contract, or the input data to
-     *      initialize has invalid addresses.
+     *      to the implementation
+     * @dev This will revert if the implementation on the beacon is not a contract, or if the input data to
+     *      initialize has invalid addresses
      * @param beacon The address of the beacon contract
      * @param initData The initialization data to be passed to the implementation contract
      */
@@ -42,8 +43,8 @@ contract TVSBeaconProxy {
 
     /**
      * @notice Fallback function that delegates all calls to the implementation address returned by the beacon
-     * @dev This function uses inline assembly to first fetch the implementation address from the beacon
-     * @dev and then delegates the call to it.
+     * @dev This function first fetches the implementation address from the beacon and then uses inline assembly to
+     *      delegate the call to it
      */
     fallback() external payable {
         address implementation = _getImplementation(Beacon.get());
@@ -78,7 +79,7 @@ contract TVSBeaconProxy {
             // Store the function selector for `implementation()` (keccak256("implementation()") = 0x5c60da1b)
             mstore(ptr, 0x5c60da1b00000000000000000000000000000000000000000000000000000000)
 
-            // Perform the staticcall to the BEACON_ADDRESS
+            // Perform the staticcall to the beacon
             let success :=
                 staticcall(
                     gas(), // forward all remaining gas

@@ -28,11 +28,11 @@ abstract contract TVS is ITVS, BaseSecurity {
 
     /**
      * @notice Constructor for the TVS contract
-     * @dev Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
+     * @dev Initializes the contract with the Pectra withdrawal and consolidation EL contract addresses
      * @dev The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
-     * once here in the constructor.
-     * @dev All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set,
-     * and available to the proxy
+     *      once here in the constructor
+     * @dev All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set
+     *      and available to the proxy
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
      */
@@ -50,7 +50,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     /// @inheritdoc ITVS
     function withdraw(
         bytes[] calldata pubkeys,
-        uint64[] calldata amount,
+        uint64[] calldata amounts,
         uint256 maxFeePerWithdrawal,
         address excessFeeRecipient
     )
@@ -59,11 +59,11 @@ abstract contract TVS is ITVS, BaseSecurity {
         nonReentrant
         onlyOwner
     {
-        if (pubkeys.length != amount.length) {
-            revert LengthMismatch(pubkeys.length, amount.length);
+        if (pubkeys.length != amounts.length) {
+            revert LengthMismatch(pubkeys.length, amounts.length);
         }
 
-        // check if the value sent is enough to cover the fees
+        // Check if the value sent is enough to cover the fees
         uint256 maxFeePayable = maxFeePerWithdrawal * pubkeys.length;
         _validateSufficientValueForFee(msg.value, maxFeePayable);
 
@@ -74,7 +74,7 @@ abstract contract TVS is ITVS, BaseSecurity {
         for (uint256 i = 0; i < pubkeys.length; i++) {
             _validatePubkeyLength(pubkeys[i]);
             // Add the withdrawal request
-            bytes memory callData = abi.encodePacked(pubkeys[i], amount[i]);
+            bytes memory callData = abi.encodePacked(pubkeys[i], amounts[i]);
             (bool writeOK,) = WITHDRAWAL_CONTRACT_ADDRESS.call{ value: fee }(callData);
             if (!writeOK) {
                 revert RequestFailed();
@@ -82,7 +82,7 @@ abstract contract TVS is ITVS, BaseSecurity {
             totalFeePaid += fee;
 
             // Emit withdrawal event for each validator
-            emit WithdrawalRequested(pubkeys[i], amount[i], fee);
+            emit WithdrawalRequested(pubkeys[i], amounts[i], fee);
         }
 
         // Refund any excess value back to the excessFeeRecipient
@@ -105,16 +105,15 @@ abstract contract TVS is ITVS, BaseSecurity {
 
         // Calculate total number of consolidation operations
         uint256 totalNumOfConsolidationOperations = 0;
-
         for (uint256 i = 0; i < requests.length; i++) {
             totalNumOfConsolidationOperations += requests[i].srcPubkeys.length;
         }
+
         // Check if the msg.value is enough to cover the fees
         uint256 totalFeeRequired = fee * totalNumOfConsolidationOperations;
         _validateSufficientValueForFee(msg.value, totalFeeRequired);
 
         // Perform the consolidation requests
-
         for (uint256 i = 0; i < requests.length; i++) {
             _validatePubkeyLength(requests[i].targetPubkey);
 
@@ -131,13 +130,14 @@ abstract contract TVS is ITVS, BaseSecurity {
                 emit ConsolidationRequested(requests[i].srcPubkeys[j], requests[i].targetPubkey, fee);
             }
         }
+
         // Refund any excess value back to the excessFeeRecipient
         _refundExcessFee(msg.value, totalFeeRequired, excessFeeRecipient);
     }
 
     /// @inheritdoc ITVS
-    function sweep(address recipient, uint256 amount) external nonReentrant {
-        (address dest, uint256 amountToSweep) = _sweep(recipient, amount);
+    function sweep(address beneficiary, uint256 amount) external nonReentrant {
+        (address dest, uint256 amountToSweep) = _sweep(beneficiary, amount);
         payable(dest).sendValue(amountToSweep);
     }
 
@@ -159,7 +159,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
     /**
      * @notice Internal function to transfer the TVS to a new beneficiary and owner.
-     * @dev This function is used to transfer the TVS to a new beneficiary and owner.
+     * @dev Emits a {Transferred} event.
      * @param _beneficiary The address of the new beneficiary.
      * @param _owner The address of the new owner.
      */
@@ -172,6 +172,7 @@ abstract contract TVS is ITVS, BaseSecurity {
 
     /**
      * @notice Internal function to set the beneficiary address.
+     * @dev Emits a {BeneficiaryUpdated} event.
      * @param _newBeneficiary The address of the new beneficiary.
      */
     function _setBeneficiary(address _newBeneficiary) internal {
@@ -181,7 +182,8 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @notice Internal function to refund the excess fee for pectra related operations.
+     * @notice Internal function to refund the excess fee for Pectra-related operations.
+     * @dev Emits an {UnsentExcessFee} event if the refund could not be sent.
      * @param _totalValueReceived The total value received.
      * @param _totalFeePaid The total fee paid.
      * @param _excessFeeRecipient The address of the excess fee recipient.
@@ -204,15 +206,15 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @notice Internal function to validate the fee. Used for pectra related operations.
-     * @param feeContract The address of the fee contract.
+     * @notice Internal function to validate the fee. Used for Pectra-related operations.
+     * @dev Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.
+     * @param _feeContract The address of the fee contract.
      * @param _maxAllowedFee The maximum allowed fee.
      * @return _fee The fee.
-     * @dev Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.
      */
-    function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee) {
+    function _validateAndReturnFee(address _feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee) {
         // Read current fee from the contract
-        (bool readOK, bytes memory feeData) = feeContract.staticcall("");
+        (bool readOK, bytes memory feeData) = _feeContract.staticcall("");
         if (!readOK) {
             revert FeeReadFailed();
         }
@@ -224,9 +226,9 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @notice Internal function to validate the caller sent sufficient value for fee. Used for pectra related
-     * operations.
-     * @param _value The value.
+     * @notice Internal function to validate the caller sent sufficient value for the fee. Used for Pectra-related
+     *         operations.
+     * @param _value The value sent by the caller.
      * @param _totalFee The total fee.
      */
     function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure {
@@ -236,17 +238,19 @@ abstract contract TVS is ITVS, BaseSecurity {
     }
 
     /**
-     * @notice Internal function to validate that a public key is exactly 48 bytes in length
-     * @param pubkey The public key to validate
+     * @notice Internal function to validate that a public key is exactly 48 bytes in length.
+     * @param _pubkey The public key to validate.
      */
-    function _validatePubkeyLength(bytes memory pubkey) internal pure {
-        if (pubkey.length != 48) {
-            revert InvalidPubkeyLength(pubkey.length);
+    function _validatePubkeyLength(bytes memory _pubkey) internal pure {
+        if (_pubkey.length != 48) {
+            revert InvalidPubkeyLength(_pubkey.length);
         }
     }
 
     /**
-     * @notice Internal function to sweep the TVS.
+     * @notice Internal function to resolve the destination and amount of a sweep.
+     * @dev Only the owner can specify a custom beneficiary for the sweep.
+     * @dev Emits a {Swept} event.
      * @param _beneficiary The address of the beneficiary.
      * @param _amount The amount to sweep.
      * @return _dest The address of the destination.

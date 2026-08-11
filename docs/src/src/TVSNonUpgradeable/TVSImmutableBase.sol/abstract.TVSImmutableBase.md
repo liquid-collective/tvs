@@ -1,5 +1,5 @@
 # TVSImmutableBase
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSNonUpgradeable/TVSImmutableBase.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/1bf363e8aab5490523d3f7e0ccba11b5e058d641/src/TVSNonUpgradeable/TVSImmutableBase.sol)
 
 **Inherits:**
 [TVS](/src/components/TVS.sol/abstract.TVS.md)
@@ -18,12 +18,12 @@ This contract provides the base functionality for immutable TVS implementations
 ## Functions
 ### constructor
 
-Constructor for the TVS Immutable contract
+Constructor for the TVS Immutable base contract
 
-Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
+Initializes the contract with the Pectra withdrawal and consolidation EL contract addresses
 
 The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
-once here in the constructor.
+once here in the constructor
 
 
 ```solidity
@@ -71,6 +71,6 @@ function version() external pure returns (string memory);
 
 |Name|Type|Description|
 |----|----|-----------|
-|`<none>`|`string`|Version of the contract|
+|`<none>`|`string`|The version of the contract.|
 
 

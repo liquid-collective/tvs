@@ -1,5 +1,5 @@
 # ImmutableBeacon
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSUpgradeable/ImmutableBeacon.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/1bf363e8aab5490523d3f7e0ccba11b5e058d641/src/TVSUpgradeable/ImmutableBeacon.sol)
 
 **Title:**
 Immutable Beacon (v1)
@@ -46,7 +46,7 @@ constructor(address theImplementation) ;
 
 ## Errors
 ### InvalidImplementation
-Emitted when the implementation address is invalid
+Error thrown when the implementation address is invalid
 
 
 ```solidity

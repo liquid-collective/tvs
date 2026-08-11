@@ -1,5 +1,5 @@
 # TVSBeaconProxy
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/1bf363e8aab5490523d3f7e0ccba11b5e058d641/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol)
 
 **Title:**
 TVSBeaconProxy
@@ -7,12 +7,14 @@ TVSBeaconProxy
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
-This is an EIP-1167 minimal proxy that interacts with an upgradeable beacon contract
+This is a lightweight beacon proxy that resolves its implementation from an upgradeable beacon contract
 
-It uses the beacon contract to fetch the implementation address and delegate the call.
+It uses the beacon contract to fetch the implementation address and delegate the call
+
+The beacon address is read from the EIP-1967 beacon slot managed by the {Beacon} library
 
 The beacon contract is expected to have an `implementation()` function that returns the address of the
-implementation.
+implementation
 
 
 ## Functions
@@ -21,10 +23,10 @@ implementation.
 Constructs a new TVSBeaconProxy instance
 
 The constructor will get the implementation address from the beacon, and delegate the initialization call
-to the implementation.
+to the implementation
 
-This function will revert if the implementation on the beacon is not a contract, or the input data to
-initialize has invalid addresses.
+This will revert if the implementation on the beacon is not a contract, or if the input data to
+initialize has invalid addresses
 
 
 ```solidity
@@ -42,9 +44,8 @@ constructor(address beacon, bytes memory initData) ;
 
 Fallback function that delegates all calls to the implementation address returned by the beacon
 
-This function uses inline assembly to first fetch the implementation address from the beacon
-
-and then delegates the call to it.
+This function first fetches the implementation address from the beacon and then uses inline assembly to
+delegate the call to it
 
 
 ```solidity

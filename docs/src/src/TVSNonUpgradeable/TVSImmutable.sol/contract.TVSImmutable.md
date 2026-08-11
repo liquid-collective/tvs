@@ -1,5 +1,5 @@
 # TVSImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSNonUpgradeable/TVSImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/1bf363e8aab5490523d3f7e0ccba11b5e058d641/src/TVSNonUpgradeable/TVSImmutable.sol)
 
 **Inherits:**
 [TVSImmutableBase](/src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.md)
@@ -22,15 +22,12 @@ Constructor for the TVS Immutable contract
 
 Initializes the contract with all required parameters
 
-The withdrawal and consolidation addresses are pectra EL contract addresses, and are stored as immutable
-state variables.
-They can only be set once here in the constructor.
+The withdrawal and consolidation addresses are Pectra EL contract addresses, and are stored as immutable
+state variables. They can only be set once here in the constructor
 
-NOTE: If for any reason the withdrawal, and consolidation addresses changes on a chain where the TVS is
-already deployed, consolidation,
-and partial withdrawals might not work as expected, except the validators tied to the TVS are exited, and a new
-TVS is deployed with
-the new addresses due to the immutability of this contract.
+NOTE: Because this contract is immutable, if the withdrawal or consolidation addresses ever change on a
+chain where the TVS is already deployed, consolidations and partial withdrawals will no longer work. In
+that case the validators tied to the TVS must be exited and a new TVS deployed with the new addresses
 
 
 ```solidity

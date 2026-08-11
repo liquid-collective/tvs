@@ -1,5 +1,5 @@
 # Beacon
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSUpgradeable/state/proxy/Beacon.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/1bf363e8aab5490523d3f7e0ccba11b5e058d641/src/TVSUpgradeable/state/proxy/Beacon.sol)
 
 **Title:**
 Beacon
@@ -16,7 +16,7 @@ The implementation address is the address of the contract that contains the busi
 The beacon address is expected to have an `implementation()` function that returns the address of the
 implementation
 
-The proxy contract is expected to have a `BEACON_SLOT` slot that stores the beacon address
+The proxy contract is expected to store the beacon address in the `BEACON_SLOT` slot
 
 
 ## State Variables

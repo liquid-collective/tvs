@@ -12,13 +12,12 @@ contract DeployImmutableBeaconFactory is DeployPrepareForAbiInjection {
 
         try vm.getDeployment("ImmutableBeaconFactory") returns (address deployment) {
             recentDeployment = deployment;
-        } catch {}
+        } catch { }
 
         if (recentDeployment != address(0)) {
             console.log("No need to deploy anything, already deployed at: ", recentDeployment);
             return;
         }
-
 
         // Start broadcasting transactions
         vm.startBroadcast();
@@ -30,6 +29,5 @@ contract DeployImmutableBeaconFactory is DeployPrepareForAbiInjection {
         vm.stopBroadcast();
 
         prepareForAbiInjection();
-
     }
 }

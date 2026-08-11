@@ -34,7 +34,7 @@ clone-TVS:
 
 deploy-TVSCloneImplementation:
 	forge script scripts/DeployTVSCloneImplementation.s.sol:DeployTVSCloneImplementation $(DEPLOY_FLAGS) && \
-	DEPLOYMENT_PATH=TVSCloneImplementation CONTRACT_NAME=TVSClone make abi	
+	DEPLOYMENT_PATH=TVSCloneImplementation CONTRACT_NAME=TVSClone make abi
 
 deploy-TVSFlexibleImmutable:
 	forge script scripts/DeployTVSFlexibleImmutable.s.sol:DeployTVSFlexibleImmutable $(DEPLOY_FLAGS) && \
@@ -56,8 +56,9 @@ deploy-UpgradeableBeacon:
 	forge script scripts/DeployUpgradeableBeacon.s.sol:DeployUpgradeableBeacon $(DEPLOY_FLAGS) --ffi && \
 	DEPLOYMENT_PATH=UpgradeableBeacon CONTRACT_NAME=UpgradeableBeacon make abi
 
-deploy-PectraFeeGetter:
-	forge script scripts/DeployPectraFeeGetter.s.sol:DeployPectraFeeGetter $(DEPLOY_FLAGS) 
+deploy-TVSDeployer:
+	forge script scripts/DeployTVSDeployer.s.sol:DeployTVSDeployer $(DEPLOY_FLAGS) && \
+	DEPLOYMENT_PATH=TVSDeployer CONTRACT_NAME=TVSDeployer make abi
 
 ABI_SOURCE := out/$(CONTRACT_NAME).sol/$(CONTRACT_NAME).json
 TEMP_JSON := broadcast/temp.json
@@ -88,7 +89,6 @@ abi:
 	rm -f $(TEMP_JSON) && \
 	echo "✅ Temp file removed"
 
-
 # Documentation commands
 docs:
 	forge doc --build
@@ -99,3 +99,14 @@ coverage:
 
 check-submodules:
 	bash check-submodule-versions.sh
+
+# Declared phony so they are never shadowed by same-named files or directories (e.g. the `docs/` directory)
+.PHONY: abi docs coverage check-submodules clone-TVS \
+        deploy-ImmutableBeaconFactory \
+        deploy-TVSCloneImplementation \
+        deploy-TVSDeployer \
+        deploy-TVSFlexibleImmutable \
+        deploy-TVSImmutable \
+        deploy-TVSUpgradeable \
+        deploy-TVSUpgradeableImplementation \
+        deploy-UpgradeableBeacon

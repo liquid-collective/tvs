@@ -1,5 +1,5 @@
 # ITVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/interfaces/ITVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/1bf363e8aab5490523d3f7e0ccba11b5e058d641/src/interfaces/ITVS.sol)
 
 **Title:**
 TVS Interface
@@ -17,7 +17,7 @@ The TVS contract is the withdrawal credential of a set of validators in the syst
 ## Functions
 ### receive
 
-Fallback function to receive funds.
+Receive function to accept ETH transfers.
 
 
 ```solidity
@@ -28,9 +28,9 @@ receive() external payable;
 
 Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
 
-Only the owner can specify a custom beneficiary for the sweep
+Only the owner can specify a custom beneficiary for the sweep.
 
-Emits [Swept](/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.
+Emits a [Swept](/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.
 
 
 ```solidity
@@ -40,8 +40,8 @@ function sweep(address beneficiary, uint256 amount) external;
 
 |Name|Type|Description|
 |----|----|-----------|
-|`beneficiary`|`address`|Address to which funds will be swept, if zero address, sweeps to the beneficiary address set on the contract|
-|`amount`|`uint256`|Amount of funds to sweep, if zero, sweeps all funds on contract|
+|`beneficiary`|`address`|Address to which funds will be swept. If zero address, sweeps to the beneficiary address set on the contract.|
+|`amount`|`uint256`|Amount of funds to sweep. If zero, sweeps all funds on the contract.|
 
 
 ### sweepToBeneficiaryContract
@@ -49,7 +49,7 @@ function sweep(address beneficiary, uint256 amount) external;
 Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary contract or a specified
 beneficiary contract address.
 
-Only the owner can specify a custom beneficiary for the sweep
+Only the owner can specify a custom beneficiary for the sweep.
 
 Emits a [Swept](/src/interfaces/ITVS.sol/interface.ITVS.md#swept) event.
 
@@ -61,8 +61,8 @@ function sweepToBeneficiaryContract(address beneficiary, uint256 amount) externa
 
 |Name|Type|Description|
 |----|----|-----------|
-|`beneficiary`|`address`|Address for the contract to which funds will be swept, if zero address, sweeps to the beneficiary address set on the contract|
-|`amount`|`uint256`| Amount of funds to sweep, if zero, sweeps all funds on contract.|
+|`beneficiary`|`address`|Address of the contract to which funds will be swept. If zero address, sweeps to the beneficiary address set on the contract.|
+|`amount`|`uint256`|Amount of funds to sweep. If zero, sweeps all funds on the contract.|
 
 
 ### setBeneficiary
@@ -108,15 +108,17 @@ function transfer(address newBeneficiary, address newOwner) external;
 
 ### withdraw
 
-Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.
+Adds a withdrawal request to the Pectra EL withdrawal contract for the specified validators.
 
 Only the owner can call this function.
+
+Emits an [UnsentExcessFee](/src/interfaces/ITVS.sol/interface.ITVS.md#unsentexcessfee) event if the excess fee is not sent.
 
 
 ```solidity
 function withdraw(
     bytes[] calldata pubkeys,
-    uint64[] calldata amount,
+    uint64[] calldata amounts,
     uint256 maxFeePerWithdrawal,
     address excessFeeRecipient
 )
@@ -128,27 +130,27 @@ function withdraw(
 |Name|Type|Description|
 |----|----|-----------|
 |`pubkeys`|`bytes[]`|The public keys of the validators to withdraw from.|
-|`amount`|`uint64[]`|The amount in gwei to withdraw from each validator. Zero indicates a full withdrawal (validator exit).|
+|`amounts`|`uint64[]`|The amount in gwei to withdraw from each validator, in the same order as `pubkeys`. Zero indicates a full withdrawal (validator exit).|
 |`maxFeePerWithdrawal`|`uint256`|The maximum fee allowed per withdrawal.|
 |`excessFeeRecipient`|`address`|The address to which excess fees will be sent.|
 
 
 ### consolidate
 
-Adds a consolidation request to the pectra EL consolidation contract for the given source validators.
+Adds a consolidation request to the Pectra EL consolidation contract for the given source validators.
 
 Only the owner can call this function.
 
-Both source and target validators (pubKeys) must be from the same TVS (this TVS).
+Both source and target validators (pubkeys) must be from the same TVS (this TVS).
 
 The excess fee is the difference between the maximum fee and the actual fee paid.
 
-Emits a [UnsentExcessFee](/src/interfaces/ITVS.sol/interface.ITVS.md#unsentexcessfee) event if the excess fee is not sent.
+Emits an [UnsentExcessFee](/src/interfaces/ITVS.sol/interface.ITVS.md#unsentexcessfee) event if the excess fee is not sent.
 
 
 ```solidity
 function consolidate(
-    ConsolidationRequest[] memory requests,
+    ConsolidationRequest[] calldata requests,
     uint256 maxFeePerConsolidation,
     address excessFeeRecipient
 )
@@ -191,7 +193,7 @@ function version() external pure returns (string memory);
 
 |Name|Type|Description|
 |----|----|-----------|
-|`<none>`|`string`|Version of the contract|
+|`<none>`|`string`|The version of the contract.|
 
 
 ## Events
@@ -225,8 +227,8 @@ event BeneficiaryUpdated(address indexed newBeneficiary);
 |`newBeneficiary`|`address`|The new beneficiary address.|
 
 ### UnsentExcessFee
-Emitted when the excess fee sent as part of a {consolidation}, or {withdrawal} - (partial or full)
-request could not be refunded to the {excessFeeRecipient} recipient.
+Emitted when the excess fee sent as part of a [consolidate](/src/interfaces/ITVS.sol/interface.ITVS.md#consolidate) or [withdraw](/src/interfaces/ITVS.sol/interface.ITVS.md#withdraw) (partial or full) request
+could not be refunded to the excess fee recipient.
 
 
 ```solidity
@@ -238,7 +240,7 @@ event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excess
 |Name|Type|Description|
 |----|----|-----------|
 |`excessFeeRecipient`|`address`|The address to which the excess fee should have been sent.|
-|`excessFee`|`uint256`|The amount of excess fee sent.|
+|`excessFee`|`uint256`|The amount of excess fee that could not be refunded.|
 
 ### Transferred
 Emitted when the ownership of the TVS is transferred to a new owner.
@@ -328,7 +330,7 @@ error InsufficientBalance(uint256 available, uint256 required);
 ### FeeTooHigh
 Error thrown when a fee exceeds the maximum allowed.
 
-This error is associated with the {consolidation} and {withdrawal} functions
+This error is associated with the [consolidate](/src/interfaces/ITVS.sol/interface.ITVS.md#consolidate) and [withdraw](/src/interfaces/ITVS.sol/interface.ITVS.md#withdraw) functions.
 
 
 ```solidity
@@ -360,8 +362,8 @@ error LengthMismatch(uint256 expected, uint256 actual);
 ### FeeReadFailed
 Error thrown when reading the fee fails.
 
-This error is associated with the {consolidation} and {withdrawal} functions, which read the fee from the
-associated pectra EL contracts.
+This error is associated with the [consolidate](/src/interfaces/ITVS.sol/interface.ITVS.md#consolidate) and [withdraw](/src/interfaces/ITVS.sol/interface.ITVS.md#withdraw) functions, which read the fee from the
+associated Pectra EL contracts.
 
 
 ```solidity
@@ -369,7 +371,7 @@ error FeeReadFailed();
 ```
 
 ### RequestFailed
-Error thrown when adding a consolidation or withdraw request fails.
+Error thrown when adding a consolidation or withdrawal request fails.
 
 
 ```solidity
@@ -379,8 +381,8 @@ error RequestFailed();
 ### InsufficientValueForFee
 Error thrown when the value provided is insufficient for the fee.
 
-This error is associated with the {consolidation} and {withdrawal} functions, which interact with the
-associated pectra EL contracts.
+This error is associated with the [consolidate](/src/interfaces/ITVS.sol/interface.ITVS.md#consolidate) and [withdraw](/src/interfaces/ITVS.sol/interface.ITVS.md#withdraw) functions, which interact with the
+associated Pectra EL contracts.
 
 
 ```solidity

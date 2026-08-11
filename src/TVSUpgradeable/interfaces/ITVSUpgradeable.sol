@@ -6,9 +6,9 @@ import "../../interfaces/ITVS.sol";
 /**
  * @title TVS Interface (Upgradeable)
  * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
- * @notice Interface for the TVS contract.
- * @dev This interface is used to interact with the TVS contract.
- * @dev The TVSUpgradeable contract is an upgradeable implementation of the TVS contract
+ * @notice Interface for the TVSUpgradeable contract.
+ * @dev This interface is used to interact with the TVSUpgradeable contract.
+ * @dev The TVSUpgradeable contract is an upgradeable implementation of the TVS contract.
  */
 interface ITVSUpgradeable is ITVS {
     /**
@@ -26,9 +26,9 @@ interface ITVSUpgradeable is ITVS {
      * @notice Sets a new beacon address for the TVS.
      * @dev Only the owner can call this function.
      * @dev Emits a {BeaconUpgraded} event.
-     * @param beacon The new beacon address.
+     * @param newBeacon The new beacon address.
      */
-    function setBeacon(address beacon) external;
+    function setBeacon(address newBeacon) external;
 
     /**
      * @notice Retrieves the current beacon address.

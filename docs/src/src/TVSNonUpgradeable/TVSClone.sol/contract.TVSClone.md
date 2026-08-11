@@ -1,5 +1,5 @@
 # TVSClone
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSNonUpgradeable/TVSClone.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/1bf363e8aab5490523d3f7e0ccba11b5e058d641/src/TVSNonUpgradeable/TVSClone.sol)
 
 **Inherits:**
 [TVSImmutableBase](/src/TVSNonUpgradeable/TVSImmutableBase.sol/abstract.TVSImmutableBase.md)
@@ -15,7 +15,7 @@ Non-upgradeable implementation of the TVS with initializer
 The TVSClone contract is designed with the idea of providing an immutable version that is compatible with
 EIP-1167 clone proxy, offering users a way to minimize gas costs during deployment.
 
-Even though this contract follows the pattern of a proxy implementation contract. It is a non-upgradeable
+Even though this contract follows the pattern of a proxy implementation contract, it is a non-upgradeable
 implementation of the TVS contract, expected to be used only with the clone proxy pattern which is
 non-upgradeable.
 
@@ -33,6 +33,13 @@ constructor(
 )
     TVSImmutableBase(withdrawalContractAddress, consolidationContractAddress);
 ```
+**Parameters**
+
+|Name|Type|Description|
+|----|----|-----------|
+|`withdrawalContractAddress`|`address`|The address of the withdrawal contract|
+|`consolidationContractAddress`|`address`|The address of the consolidation contract|
+
 
 ### initialize
 
