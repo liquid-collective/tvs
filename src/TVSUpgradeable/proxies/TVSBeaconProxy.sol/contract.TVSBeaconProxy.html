@@ -182,20 +182,21 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvsbeaconproxy"><a class="header" href="#tvsbeaconproxy">TVSBeaconProxy</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/d42b06b9eeb0ea1af5b2a5416d2a84ba619dfef2/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/d046658038f19a190a1af203fe2181e303dfc5b0/src/TVSUpgradeable/proxies/TVSBeaconProxy.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
-<p>This is an EIP-1167 minimal proxy that interacts with an upgradeable beacon contract</p>
-<p>It uses the beacon contract to fetch the implementation address and delegate the call.</p>
+<p>This is a lightweight beacon proxy that resolves its implementation from an upgradeable beacon contract</p>
+<p>It uses the beacon contract to fetch the implementation address and delegate the call</p>
+<p>The beacon address is read from the EIP-1967 beacon slot managed by the {Beacon} library</p>
 <p>The beacon contract is expected to have an <code>implementation()</code> function that returns the address of the
-implementation.</p>
+implementation</p>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="constructor"><a class="header" href="#constructor">constructor</a></h3>
 <p>Constructs a new TVSBeaconProxy instance</p>
 <p>The constructor will get the implementation address from the beacon, and delegate the initialization call
-to the implementation.</p>
-<p>This function will revert if the implementation on the beacon is not a contract, or the input data to
-initialize has invalid addresses.</p>
+to the implementation</p>
+<p>This will revert if the implementation on the beacon is not a contract, or if the input data to
+initialize has invalid addresses</p>
 <pre><code class="language-solidity">constructor(address beacon, bytes memory initData) ;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -206,8 +207,8 @@ initialize has invalid addresses.</p>
 </div>
 <h3 id="fallback"><a class="header" href="#fallback">fallback</a></h3>
 <p>Fallback function that delegates all calls to the implementation address returned by the beacon</p>
-<p>This function uses inline assembly to first fetch the implementation address from the beacon</p>
-<p>and then delegates the call to it.</p>
+<p>This function first fetches the implementation address from the beacon and then uses inline assembly to
+delegate the call to it</p>
 <pre><code class="language-solidity">fallback() external payable;
 </code></pre>
 <h3 id="_getimplementation"><a class="header" href="#_getimplementation">_getImplementation</a></h3>

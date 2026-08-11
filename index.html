@@ -210,7 +210,7 @@
 <h3 id="upgradeable"><a class="header" href="#upgradeable">Upgradeable</a></h3>
 <div class="table-wrapper"><table><thead><tr><th>Contract</th><th>Description</th></tr></thead><tbody>
 <tr><td><strong><code>TVSUpgradeable</code></strong></td><td>Upgradeable TVS implementation using the <strong>beacon proxy</strong> pattern. Each instance is a <code>TVSBeaconProxy</code> that delegates to a shared <code>UpgradeableBeacon</code>, which in turn points to the <code>TVSUpgradeable</code> implementation. The beacon owner can upgrade all proxies at once by changing the beacon's implementation pointer.</td></tr>
-<tr><td><strong><code>TVSBeaconProxy</code></strong></td><td>A lightweight proxy (similar to EIP-1167) that reads its implementation address from a beacon contract at runtime. Deployed per-TVS instance.</td></tr>
+<tr><td><strong><code>TVSBeaconProxy</code></strong></td><td>A lightweight proxy that reads its implementation address from a beacon contract at runtime, using the EIP-1967 beacon slot. Deployed per-TVS instance.</td></tr>
 </tbody></table>
 </div>
 <h3 id="beacon--factory-contracts"><a class="header" href="#beacon--factory-contracts">Beacon &amp; Factory Contracts</a></h3>
@@ -241,7 +241,7 @@
 <div class="table-wrapper"><table><thead><tr><th>Interface</th><th>Purpose</th></tr></thead><tbody>
 <tr><td><code>ITVS</code></td><td>Core TVS interface (sweep, withdraw, consolidate, transfer, setBeneficiary).</td></tr>
 <tr><td><code>ITVSUpgradeable</code></td><td>Extends <code>ITVS</code> with <code>setBeacon()</code> and <code>beacon()</code>.</td></tr>
-<tr><td><code>ITVSFlexibleImmutable</code></td><td>Adds <code>executeCall()</code> and <code>executeBatch()</code> for arbitrary calls.</td></tr>
+<tr><td><code>ITVSFlexibleImmutable</code></td><td>Extends <code>ITVS</code> with <code>executeCall()</code> and <code>executeBatch()</code> for arbitrary calls.</td></tr>
 <tr><td><code>IImmutableBeaconFactory</code></td><td>Interface for deploying new <code>ImmutableBeacon</code> instances.</td></tr>
 <tr><td><code>ITVSSweepBeneficiary</code></td><td>Interface a beneficiary contract must implement to receive ETH via <code>sweepToBeneficiaryContract()</code>.</td></tr>
 </tbody></table>
@@ -313,6 +313,8 @@ forge install
 <tr><td><code>PRIVATE_KEY</code></td><td>Yes</td><td>Deployer private key</td></tr>
 <tr><td><code>BENEFICIARY</code></td><td>Yes</td><td>Default beneficiary address</td></tr>
 <tr><td><code>OWNER</code></td><td>Yes</td><td>Contract owner address</td></tr>
+<tr><td><code>WITHDRAWAL_CONTRACT</code></td><td>Yes</td><td>Pectra EL withdrawal contract address</td></tr>
+<tr><td><code>CONSOLIDATION_CONTRACT</code></td><td>Yes</td><td>Pectra EL consolidation contract address</td></tr>
 <tr><td><code>ETHERSCAN_API_KEY</code></td><td>No</td><td>For contract verification</td></tr>
 <tr><td><code>ETHERSCAN_API</code></td><td>No</td><td>Custom verifier URL</td></tr>
 <tr><td><code>IMMUTABLE_BEACON_FACTORY</code></td><td>No</td><td>Pre-deployed factory address (overrides broadcast lookup)</td></tr>
@@ -339,7 +341,13 @@ forge install
 <pre><code class="language-bash">make deploy-UpgradeableBeacon
 </code></pre>
 <p>Depends on: <code>TVSUpgradeableImplementation</code> (or set <code>TVS_UPGRADEABLE_IMPLEMENTATION</code> env var).</p>
-<h4 id="5-deploy-a-tvs-instance"><a class="header" href="#5-deploy-a-tvs-instance">5. Deploy a TVS Instance</a></h4>
+<h4 id="5-deploy-tvsdeployer-optional"><a class="header" href="#5-deploy-tvsdeployer-optional">5. Deploy TVSDeployer (optional)</a></h4>
+<pre><code class="language-bash">make deploy-TVSDeployer
+</code></pre>
+<p>Depends on: <code>TVSCloneImplementation</code> and <code>TVSUpgradeableImplementation</code> (or set <code>TVS_CLONE_IMPLEMENTATION</code> and
+<code>TVS_UPGRADEABLE_IMPLEMENTATION</code> env vars). Only needed if you want the permissionless factory on-chain; the
+per-variant deployments below do not require it.</p>
+<h4 id="6-deploy-a-tvs-instance"><a class="header" href="#6-deploy-a-tvs-instance">6. Deploy a TVS Instance</a></h4>
 <p>Pick the variant you need:</p>
 <pre><code class="language-bash"># Upgradeable (beacon proxy)
 make deploy-TVSUpgradeable

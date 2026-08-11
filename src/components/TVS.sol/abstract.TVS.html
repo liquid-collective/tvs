@@ -182,7 +182,7 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="tvs"><a class="header" href="#tvs">TVS</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/d42b06b9eeb0ea1af5b2a5416d2a84ba619dfef2/src/components/TVS.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/d046658038f19a190a1af203fe2181e303dfc5b0/src/components/TVS.sol">Git Source</a></p>
 <p><strong>Inherits:</strong>
 <a href="/home/runner/work/tvs/tvs/docs/src/src/interfaces/ITVS.sol/interface.ITVS.html">ITVS</a>, <a href="/home/runner/work/tvs/tvs/docs/src/src/components/BaseSecurity.sol/abstract.BaseSecurity.html">BaseSecurity</a></p>
 <p><strong>Author:</strong>
@@ -200,10 +200,10 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
 <h3 id="constructor"><a class="header" href="#constructor">constructor</a></h3>
 <p>Constructor for the TVS contract</p>
-<p>Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.</p>
+<p>Initializes the contract with the Pectra withdrawal and consolidation EL contract addresses</p>
 <p>The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
-once here in the constructor.</p>
-<p>All implementation versions of TVS <strong>MUST</strong> have this constructor, to ensure the correct addresses are set,
+once here in the constructor</p>
+<p>All implementation versions of TVS <strong>MUST</strong> have this constructor, to ensure the correct addresses are set
 and available to the proxy</p>
 <pre><code class="language-solidity">constructor(address withdrawalContractAddress, address consolidationContractAddress) ;
 </code></pre>
@@ -214,15 +214,15 @@ and available to the proxy</p>
 </tbody></table>
 </div>
 <h3 id="receive"><a class="header" href="#receive">receive</a></h3>
-<p>Fallback function to receive funds.</p>
+<p>Receive function to accept ETH transfers.</p>
 <pre><code class="language-solidity">receive() external payable;
 </code></pre>
 <h3 id="withdraw"><a class="header" href="#withdraw">withdraw</a></h3>
-<p>Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.</p>
+<p>Adds a withdrawal request to the Pectra EL withdrawal contract for the specified validators.</p>
 <p>Only the owner can call this function.</p>
 <pre><code class="language-solidity">function withdraw(
     bytes[] calldata pubkeys,
-    uint64[] calldata amount,
+    uint64[] calldata amounts,
     uint256 maxFeePerWithdrawal,
     address excessFeeRecipient
 )
@@ -234,13 +234,13 @@ and available to the proxy</p>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>pubkeys</code></td><td><code>bytes[]</code></td><td>The public keys of the validators to withdraw from.</td></tr>
-<tr><td><code>amount</code></td><td><code>uint64[]</code></td><td>The amount in gwei to withdraw from each validator. Zero indicates a full withdrawal (validator exit).</td></tr>
+<tr><td><code>amounts</code></td><td><code>uint64[]</code></td><td>The amount in gwei to withdraw from each validator, in the same order as <code>pubkeys</code>. Zero indicates a full withdrawal (validator exit).</td></tr>
 <tr><td><code>maxFeePerWithdrawal</code></td><td><code>uint256</code></td><td>The maximum fee allowed per withdrawal.</td></tr>
 <tr><td><code>excessFeeRecipient</code></td><td><code>address</code></td><td>The address to which excess fees will be sent.</td></tr>
 </tbody></table>
 </div>
 <h3 id="consolidate"><a class="header" href="#consolidate">consolidate</a></h3>
-<p>Adds a consolidation request to the pectra EL consolidation contract for the given source validators.</p>
+<p>Adds a consolidation request to the Pectra EL consolidation contract for the given source validators.</p>
 <p>Only the owner can call this function.</p>
 <pre><code class="language-solidity">function consolidate(
     ConsolidationRequest[] calldata requests,
@@ -261,25 +261,25 @@ and available to the proxy</p>
 </div>
 <h3 id="sweep"><a class="header" href="#sweep">sweep</a></h3>
 <p>Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.</p>
-<p>Only the owner can specify a custom beneficiary for the sweep</p>
-<pre><code class="language-solidity">function sweep(address recipient, uint256 amount) external nonReentrant;
+<p>Only the owner can specify a custom beneficiary for the sweep.</p>
+<pre><code class="language-solidity">function sweep(address beneficiary, uint256 amount) external nonReentrant;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>recipient</code></td><td><code>address</code></td><td></td></tr>
-<tr><td><code>amount</code></td><td><code>uint256</code></td><td>Amount of funds to sweep, if zero, sweeps all funds on contract</td></tr>
+<tr><td><code>beneficiary</code></td><td><code>address</code></td><td>Address to which funds will be swept. If zero address, sweeps to the beneficiary address set on the contract.</td></tr>
+<tr><td><code>amount</code></td><td><code>uint256</code></td><td>Amount of funds to sweep. If zero, sweeps all funds on the contract.</td></tr>
 </tbody></table>
 </div>
 <h3 id="sweeptobeneficiarycontract"><a class="header" href="#sweeptobeneficiarycontract">sweepToBeneficiaryContract</a></h3>
 <p>Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary contract or a specified
 beneficiary contract address.</p>
-<p>Only the owner can specify a custom beneficiary for the sweep</p>
+<p>Only the owner can specify a custom beneficiary for the sweep.</p>
 <pre><code class="language-solidity">function sweepToBeneficiaryContract(address beneficiary, uint256 amount) external nonReentrant;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>beneficiary</code></td><td><code>address</code></td><td>Address for the contract to which funds will be swept, if zero address, sweeps to the beneficiary address set on the contract</td></tr>
-<tr><td><code>amount</code></td><td><code>uint256</code></td><td>Amount of funds to sweep, if zero, sweeps all funds on contract.</td></tr>
+<tr><td><code>beneficiary</code></td><td><code>address</code></td><td>Address of the contract to which funds will be swept. If zero address, sweeps to the beneficiary address set on the contract.</td></tr>
+<tr><td><code>amount</code></td><td><code>uint256</code></td><td>Amount of funds to sweep. If zero, sweeps all funds on the contract.</td></tr>
 </tbody></table>
 </div>
 <h3 id="setbeneficiary"><a class="header" href="#setbeneficiary">setBeneficiary</a></h3>
@@ -303,7 +303,7 @@ beneficiary contract address.</p>
 </div>
 <h3 id="_transfer"><a class="header" href="#_transfer">_transfer</a></h3>
 <p>Internal function to transfer the TVS to a new beneficiary and owner.</p>
-<p>This function is used to transfer the TVS to a new beneficiary and owner.</p>
+<p>Emits a {Transferred} event.</p>
 <pre><code class="language-solidity">function _transfer(address _beneficiary, address _owner) internal;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -314,6 +314,7 @@ beneficiary contract address.</p>
 </div>
 <h3 id="_setbeneficiary"><a class="header" href="#_setbeneficiary">_setBeneficiary</a></h3>
 <p>Internal function to set the beneficiary address.</p>
+<p>Emits a {BeneficiaryUpdated} event.</p>
 <pre><code class="language-solidity">function _setBeneficiary(address _newBeneficiary) internal;
 </code></pre>
 <p><strong>Parameters</strong></p>
@@ -322,7 +323,8 @@ beneficiary contract address.</p>
 </tbody></table>
 </div>
 <h3 id="_refundexcessfee"><a class="header" href="#_refundexcessfee">_refundExcessFee</a></h3>
-<p>Internal function to refund the excess fee for pectra related operations.</p>
+<p>Internal function to refund the excess fee for Pectra-related operations.</p>
+<p>Emits an {UnsentExcessFee} event if the refund could not be sent.</p>
 <pre><code class="language-solidity">function _refundExcessFee(
     uint256 _totalValueReceived,
     uint256 _totalFeePaid,
@@ -338,10 +340,10 @@ beneficiary contract address.</p>
 </tbody></table>
 </div>
 <h3 id="_validateandreturnfee"><a class="header" href="#_validateandreturnfee">_validateAndReturnFee</a></h3>
-<p>Internal function to validate the fee. Used for pectra related operations.</p>
+<p>Internal function to validate the fee. Used for Pectra-related operations.</p>
 <p>Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.</p>
 <pre><code class="language-solidity">function _validateAndReturnFee(
-    address feeContract,
+    address _feeContract,
     uint256 _maxAllowedFee
 )
     internal
@@ -350,7 +352,7 @@ beneficiary contract address.</p>
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>feeContract</code></td><td><code>address</code></td><td>The address of the fee contract.</td></tr>
+<tr><td><code>_feeContract</code></td><td><code>address</code></td><td>The address of the fee contract.</td></tr>
 <tr><td><code>_maxAllowedFee</code></td><td><code>uint256</code></td><td>The maximum allowed fee.</td></tr>
 </tbody></table>
 </div>
@@ -360,27 +362,29 @@ beneficiary contract address.</p>
 </tbody></table>
 </div>
 <h3 id="_validatesufficientvalueforfee"><a class="header" href="#_validatesufficientvalueforfee">_validateSufficientValueForFee</a></h3>
-<p>Internal function to validate the caller sent sufficient value for fee. Used for pectra related
+<p>Internal function to validate the caller sent sufficient value for the fee. Used for Pectra-related
 operations.</p>
 <pre><code class="language-solidity">function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) internal pure;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>_value</code></td><td><code>uint256</code></td><td>The value.</td></tr>
+<tr><td><code>_value</code></td><td><code>uint256</code></td><td>The value sent by the caller.</td></tr>
 <tr><td><code>_totalFee</code></td><td><code>uint256</code></td><td>The total fee.</td></tr>
 </tbody></table>
 </div>
 <h3 id="_validatepubkeylength"><a class="header" href="#_validatepubkeylength">_validatePubkeyLength</a></h3>
-<p>Internal function to validate that a public key is exactly 48 bytes in length</p>
-<pre><code class="language-solidity">function _validatePubkeyLength(bytes memory pubkey) internal pure;
+<p>Internal function to validate that a public key is exactly 48 bytes in length.</p>
+<pre><code class="language-solidity">function _validatePubkeyLength(bytes memory _pubkey) internal pure;
 </code></pre>
 <p><strong>Parameters</strong></p>
 <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Type</th><th>Description</th></tr></thead><tbody>
-<tr><td><code>pubkey</code></td><td><code>bytes</code></td><td>The public key to validate</td></tr>
+<tr><td><code>_pubkey</code></td><td><code>bytes</code></td><td>The public key to validate.</td></tr>
 </tbody></table>
 </div>
 <h3 id="_sweep"><a class="header" href="#_sweep">_sweep</a></h3>
-<p>Internal function to sweep the TVS.</p>
+<p>Internal function to resolve the destination and amount of a sweep.</p>
+<p>Only the owner can specify a custom beneficiary for the sweep.</p>
+<p>Emits a {Swept} event.</p>
 <pre><code class="language-solidity">function _sweep(
     address _beneficiary,
     uint256 _amount
