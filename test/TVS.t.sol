@@ -873,6 +873,10 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerWithdrawal = 0.1 ether;
         vm.deal(owner, maxFeePerWithdrawal);
 
+        // Mock static call response with a valid fee that is less than maxFeePerWithdrawal
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerWithdrawal - 1);
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
         // Call the withdraw function
         vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 47));
         vm.prank(owner);
@@ -897,6 +901,10 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
 
+        // Mock static call response with a valid fee that is less than maxFeePerConsolidation
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation - 1);
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
         // Call the consolidate function
         vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 47));
         vm.prank(owner);
@@ -920,6 +928,10 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock static call response with a valid fee that is less than maxFeePerConsolidation
+        bytes memory mockFeeData = abi.encodePacked(maxFeePerConsolidation - 1);
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
 
         // Call the consolidate function
         vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 47));
@@ -1066,5 +1078,111 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         vm.expectRevert(abi.encodeWithSignature("InvalidAddress()"));
         vm.prank(owner);
         tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, address(0));
+    }
+
+    /**
+     * @notice Tests that the withdraw function reverts when the fee read succeeds but returns fewer than 32 bytes.
+     */
+    function testWithdrawFailsIfFeeDataIsTooShort() public {
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Mock a successful static call that returns only 8 bytes of fee data
+        bytes memory mockFeeData = abi.encodePacked(uint64(1));
+        assertEq(mockFeeData.length, 8, "Mock fee data should be shorter than 32 bytes");
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        vm.prank(owner);
+
+        // Expect the transaction to revert because the returned fee data is not exactly 32 bytes
+        vm.expectRevert(abi.encodeWithSignature("FeeReadFailed()"));
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    /**
+     * @notice Tests that the withdraw function reverts when the fee read succeeds but returns more than 32 bytes.
+     */
+    function testWithdrawFailsIfFeeDataIsTooLong() public {
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Mock a successful static call that returns 64 bytes of fee data
+        bytes memory mockFeeData = abi.encode(uint256(1), uint256(2));
+        assertEq(mockFeeData.length, 64, "Mock fee data should be longer than 32 bytes");
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        vm.prank(owner);
+
+        // Expect the transaction to revert because the returned fee data is not exactly 32 bytes
+        vm.expectRevert(abi.encodeWithSignature("FeeReadFailed()"));
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    /**
+     * @notice Tests that the withdraw function reverts when the withdrawal contract has no code, in which case the
+     *         static call succeeds but returns empty fee data.
+     */
+    function testWithdrawFailsIfWithdrawalContractHasNoCode() public {
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // No mock is set: a static call to a codeless address succeeds and returns zero bytes
+        assertEq(WITHDRAWAL_CONTRACT_ADDRESS.code.length, 0, "Withdrawal contract should have no code");
+
+        vm.prank(owner);
+
+        // Expect the transaction to revert because the returned fee data is not exactly 32 bytes
+        vm.expectRevert(abi.encodeWithSignature("FeeReadFailed()"));
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    /**
+     * @notice Tests that the consolidate function reverts when the fee read succeeds but returns fewer than 32 bytes.
+     */
+    function testConsolidateFailsIfFeeDataIsTooShort() public {
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678";
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock a successful static call that returns only 8 bytes of fee data
+        bytes memory mockFeeData = abi.encodePacked(uint64(1));
+        assertEq(mockFeeData.length, 8, "Mock fee data should be shorter than 32 bytes");
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), mockFeeData);
+
+        vm.prank(owner);
+
+        // Expect the transaction to revert because the returned fee data is not exactly 32 bytes
+        vm.expectRevert(abi.encodeWithSignature("FeeReadFailed()"));
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
     }
 }
