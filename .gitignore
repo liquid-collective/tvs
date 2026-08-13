@@ -7,7 +7,7 @@ cache
 out
 
 # Deployment files
-broadcast/**/31337/
+broadcast
 
 .DS_Store
 lcov.info

@@ -253,6 +253,14 @@ make deploy-TVSFlexibleImmutable
 - [Solady](https://github.com/Vectorized/solady) (UpgradeableBeacon)
 - [Forge Std](https://github.com/foundry-rs/forge-std)
 
+## Security
+
+If you're interested in learning more about Liquid Collective security processes, including security audits and the protocol's vulnerability disclosure policy, see: [Liquid Collective Security](https://github.com/liquid-collective/security)
+
+## Contributing
+
+For guidance on setting up a development environment and how to make a contribution to Liquid Collective, see the [contributing guidelines](https://github.com/liquid-collective/liquid-collective-protocol/blob/main/CONTRIBUTING.md).
+
 ## License
 
 See the [LICENSE](./LICENSE) file for details.
