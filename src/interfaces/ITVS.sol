@@ -97,6 +97,13 @@ interface ITVS {
     error LengthMismatch(uint256 expected, uint256 actual);
 
     /**
+     * @notice Error thrown when an empty input array is provided.
+     * @dev This error is associated with the {consolidate} and {withdraw} functions, which require at least one
+     * operation to perform. An empty input would otherwise be a no-op that emits no operation events.
+     */
+    error InvalidEmptyArray();
+
+    /**
      * @notice Error thrown when reading the fee fails.
      * @dev This error is associated with the {consolidate} and {withdraw} functions, which read the fee from the
      * associated Pectra EL contracts.
@@ -175,6 +182,7 @@ interface ITVS {
     /**
      * @notice Adds a withdrawal request to the Pectra EL withdrawal contract for the specified validators.
      * @dev Only the owner can call this function.
+     * @dev Reverts with {InvalidEmptyArray} if `pubkeys` is empty.
      * @dev Emits an {UnsentExcessFee} event if the excess fee is not sent.
      * @param pubkeys The public keys of the validators to withdraw from.
      * @param amounts The amount in gwei to withdraw from each validator, in the same order as `pubkeys`. Zero
@@ -195,6 +203,7 @@ interface ITVS {
      * @notice Adds a consolidation request to the Pectra EL consolidation contract for the given source validators.
      * @dev Only the owner can call this function.
      * @dev Both source and target validators (pubkeys) must be from the same TVS (this TVS).
+     * @dev Reverts with {InvalidEmptyArray} if `requests` is empty, or if any request has no source pubkeys.
      * @dev The excess fee is the difference between the maximum fee and the actual fee paid.
      * @dev Emits an {UnsentExcessFee} event if the excess fee is not sent.
      * @param requests An array of consolidation requests.

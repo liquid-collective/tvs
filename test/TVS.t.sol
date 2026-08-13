@@ -972,6 +972,103 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     /**
+     * @notice Tests that the withdraw function reverts when the pubkeys array is empty.
+     */
+    function testWithdrawFailsIfPubkeysEmpty() public {
+        bytes[] memory pubkeys; // length is zero(0)
+        uint64[] memory amounts; // length is zero(0)
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Call the withdraw function
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    /**
+     * @notice Tests that the empty pubkeys check takes precedence over the length mismatch check.
+     */
+    function testWithdrawFailsWithEmptyArrayBeforeLengthMismatch() public {
+        bytes[] memory pubkeys; // length is zero(0)
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        // Call the withdraw function
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    /**
+     * @notice Tests that the consolidate function reverts when the requests array is empty.
+     */
+    function testConsolidateFailsIfRequestsEmpty() public {
+        ITVS.ConsolidationRequest[] memory requests; // length is zero(0)
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Call the consolidate function
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the consolidate function reverts when a request carries no source public keys.
+     */
+    function testConsolidateFailsIfSrcPubkeysEmpty() public {
+        bytes[] memory srcPubkeys; // length is zero(0)
+
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Call the consolidate function
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the consolidate function reverts the whole batch when a single request carries no source
+     * public keys, rather than silently skipping that request.
+     */
+    function testConsolidateFailsIfAnyRequestHasEmptySrcPubkeys() public {
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes[] memory populatedSrcPubkeys = new bytes[](1);
+        populatedSrcPubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes[] memory emptySrcPubkeys; // length is zero(0)
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](2);
+        requests[0] = ITVS.ConsolidationRequest(populatedSrcPubkeys, targetPubkey);
+        requests[1] = ITVS.ConsolidationRequest(emptySrcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // No consolidation request should be submitted for the populated request either
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
      * @notice Tests that the transfer function fails if called by a non-owner.
      */
     function testTransferFailsIfNotOwner() public {
