@@ -1,5 +1,5 @@
 # Beneficiary
-[Git Source](https://github.com/liquid-collective/tvs/blob/ec61e0de7686fd76f32b89e56f6a3ecf6bf520ed/src/state/Beneficiary.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/73975467b58a06efd3cb21e22cbe8935ab4018be/src/state/Beneficiary.sol)
 
 **Title:**
 Beneficiary
@@ -14,7 +14,7 @@ The beneficiary address is the address to which all funds are swept when a {swee
 The proxy contract is expected to store the beneficiary address in the `BENEFICIARY_SLOT` slot
 
 
-## State Variables
+## Constants
 ### BENEFICIARY_SLOT
 Slot for the beneficiary address
 

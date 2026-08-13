@@ -1,5 +1,5 @@
 # ITVSSweepBeneficiary
-[Git Source](https://github.com/liquid-collective/tvs/blob/ec61e0de7686fd76f32b89e56f6a3ecf6bf520ed/src/interfaces/ITVSSweepBeneficiary.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/73975467b58a06efd3cb21e22cbe8935ab4018be/src/interfaces/ITVSSweepBeneficiary.sol)
 
 **Title:**
 Sweep Beneficiary Interface

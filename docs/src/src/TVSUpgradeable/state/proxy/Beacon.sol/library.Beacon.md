@@ -1,5 +1,5 @@
 # Beacon
-[Git Source](https://github.com/liquid-collective/tvs/blob/ec61e0de7686fd76f32b89e56f6a3ecf6bf520ed/src/TVSUpgradeable/state/proxy/Beacon.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/73975467b58a06efd3cb21e22cbe8935ab4018be/src/TVSUpgradeable/state/proxy/Beacon.sol)
 
 **Title:**
 Beacon
@@ -19,7 +19,7 @@ implementation
 The proxy contract is expected to store the beacon address in the `BEACON_SLOT` slot
 
 
-## State Variables
+## Constants
 ### BEACON_SLOT
 Slot for the beacon address
 

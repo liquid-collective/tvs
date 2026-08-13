@@ -1,5 +1,5 @@
 # TVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/ec61e0de7686fd76f32b89e56f6a3ecf6bf520ed/src/TVSUpgradeable/TVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/73975467b58a06efd3cb21e22cbe8935ab4018be/src/TVSUpgradeable/TVSUpgradeable.sol)
 
 **Inherits:**
 [ITVSUpgradeable](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md), [TVS](/src/components/TVS.sol/abstract.TVS.md)
@@ -15,7 +15,7 @@ Upgradeable implementation of the TVS
 This contract provides an upgradeable version of the TVS using a beacon proxy pattern
 
 
-## State Variables
+## Constants
 ### IMMUTABLE_BEACON
 The address of the immutable beacon contract
 

@@ -1,5 +1,5 @@
 # BaseSecurity
-[Git Source](https://github.com/liquid-collective/tvs/blob/ec61e0de7686fd76f32b89e56f6a3ecf6bf520ed/src/components/BaseSecurity.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/73975467b58a06efd3cb21e22cbe8935ab4018be/src/components/BaseSecurity.sol)
 
 **Inherits:**
 Initializable, OwnableUpgradeable, ReentrancyGuardTransient
@@ -56,9 +56,9 @@ function renounceOwnership() public view override onlyOwner;
 
 Overrides [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) to prevent direct ownership transfers that bypass protocol invariants.
 
-Direct calls to [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) skip the beneficiary update, the beacon freeze, and the
-{Transferred} event enforced by the {transfer} function. All ownership transfers must go
-through {transfer}.
+Direct calls to [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) skip the beneficiary update and the {Transferred} event
+enforced by the {transfer} function. Upgradeable variants also skip the beacon freeze.
+All ownership transfers must go through {transfer}.
 
 Reverts with [UseTransferFunction](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#usetransferfunction).
 
@@ -99,8 +99,9 @@ error OwnershipCannotBeRenounced();
 Error thrown when [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) is called directly.
 
 Ownership transfers must go through the secure {transfer} function, which enforces
-all protocol invariants (updating the beneficiary, freezing the beacon, emitting
-the {Transferred} event). Calling [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) directly bypasses these invariants.
+all protocol invariants, including the beneficiary update and the {Transferred} event.
+Upgradeable variants also freeze the beacon. Calling [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) directly
+bypasses these invariants.
 
 
 ```solidity

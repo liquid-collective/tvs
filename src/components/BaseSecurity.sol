@@ -42,8 +42,9 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
     /**
      * @notice Error thrown when {transferOwnership} is called directly.
      * @dev Ownership transfers must go through the secure {transfer} function, which enforces
-     *      all protocol invariants (updating the beneficiary, freezing the beacon, emitting
-     *      the {Transferred} event). Calling {transferOwnership} directly bypasses these invariants.
+     *      all protocol invariants, including the beneficiary update and the {Transferred} event.
+     *      Upgradeable variants also freeze the beacon. Calling {transferOwnership} directly
+     *      bypasses these invariants.
      */
     error UseTransferFunction();
 
@@ -59,9 +60,9 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
 
     /**
      * @notice Overrides {transferOwnership} to prevent direct ownership transfers that bypass protocol invariants.
-     * @dev Direct calls to {transferOwnership} skip the beneficiary update, the beacon freeze, and the
-     *      {Transferred} event enforced by the {transfer} function. All ownership transfers must go
-     *      through {transfer}.
+     * @dev Direct calls to {transferOwnership} skip the beneficiary update and the {Transferred} event
+     *      enforced by the {transfer} function. Upgradeable variants also skip the beacon freeze.
+     *      All ownership transfers must go through {transfer}.
      * @dev Reverts with {UseTransferFunction}.
      * @dev Only callable by the contract owner.
      */
