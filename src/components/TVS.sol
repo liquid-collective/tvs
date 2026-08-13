@@ -32,7 +32,6 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @dev The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
      *      once here in the constructor
      * @dev All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set
-     *      and available to the proxy
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
      */
