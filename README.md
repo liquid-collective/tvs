@@ -255,7 +255,7 @@ make deploy-TVSFlexibleImmutable
 
 ## Security
 
-If you're interested in learning more about Liquid Collective security processes, including security audits and the protocol's vulnerability disclosure policy, see: [Liquid Collective Security](https://github.com/liquid-collective/security)
+If you're interested in learning more about Liquid Collective security processes, including security audits and the protocol's vulnerability disclosure policy, see: [Liquid Collective Security](https://github.com/liquid-collective/security).
 
 ## Contributing
 
