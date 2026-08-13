@@ -66,6 +66,7 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
      * @dev Reverts with {UseTransferFunction}.
      * @dev Only callable by the contract owner.
      */
+    // solhint-disable-next-line use-natspec
     function transferOwnership(address) public view override onlyOwner {
         revert UseTransferFunction();
     }
