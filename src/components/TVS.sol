@@ -9,7 +9,7 @@ import "openzeppelin-contracts/contracts/utils/Address.sol";
 
 /**
  * @title Transferable Validator Set (TVS - v1)
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice Implementation of the TVS
  */
 abstract contract TVS is ITVS, BaseSecurity {
@@ -225,10 +225,10 @@ abstract contract TVS is ITVS, BaseSecurity {
     function _validateAndReturnFee(address _feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee) {
         // Read current fee from the contract
         (bool readOK, bytes memory feeData) = _feeContract.staticcall("");
-        if (!readOK) {
+        if (!readOK || feeData.length != 32) {
             revert FeeReadFailed();
         }
-        _fee = uint256(bytes32(feeData));
+        _fee = abi.decode(feeData, (uint256));
 
         if (_fee > _maxAllowedFee) {
             revert FeeTooHigh(_fee, _maxAllowedFee);
@@ -251,7 +251,7 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @notice Internal function to validate that a public key is exactly 48 bytes in length.
      * @param _pubkey The public key to validate.
      */
-    function _validatePubkeyLength(bytes memory _pubkey) internal pure {
+    function _validatePubkeyLength(bytes calldata _pubkey) internal pure {
         if (_pubkey.length != 48) {
             revert InvalidPubkeyLength(_pubkey.length);
         }

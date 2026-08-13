@@ -7,7 +7,7 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.s
 
 /**
  * @title BaseSecurity
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice This contract uses OpenZeppelin's upgradeable libraries to ensure compatibility
  *         with upgradeable contracts. The use of upgradeable libraries is safe here because
  *         the `_setupSecurity` function is marked as `initializer`, which ensures that it
@@ -66,6 +66,7 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
      * @dev Reverts with {UseTransferFunction}.
      * @dev Only callable by the contract owner.
      */
+    // solhint-disable-next-line use-natspec
     function transferOwnership(address) public view override onlyOwner {
         revert UseTransferFunction();
     }

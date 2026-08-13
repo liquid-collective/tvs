@@ -1,11 +1,11 @@
 # ImmutableBeacon
-[Git Source](https://github.com/liquid-collective/tvs/blob/0a7c19c25bddf9711a5173f5e1fef30c118f1dd9/src/TVSUpgradeable/ImmutableBeacon.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/96c19775021894fde7393def044436b34bb7c971/src/TVSUpgradeable/ImmutableBeacon.sol)
 
 **Title:**
 Immutable Beacon (v1)
 
 **Author:**
-Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
 
 An immutable beacon whose implementation can never be altered after deployment
 

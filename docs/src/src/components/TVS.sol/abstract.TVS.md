@@ -1,5 +1,5 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/0a7c19c25bddf9711a5173f5e1fef30c118f1dd9/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/96c19775021894fde7393def044436b34bb7c971/src/components/TVS.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
@@ -8,7 +8,7 @@
 Transferable Validator Set (TVS - v1)
 
 **Author:**
-Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
 
 Implementation of the TVS
 
@@ -296,7 +296,7 @@ Internal function to validate that a public key is exactly 48 bytes in length.
 
 
 ```solidity
-function _validatePubkeyLength(bytes memory _pubkey) internal pure;
+function _validatePubkeyLength(bytes calldata _pubkey) internal pure;
 ```
 **Parameters**
 

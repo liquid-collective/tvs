@@ -5,7 +5,7 @@ import "openzeppelin-contracts/contracts/utils/StorageSlot.sol";
 
 /**
  * @title Beneficiary
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice This library manages the beneficiary address for the TVS
  * @dev The beneficiary address is the address to which all funds are swept when a {sweep} operation is performed
  * @dev TVS variants store the beneficiary address in the `BENEFICIARY_SLOT` slot
