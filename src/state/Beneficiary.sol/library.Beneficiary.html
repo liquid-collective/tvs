@@ -182,16 +182,16 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="beneficiary"><a class="header" href="#beneficiary">Beneficiary</a></h1>
-<p><a href="https://github.com/liquid-collective/tvs/blob/16fc059c8e96d17e76a8cc0a85ba4db5fe222845/src/state/Beneficiary.sol">Git Source</a></p>
+<p><a href="https://github.com/liquid-collective/tvs/blob/ae356aec096f1ec653d679b6745d85b4ff4e3740/src/state/Beneficiary.sol">Git Source</a></p>
 <p><strong>Author:</strong>
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation</p>
-<p>This library manages the beneficiary address for the TVS proxy contract</p>
+<p>This library manages the beneficiary address for the TVS</p>
 <p>The beneficiary address is the address to which all funds are swept when a {sweep} operation is performed</p>
 <p>TVS variants store the beneficiary address in the <code>BENEFICIARY_SLOT</code> slot</p>
 <h2 id="state-variables"><a class="header" href="#state-variables">State Variables</a></h2>
 <h3 id="beneficiary_slot"><a class="header" href="#beneficiary_slot">BENEFICIARY_SLOT</a></h3>
 <p>Slot for the beneficiary address</p>
-<p>This slot is used to store the beneficiary address for the proxy contract</p>
+<p>This slot is used to store the beneficiary address for the TVS</p>
 <pre><code class="language-solidity">bytes32 internal constant BENEFICIARY_SLOT = bytes32(uint256(keccak256("tvs.state.beneficiary")) - 1)
 </code></pre>
 <h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
