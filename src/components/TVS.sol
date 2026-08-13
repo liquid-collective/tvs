@@ -9,7 +9,7 @@ import "openzeppelin-contracts/contracts/utils/Address.sol";
 
 /**
  * @title Transferable Validator Set (TVS - v1)
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice Implementation of the TVS
  */
 abstract contract TVS is ITVS, BaseSecurity {

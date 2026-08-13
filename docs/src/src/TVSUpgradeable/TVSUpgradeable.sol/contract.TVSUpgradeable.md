@@ -1,5 +1,5 @@
 # TVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/3c7308137aaf51079c5881c944f3f47ae5a7cb85/src/TVSUpgradeable/TVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/a6cacb3e931fe961fd5cf60c34d769c2e74da592/src/TVSUpgradeable/TVSUpgradeable.sol)
 
 **Inherits:**
 [ITVSUpgradeable](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md), [TVS](/src/components/TVS.sol/abstract.TVS.md)
@@ -8,7 +8,7 @@
 Upgradeable TVS (v1)
 
 **Author:**
-Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
 
 Upgradeable implementation of the TVS
 

@@ -3,7 +3,7 @@ pragma solidity 0.8.34;
 
 /**
  * @title ITVSFlexibleImmutable Interface
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice Interface for the TVSFlexibleImmutable contract
  * @dev This interface is used to interact with the TVSFlexibleImmutable contract
  * @dev The TVSFlexibleImmutable contract is a flexible immutable implementation of the TVS contract

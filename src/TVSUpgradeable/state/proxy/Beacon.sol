@@ -5,7 +5,7 @@ import "openzeppelin-contracts/contracts/utils/StorageSlot.sol";
 
 /**
  * @title Beacon
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice This library manages the beacon address for the proxy contract
  * @dev The beacon address is the address of the contract that holds the implementation address
  * @dev The implementation address is the address of the contract that contains the business logic

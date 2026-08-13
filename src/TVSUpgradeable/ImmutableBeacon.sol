@@ -3,7 +3,7 @@ pragma solidity 0.8.34;
 
 /**
  * @title Immutable Beacon (v1)
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice An immutable beacon whose implementation can never be altered after deployment
  * @dev This contract is used to store the implementation address of a proxy contract
  * @dev The implementation address is set in the constructor and cannot be changed

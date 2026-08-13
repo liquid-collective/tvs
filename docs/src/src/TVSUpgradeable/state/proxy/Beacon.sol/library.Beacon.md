@@ -1,11 +1,11 @@
 # Beacon
-[Git Source](https://github.com/liquid-collective/tvs/blob/3c7308137aaf51079c5881c944f3f47ae5a7cb85/src/TVSUpgradeable/state/proxy/Beacon.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/a6cacb3e931fe961fd5cf60c34d769c2e74da592/src/TVSUpgradeable/state/proxy/Beacon.sol)
 
 **Title:**
 Beacon
 
 **Author:**
-Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
 
 This library manages the beacon address for the proxy contract
 

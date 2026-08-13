@@ -6,7 +6,7 @@ import "./interfaces/IImmutableBeaconFactory.sol";
 
 /**
  * @title Immutable Beacon Factory
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice Factory contract for deploying instances of immutable beacons, guaranteeing that their implementation is
  * frozen after deployment
  */
