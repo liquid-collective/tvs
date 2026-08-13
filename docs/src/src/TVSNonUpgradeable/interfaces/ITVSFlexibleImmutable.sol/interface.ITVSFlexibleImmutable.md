@@ -1,5 +1,5 @@
 # ITVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/3c7308137aaf51079c5881c944f3f47ae5a7cb85/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/0a7c19c25bddf9711a5173f5e1fef30c118f1dd9/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
 
 **Title:**
 ITVSFlexibleImmutable Interface

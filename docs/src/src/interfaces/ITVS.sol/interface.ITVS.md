@@ -1,5 +1,5 @@
 # ITVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/3c7308137aaf51079c5881c944f3f47ae5a7cb85/src/interfaces/ITVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/0a7c19c25bddf9711a5173f5e1fef30c118f1dd9/src/interfaces/ITVS.sol)
 
 **Title:**
 TVS Interface
@@ -112,6 +112,8 @@ Adds a withdrawal request to the Pectra EL withdrawal contract for the specified
 
 Only the owner can call this function.
 
+Reverts with [InvalidEmptyArray](/src/interfaces/ITVS.sol/interface.ITVS.md#invalidemptyarray) if `pubkeys` is empty.
+
 Emits an [UnsentExcessFee](/src/interfaces/ITVS.sol/interface.ITVS.md#unsentexcessfee) event if the excess fee is not sent.
 
 
@@ -142,6 +144,9 @@ Adds a consolidation request to the Pectra EL consolidation contract for the giv
 Only the owner can call this function.
 
 Both source and target validators (pubkeys) must be from the same TVS (this TVS).
+
+Reverts with [InvalidEmptyArray](/src/interfaces/ITVS.sol/interface.ITVS.md#invalidemptyarray) if `requests` is empty, or if any request has no source pubkeys or an
+empty target pubkey.
 
 The excess fee is the difference between the maximum fee and the actual fee paid.
 
@@ -358,6 +363,17 @@ error LengthMismatch(uint256 expected, uint256 actual);
 |----|----|-----------|
 |`expected`|`uint256`|The expected length of the input arrays.|
 |`actual`|`uint256`|The actual length of the input arrays provided.|
+
+### InvalidEmptyArray
+Error thrown when an empty input array is provided.
+
+This error is associated with the [consolidate](/src/interfaces/ITVS.sol/interface.ITVS.md#consolidate) and [withdraw](/src/interfaces/ITVS.sol/interface.ITVS.md#withdraw) functions, which require at least one
+operation to perform. An empty input would otherwise be a no-op that emits no operation events.
+
+
+```solidity
+error InvalidEmptyArray();
+```
 
 ### FeeReadFailed
 Error thrown when reading the fee fails.
