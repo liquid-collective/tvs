@@ -1,5 +1,5 @@
 # Beneficiary
-[Git Source](https://github.com/liquid-collective/tvs/blob/73975467b58a06efd3cb21e22cbe8935ab4018be/src/state/Beneficiary.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/state/Beneficiary.sol)
 
 **Title:**
 Beneficiary
@@ -11,7 +11,7 @@ This library manages the beneficiary address for the TVS proxy contract
 
 The beneficiary address is the address to which all funds are swept when a {sweep} operation is performed
 
-The proxy contract is expected to store the beneficiary address in the `BENEFICIARY_SLOT` slot
+TVS variants store the beneficiary address in the `BENEFICIARY_SLOT` slot
 
 
 ## Constants
