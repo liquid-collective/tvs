@@ -2,7 +2,7 @@
 pragma solidity 0.8.34;
 
 /**
- * @title IImmutableBeaconFactory
+ * @title Immutable Beacon Factory Interface
  * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
  * @notice Interface for the Immutable Beacon Factory
  * @dev This interface is used to deploy new immutable beacon contracts

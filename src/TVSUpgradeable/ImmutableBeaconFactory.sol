@@ -13,6 +13,6 @@ import "./interfaces/IImmutableBeaconFactory.sol";
 contract ImmutableBeaconFactory is IImmutableBeaconFactory {
     /// @inheritdoc IImmutableBeaconFactory
     function deployBeacon(address implementation) external returns (address beacon) {
-        return address(new ImmutableBeacon(implementation));
+        beacon = address(new ImmutableBeacon(implementation));
     }
 }

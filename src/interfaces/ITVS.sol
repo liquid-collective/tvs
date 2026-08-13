@@ -33,10 +33,10 @@ interface ITVS {
     event BeneficiaryUpdated(address indexed newBeneficiary);
 
     /**
-     * @notice Emitted when the excess fee sent as part of a {consolidation}, or {withdrawal} - (partial or full)
-     * request could not be refunded to the {excessFeeRecipient} recipient.
+     * @notice Emitted when the excess fee sent as part of a {consolidate} or {withdraw} (partial or full) request
+     * could not be refunded to the excess fee recipient.
      * @param excessFeeRecipient The address to which the excess fee should have been sent.
-     * @param excessFee The amount of excess fee sent.
+     * @param excessFee The amount of excess fee that could not be refunded.
      */
     event UnsentExcessFee(address indexed excessFeeRecipient, uint256 indexed excessFee);
 
@@ -83,7 +83,7 @@ interface ITVS {
 
     /**
      * @notice Error thrown when a fee exceeds the maximum allowed.
-     * @dev This error is associated with the {consolidation} and {withdrawal} functions
+     * @dev This error is associated with the {consolidate} and {withdraw} functions.
      * @param currentFee The current fee for the operation.
      * @param maxAllowedFee The maximum allowed fee that can be paid.
      */
@@ -98,20 +98,20 @@ interface ITVS {
 
     /**
      * @notice Error thrown when reading the fee fails.
-     * @dev This error is associated with the {consolidation} and {withdrawal} functions, which read the fee from the
-     * associated pectra EL contracts.
+     * @dev This error is associated with the {consolidate} and {withdraw} functions, which read the fee from the
+     * associated Pectra EL contracts.
      */
     error FeeReadFailed();
 
     /**
-     * @notice Error thrown when adding a consolidation or withdraw request fails.
+     * @notice Error thrown when adding a consolidation or withdrawal request fails.
      */
     error RequestFailed();
 
     /**
      * @notice Error thrown when the value provided is insufficient for the fee.
-     * @dev This error is associated with the {consolidation} and {withdrawal} functions, which interact with the
-     * associated pectra EL contracts.
+     * @dev This error is associated with the {consolidate} and {withdraw} functions, which interact with the
+     * associated Pectra EL contracts.
      * @param value The value provided.
      * @param totalFee The total fee required.
      */
@@ -129,29 +129,28 @@ interface ITVS {
     error InvalidPubkeyLength(uint256 length);
 
     /**
-     * @notice Fallback function to receive funds.
+     * @notice Receive function to accept ETH transfers.
      */
     receive() external payable;
 
     /**
      * @notice Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
-     * @dev Only the owner can specify a custom beneficiary for the sweep
-     * @dev Emits {Swept} event.
-     * @param beneficiary Address to which funds will be swept, if zero address, sweeps to the beneficiary address set
-     * on the contract
-     * @param amount Amount of funds to sweep, if zero, sweeps all funds on contract
+     * @dev Only the owner can specify a custom beneficiary for the sweep.
+     * @dev Emits a {Swept} event.
+     * @param beneficiary Address to which funds will be swept. If zero address, sweeps to the beneficiary address set
+     * on the contract.
+     * @param amount Amount of funds to sweep. If zero, sweeps all funds on the contract.
      */
     function sweep(address beneficiary, uint256 amount) external;
 
     /**
      * @notice Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary contract or a specified
      * beneficiary contract address.
-     * @dev Only the owner can specify a custom beneficiary for the sweep
+     * @dev Only the owner can specify a custom beneficiary for the sweep.
      * @dev Emits a {Swept} event.
-     * @param beneficiary Address for the contract to which funds will be swept, if zero address, sweeps to the
-     * beneficiary address set
-     * on the contract
-     * @param amount  Amount of funds to sweep, if zero, sweeps all funds on contract.
+     * @param beneficiary Address of the contract to which funds will be swept. If zero address, sweeps to the
+     * beneficiary address set on the contract.
+     * @param amount Amount of funds to sweep. If zero, sweeps all funds on the contract.
      */
     function sweepToBeneficiaryContract(address beneficiary, uint256 amount) external;
 
@@ -174,17 +173,18 @@ interface ITVS {
     function transfer(address newBeneficiary, address newOwner) external;
 
     /**
-     * @notice Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.
+     * @notice Adds a withdrawal request to the Pectra EL withdrawal contract for the specified validators.
      * @dev Only the owner can call this function.
+     * @dev Emits an {UnsentExcessFee} event if the excess fee is not sent.
      * @param pubkeys The public keys of the validators to withdraw from.
-     * @param amount The amount in gwei to withdraw from each validator. Zero indicates a full withdrawal (validator
-     * exit).
+     * @param amounts The amount in gwei to withdraw from each validator, in the same order as `pubkeys`. Zero
+     * indicates a full withdrawal (validator exit).
      * @param maxFeePerWithdrawal The maximum fee allowed per withdrawal.
      * @param excessFeeRecipient The address to which excess fees will be sent.
      */
     function withdraw(
         bytes[] calldata pubkeys,
-        uint64[] calldata amount,
+        uint64[] calldata amounts,
         uint256 maxFeePerWithdrawal,
         address excessFeeRecipient
     )
@@ -192,17 +192,17 @@ interface ITVS {
         payable;
 
     /**
-     * @notice Adds a consolidation request to the pectra EL consolidation contract for the given source validators.
+     * @notice Adds a consolidation request to the Pectra EL consolidation contract for the given source validators.
      * @dev Only the owner can call this function.
-     * @dev Both source and target validators (pubKeys) must be from the same TVS (this TVS).
+     * @dev Both source and target validators (pubkeys) must be from the same TVS (this TVS).
      * @dev The excess fee is the difference between the maximum fee and the actual fee paid.
-     * @dev Emits a {UnsentExcessFee} event if the excess fee is not sent.
+     * @dev Emits an {UnsentExcessFee} event if the excess fee is not sent.
      * @param requests An array of consolidation requests.
      * @param maxFeePerConsolidation The maximum fee allowed per consolidation request.
      * @param excessFeeRecipient The address to which excess fees will be sent.
      */
     function consolidate(
-        ConsolidationRequest[] memory requests,
+        ConsolidationRequest[] calldata requests,
         uint256 maxFeePerConsolidation,
         address excessFeeRecipient
     )
@@ -219,7 +219,7 @@ interface ITVS {
 
     /**
      * @notice Retrieves the version of the contract.
-     * @return Version of the contract
+     * @return The version of the contract.
      */
     function version() external pure returns (string memory);
 }

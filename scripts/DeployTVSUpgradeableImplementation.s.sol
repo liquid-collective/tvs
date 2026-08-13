@@ -12,7 +12,7 @@ contract DeployTVSUpgradeableImplementation is DeployPrepareForAbiInjection {
 
         try vm.getDeployment("TVSUpgradeable") returns (address deployment) {
             recentDeployment = deployment;
-        } catch {}
+        } catch { }
 
         if (recentDeployment != address(0)) {
             console.log("No need to deploy anything, already deployed at: ", recentDeployment);
@@ -24,21 +24,17 @@ contract DeployTVSUpgradeableImplementation is DeployPrepareForAbiInjection {
         address consolidationContract = vm.envAddress("CONSOLIDATION_CONTRACT");
         address immutableBeaconFactory;
 
-            if (vm.envExists("IMMUTABLE_BEACON_FACTORY")) {
-                immutableBeaconFactory = vm.envAddress("IMMUTABLE_BEACON_FACTORY");
-            } else {
-                immutableBeaconFactory = vm.getDeployment("ImmutableBeaconFactory");
-            }
+        if (vm.envExists("IMMUTABLE_BEACON_FACTORY")) {
+            immutableBeaconFactory = vm.envAddress("IMMUTABLE_BEACON_FACTORY");
+        } else {
+            immutableBeaconFactory = vm.getDeployment("ImmutableBeaconFactory");
+        }
 
         // Start broadcasting transactions
         vm.startBroadcast();
 
         // Deploy the TVSUpgradeable contract
-        new TVSUpgradeable(
-            withdrawalContract,
-            consolidationContract,
-            immutableBeaconFactory
-        );
+        new TVSUpgradeable(withdrawalContract, consolidationContract, immutableBeaconFactory);
 
         // Stop broadcasting transactions
         vm.stopBroadcast();

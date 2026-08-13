@@ -39,7 +39,7 @@ Every TVS contract:
 | Contract | Description |
 |---|---|
 | **`TVSUpgradeable`** | Upgradeable TVS implementation using the **beacon proxy** pattern. Each instance is a `TVSBeaconProxy` that delegates to a shared `UpgradeableBeacon`, which in turn points to the `TVSUpgradeable` implementation. The beacon owner can upgrade all proxies at once by changing the beacon's implementation pointer. |
-| **`TVSBeaconProxy`** | A lightweight proxy (similar to EIP-1167) that reads its implementation address from a beacon contract at runtime. Deployed per-TVS instance. |
+| **`TVSBeaconProxy`** | A lightweight proxy that reads its implementation address from a beacon contract at runtime, using the EIP-1967 beacon slot. Deployed per-TVS instance. |
 
 ### Beacon & Factory Contracts
 
@@ -75,7 +75,7 @@ The **`TVSDeployer`** contract is a single entry-point for deploying any TVS var
 |---|---|
 | `ITVS` | Core TVS interface (sweep, withdraw, consolidate, transfer, setBeneficiary). |
 | `ITVSUpgradeable` | Extends `ITVS` with `setBeacon()` and `beacon()`. |
-| `ITVSFlexibleImmutable` | Adds `executeCall()` and `executeBatch()` for arbitrary calls. |
+| `ITVSFlexibleImmutable` | Standalone interface declaring `executeCall()` and `executeBatch()` for arbitrary calls. It does not inherit `ITVS` — `TVSFlexibleImmutable` implements both independently. |
 | `IImmutableBeaconFactory` | Interface for deploying new `ImmutableBeacon` instances. |
 | `ITVSSweepBeneficiary` | Interface a beneficiary contract must implement to receive ETH via `sweepToBeneficiaryContract()`. |
 
@@ -172,6 +172,8 @@ Create a `.env` file (see the Makefile for full usage):
 | `PRIVATE_KEY` | Yes | Deployer private key |
 | `BENEFICIARY` | Yes | Default beneficiary address |
 | `OWNER` | Yes | Contract owner address |
+| `WITHDRAWAL_CONTRACT` | Yes | Pectra EL withdrawal contract address |
+| `CONSOLIDATION_CONTRACT` | Yes | Pectra EL consolidation contract address |
 | `ETHERSCAN_API_KEY` | No | For contract verification |
 | `ETHERSCAN_API` | No | Custom verifier URL |
 | `IMMUTABLE_BEACON_FACTORY` | No | Pre-deployed factory address (overrides broadcast lookup) |
@@ -211,7 +213,16 @@ make deploy-UpgradeableBeacon
 ```
 Depends on: `TVSUpgradeableImplementation` (or set `TVS_UPGRADEABLE_IMPLEMENTATION` env var).
 
-#### 5. Deploy a TVS Instance
+#### 5. Deploy TVSDeployer (optional)
+
+```bash
+make deploy-TVSDeployer
+```
+Depends on: `TVSCloneImplementation` and `TVSUpgradeableImplementation` (or set `TVS_CLONE_IMPLEMENTATION` and
+`TVS_UPGRADEABLE_IMPLEMENTATION` env vars). Only needed if you want the permissionless factory on-chain; the
+per-variant deployments below do not require it.
+
+#### 6. Deploy a TVS Instance
 
 Pick the variant you need:
 

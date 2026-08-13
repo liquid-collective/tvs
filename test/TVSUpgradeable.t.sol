@@ -238,7 +238,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
      * @notice Tests setting a zero address as the new beacon address.
      * @dev Expects the transaction to revert when attempting to set a zero address as the beacon.
      */
-    function testUpdateBeaconWithInValidAddress() public {
+    function testUpdateBeaconWithInvalidAddress() public {
         address newBeacon = address(0);
 
         vm.expectRevert();
@@ -266,7 +266,7 @@ contract TVSUpgradeableTest is BaseTVSTest {
      * @dev Expects the transaction to revert when the beacon's implementation lacks the `setBeaconUnchecked(address)`
      * function.
      */
-    function testUpdateUsingBeaconWithImplementationWithoutUnsafeSetBeaconFunction() public {
+    function testUpdateUsingBeaconWithImplementationWithoutSetBeaconUncheckedFunction() public {
         address invalidTVSImplementation = address(new MockInvalidTVSImplementation());
         address newBeacon = address(new UpgradeableBeacon(owner, invalidTVSImplementation));
 

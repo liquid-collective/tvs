@@ -9,12 +9,16 @@ import "./TVSImmutableBase.sol";
  * @notice Non-upgradeable implementation of the TVS with initializer
  * @dev The TVSClone contract is designed with the idea of providing an immutable version that is compatible with
  *      EIP-1167 clone proxy, offering users a way to minimize gas costs during deployment.
- * @dev Even though this contract follows the pattern of a proxy implementation contract. It is a non-upgradeable
+ * @dev Even though this contract follows the pattern of a proxy implementation contract, it is a non-upgradeable
  *      implementation of the TVS contract, expected to be used only with the clone proxy pattern which is
  *      non-upgradeable.
  */
 contract TVSClone is TVSImmutableBase {
-    /// @notice Constructor that disables initializers to prevent direct use of the implementation contract
+    /**
+     * @notice Constructor that disables initializers to prevent direct use of the implementation contract
+     * @param withdrawalContractAddress The address of the withdrawal contract
+     * @param consolidationContractAddress The address of the consolidation contract
+     */
     constructor(
         address withdrawalContractAddress,
         address consolidationContractAddress

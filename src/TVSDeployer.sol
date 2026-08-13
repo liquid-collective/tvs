@@ -88,6 +88,7 @@ contract TVSDeployer {
 
     /**
      * @notice Deploys a new TVSClone proxy and initializes it
+     * @dev Emits a {TVSCloneDeployed} event
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
      * @return tvs The address of the deployed TVS proxy
@@ -100,6 +101,7 @@ contract TVSDeployer {
 
     /**
      * @notice Deploys a new TVSImmutable contract
+     * @dev Emits a {TVSImmutableDeployed} event
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
      * @return tvs The address of the deployed TVS contract
@@ -111,6 +113,7 @@ contract TVSDeployer {
 
     /**
      * @notice Deploys a new TVSFlexibleImmutable contract
+     * @dev Emits a {TVSFlexibleImmutableDeployed} event
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
      * @return tvs The address of the deployed TVS contract
@@ -123,11 +126,12 @@ contract TVSDeployer {
     }
 
     /**
-     * @notice Deploys a new TVSUpgradeable (Beacon Proxy) and initializes it
+     * @notice Deploys a new TVSUpgradeable (beacon proxy) and initializes it
+     * @dev Emits a {TVSUpgradeableDeployed} event
+     * @dev If a new beacon is deployed, it is deployed with the sender as the owner
      * @param beneficiary The address that will receive all ETH swept from the TVS
      * @param owner The address that will have ownership rights over the TVS
-     * @param beacon The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed.
-     * @dev The new beacon will be deployed with the sender as the owner
+     * @param beacon The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed
      * @return tvs The address of the deployed TVS proxy
      */
     function deployUpgradeable(address beneficiary, address owner, address beacon) external returns (address tvs) {

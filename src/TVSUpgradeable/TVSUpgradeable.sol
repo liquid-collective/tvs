@@ -26,10 +26,10 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
 
     /**
      * @notice Constructs a new TVSUpgradeable instance
-     * @dev Initializes the contract with Pectra withdrawal and consolidation EL contract addresses, and the immutable
-     *      beacon factory address.
+     * @dev Initializes the contract with the Pectra withdrawal and consolidation EL contract addresses, and the
+     *      immutable beacon factory address
      * @dev The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
-     *      once here in the constructor.
+     *      once here in the constructor
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
      * @param immutableBeaconFactory The address of the immutable beacon factory. This is used once in the constructor
@@ -74,7 +74,7 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
      * @notice This function is used by the {setBeacon} function to directly set the beacon address without
      *         additional checks
      * @dev WARNING: This function should only be invoked via delegatecall from {_setBeacon}. Direct calls bypass
-     *      validation. It allows the {setBeacon} function to perform robust checks before setting the new beacon.
+     *      validation. It allows the {setBeacon} function to perform robust checks before setting the new beacon
      * @dev Emits a {BeaconUpgraded} event
      * @dev Only callable by the contract owner
      * @param newBeacon The new beacon address
@@ -101,9 +101,8 @@ contract TVSUpgradeable is ITVSUpgradeable, TVS {
 
     /**
      * @notice Internal function to set the beacon address
-     * @dev This function is used internally to set the beacon address
-     * @dev This function uses the functionDelegateCall exposed by the OpenZeppelin Address contract to delegate the
-     *      call to the implementation contract, and reverts if the call fails
+     * @dev This function uses the `functionDelegateCall` helper exposed by the OpenZeppelin Address library to
+     *      delegate the call to the implementation contract, and reverts if the call fails
      * @param _beacon The address of the new beacon contract
      */
     function _setBeacon(address _beacon) internal {

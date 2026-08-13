@@ -1,5 +1,5 @@
 # ITVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md)
@@ -10,11 +10,11 @@ TVS Interface (Upgradeable)
 **Author:**
 Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
 
-Interface for the TVS contract.
+Interface for the TVSUpgradeable contract.
 
-This interface is used to interact with the TVS contract.
+This interface is used to interact with the TVSUpgradeable contract.
 
-The TVSUpgradeable contract is an upgradeable implementation of the TVS contract
+The TVSUpgradeable contract is an upgradeable implementation of the TVS contract.
 
 
 ## Functions
@@ -28,13 +28,13 @@ Emits a [BeaconUpgraded](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/inte
 
 
 ```solidity
-function setBeacon(address beacon) external;
+function setBeacon(address newBeacon) external;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`beacon`|`address`|The new beacon address.|
+|`newBeacon`|`address`|The new beacon address.|
 
 
 ### beacon

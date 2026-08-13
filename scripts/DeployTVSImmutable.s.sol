@@ -18,12 +18,7 @@ contract DeployTVSImmutable is DeployPrepareForAbiInjection {
         vm.startBroadcast();
 
         // Deploy the TVSImmutable contract
-        new TVSImmutable(
-            beneficiary,
-            owner,
-            withdrawalContract,
-            consolidationContract
-        );
+        new TVSImmutable(beneficiary, owner, withdrawalContract, consolidationContract);
 
         // Stop broadcasting transactions
         vm.stopBroadcast();

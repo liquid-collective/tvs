@@ -7,14 +7,14 @@ pragma solidity 0.8.34;
  * @notice Interface for the TVS beneficiary contract to receive ETH from the TVS.
  * @dev This interface is used to receive ETH from the TVS contract.
  * @dev This interface should be implemented by a beneficiary contract if the contract is unable to receive direct ETH
- * transfers
+ * transfers.
  * @dev The TVS contract is the withdrawal credential of a set of validators in the system.
  */
 interface ITVSSweepBeneficiary {
     /**
-     * @notice Allows a contract to receive ETH from TVS via the `sweepToBeneficiaryContract` function.
+     * @notice Allows a contract to receive ETH from the TVS via the {sweepToBeneficiaryContract} function.
      * @dev This function MUST be implemented by the TVS beneficiary contract, in order to use the
-     * `sweepToBeneficiaryContract` function of the TVS.
+     * {sweepToBeneficiaryContract} function of the TVS.
      */
     function receiveETHFromTVS() external payable;
 }

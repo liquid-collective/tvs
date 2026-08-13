@@ -18,12 +18,7 @@ contract DeployTVSFlexibleImmutable is DeployPrepareForAbiInjection {
         vm.startBroadcast();
 
         // Deploy the TVSFlexibleImmutable contract
-        new TVSFlexibleImmutable(
-            beneficiary,
-            owner,
-            withdrawalContract,
-            consolidationContract
-        );
+        new TVSFlexibleImmutable(beneficiary, owner, withdrawalContract, consolidationContract);
 
         // Stop broadcasting transactions
         vm.stopBroadcast();

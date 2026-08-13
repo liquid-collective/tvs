@@ -1,5 +1,5 @@
 # TVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
 
 **Inherits:**
 [ITVSFlexibleImmutable](/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.md), [TVSImmutable](/src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.md)
@@ -25,8 +25,8 @@ Constructor for the TVSFlexibleImmutable contract
 
 Initializes the contract with all required parameters
 
-The withdrawal and consolidation addresses are pectra EL contract addresses, and are stored as immutable
-state variables. They can only be set once here in the constructor.
+The withdrawal and consolidation addresses are Pectra EL contract addresses, and are stored as immutable
+state variables. They can only be set once here in the constructor
 
 
 ```solidity
@@ -74,11 +74,10 @@ function executeCall(Call calldata call) external payable onlyOwner nonReentrant
 ### executeBatch
 
 Executes a batch of low-level calls or delegatecalls.
-NOTE:
-- when msg.value is passed, only one delegatecall should be made
-- when msg.value is passed, any delegatecall to non-payable functions will fail
 
-Reverts on the first call that fails.
+NOTE:
+- when msg.value is passed, only one delegatecall should be made;
+- when msg.value is passed, any delegatecall to non-payable functions will fail.
 
 
 ```solidity

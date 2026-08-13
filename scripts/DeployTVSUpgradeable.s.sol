@@ -19,12 +19,8 @@ contract DeployTVSUpgradeable is DeployPrepareForAbiInjection {
         address owner = vm.envAddress("OWNER");
 
         // Encode initialization data
-        bytes memory initData = abi.encodeWithSignature(
-            "initialize(address,address,address)",
-            beneficiary,
-            owner,
-            beacon
-        );
+        bytes memory initData =
+            abi.encodeWithSignature("initialize(address,address,address)", beneficiary, owner, beacon);
 
         // Start broadcasting transactions
         vm.startBroadcast();
@@ -36,6 +32,5 @@ contract DeployTVSUpgradeable is DeployPrepareForAbiInjection {
         vm.stopBroadcast();
 
         prepareForAbiInjection();
-
     }
 }

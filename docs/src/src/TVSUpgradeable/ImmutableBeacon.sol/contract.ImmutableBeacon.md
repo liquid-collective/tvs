@@ -1,5 +1,5 @@
 # ImmutableBeacon
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSUpgradeable/ImmutableBeacon.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/TVSUpgradeable/ImmutableBeacon.sol)
 
 **Title:**
 Immutable Beacon (v1)
@@ -14,7 +14,7 @@ This contract is used to store the implementation address of a proxy contract
 The implementation address is set in the constructor and cannot be changed
 
 
-## State Variables
+## Constants
 ### implementation
 The proxy implementation address stored in the beacon
 
@@ -46,7 +46,7 @@ constructor(address theImplementation) ;
 
 ## Errors
 ### InvalidImplementation
-Emitted when the implementation address is invalid
+Error thrown when the implementation address is invalid
 
 
 ```solidity

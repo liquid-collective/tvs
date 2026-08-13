@@ -1,5 +1,5 @@
 # BaseSecurity
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/components/BaseSecurity.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/components/BaseSecurity.sol)
 
 **Inherits:**
 Initializable, OwnableUpgradeable, ReentrancyGuardTransient
@@ -39,13 +39,13 @@ deployment phase to properly configure ownership and reentrancy protection.
 ## Functions
 ### renounceOwnership
 
-Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement
+Overrides the [renounceOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#renounceownership) function from OwnableUpgradeable to prevent ownership renouncement.
 
-This function reverts unconditionally to prevent ownership renouncement by mistake
+This function reverts unconditionally to prevent ownership renouncement by mistake.
 
-Reverts with [OwnershipCannotBeRenounced](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#ownershipcannotberenounced)
+Reverts with [OwnershipCannotBeRenounced](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#ownershipcannotberenounced).
 
-Only callable by the contract owner
+Only callable by the contract owner.
 
 
 ```solidity
@@ -54,12 +54,15 @@ function renounceOwnership() public view override onlyOwner;
 
 ### transferOwnership
 
-Overrides transferOwnership to prevent direct ownership transfers that bypass protocol invariants.
+Overrides [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) to prevent direct ownership transfers that bypass protocol invariants.
 
-Direct calls to transferOwnership skip the beneficiary update, and Transferred event
-enforced by the transfer() function. All ownership transfers must go through transfer().
+Direct calls to [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) skip the beneficiary update and the {Transferred} event
+enforced by the {transfer} function. Upgradeable variants also skip the beacon freeze.
+All ownership transfers must go through {transfer}.
 
-Reverts with [UseTransferFunction](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#usetransferfunction)
+Reverts with [UseTransferFunction](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#usetransferfunction).
+
+Only callable by the contract owner.
 
 
 ```solidity
@@ -69,6 +72,8 @@ function transferOwnership(address) public view override onlyOwner;
 ### _setupSecurity
 
 Sets up the contract by initializing Ownable and ReentrancyGuard features.
+
+Can only be called once, as it is marked with the `initializer` modifier.
 
 
 ```solidity
@@ -91,11 +96,12 @@ error OwnershipCannotBeRenounced();
 ```
 
 ### UseTransferFunction
-Error thrown when transferOwnership is called directly.
+Error thrown when [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) is called directly.
 
-Ownership transfers must go through the secure transfer() function, which enforces
-all protocol invariants (updating the beneficiary, freezing the beacon, emitting
-the Transferred event). Calling transferOwnership directly bypasses these invariants.
+Ownership transfers must go through the secure {transfer} function, which enforces
+all protocol invariants, including the beneficiary update and the {Transferred} event.
+Upgradeable variants also freeze the beacon. Calling [transferOwnership](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md#transferownership) directly
+bypasses these invariants.
 
 
 ```solidity

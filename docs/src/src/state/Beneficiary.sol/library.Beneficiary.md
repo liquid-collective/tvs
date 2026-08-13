@@ -1,5 +1,5 @@
 # Beneficiary
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/state/Beneficiary.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/state/Beneficiary.sol)
 
 **Title:**
 Beneficiary
@@ -9,12 +9,12 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 
 This library manages the beneficiary address for the TVS proxy contract
 
-The beneficiary address is the address to which all funds are swept to when a {sweep} operation is performed
+The beneficiary address is the address to which all funds are swept when a {sweep} operation is performed
 
-The proxy contract is expected to have a `BENEFICIARY_SLOT` slot that stores the beneficiary address
+TVS variants store the beneficiary address in the `BENEFICIARY_SLOT` slot
 
 
-## State Variables
+## Constants
 ### BENEFICIARY_SLOT
 Slot for the beneficiary address
 
@@ -33,13 +33,13 @@ Set the beneficiary address
 
 
 ```solidity
-function set(address _newBeneficiary) internal;
+function set(address newBeneficiary) internal;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`_newBeneficiary`|`address`|The new beneficiary address|
+|`newBeneficiary`|`address`|The new beneficiary address|
 
 
 ### get

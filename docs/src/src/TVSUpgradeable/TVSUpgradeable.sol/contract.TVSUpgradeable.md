@@ -1,5 +1,5 @@
 # TVSUpgradeable
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSUpgradeable/TVSUpgradeable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/TVSUpgradeable/TVSUpgradeable.sol)
 
 **Inherits:**
 [ITVSUpgradeable](/src/TVSUpgradeable/interfaces/ITVSUpgradeable.sol/interface.ITVSUpgradeable.md), [TVS](/src/components/TVS.sol/abstract.TVS.md)
@@ -15,7 +15,7 @@ Upgradeable implementation of the TVS
 This contract provides an upgradeable version of the TVS using a beacon proxy pattern
 
 
-## State Variables
+## Constants
 ### IMMUTABLE_BEACON
 The address of the immutable beacon contract
 
@@ -34,11 +34,11 @@ address public immutable IMMUTABLE_BEACON
 
 Constructs a new TVSUpgradeable instance
 
-Initializes the contract with Pectra withdrawal and consolidation EL contract addresses, and the immutable
-beacon factory address.
+Initializes the contract with the Pectra withdrawal and consolidation EL contract addresses, and the
+immutable beacon factory address
 
 The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
-once here in the constructor.
+once here in the constructor
 
 
 ```solidity
@@ -104,7 +104,7 @@ This function is used by the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/
 additional checks
 
 WARNING: This function should only be invoked via delegatecall from [_setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#_setbeacon). Direct calls bypass
-validation. It allows the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function to perform robust checks before setting the new beacon.
+validation. It allows the [setBeacon](/src/TVSUpgradeable/TVSUpgradeable.sol/contract.TVSUpgradeable.md#setbeacon) function to perform robust checks before setting the new beacon
 
 Emits a {BeaconUpgraded} event
 
@@ -135,7 +135,7 @@ function setBeacon(address newBeacon) external onlyOwner nonReentrant;
 
 |Name|Type|Description|
 |----|----|-----------|
-|`newBeacon`|`address`||
+|`newBeacon`|`address`|The new beacon address.|
 
 
 ### beacon
@@ -165,17 +165,15 @@ function version() external pure returns (string memory);
 
 |Name|Type|Description|
 |----|----|-----------|
-|`<none>`|`string`|Version of the contract|
+|`<none>`|`string`|The version of the contract.|
 
 
 ### _setBeacon
 
 Internal function to set the beacon address
 
-This function is used internally to set the beacon address
-
-This function uses the functionDelegateCall exposed by the OpenZeppelin Address contract to delegate the
-call to the implementation contract, and reverts if the call fails
+This function uses the `functionDelegateCall` helper exposed by the OpenZeppelin Address library to
+delegate the call to the implementation contract, and reverts if the call fails
 
 
 ```solidity
