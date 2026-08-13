@@ -1035,6 +1035,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
 
+        // Mock a valid 32-byte fee read so the call reaches the empty-array check
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
+
         // Call the consolidate function
         vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
         vm.prank(owner);
@@ -1092,6 +1095,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
 
+        // Mock a valid 32-byte fee read so the call reaches the empty-array check
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
+
         // Call the consolidate function
         vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
         vm.prank(owner);
@@ -1148,6 +1154,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock a valid 32-byte fee read so the call reaches the pubkey length check
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
 
         // Call the consolidate function
         vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 47));
@@ -1216,6 +1225,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
 
+        // Mock a valid 32-byte fee read so the call reaches the empty-array check
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
+
         vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
         vm.prank(owner);
         tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
@@ -1238,6 +1250,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock a valid 32-byte fee read so the call reaches the empty-array check
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
 
         vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
         vm.prank(owner);
@@ -1288,6 +1303,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
 
+        // Mock a valid 32-byte fee read so the call reaches the pubkey length check
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
+
         vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 0));
         vm.prank(owner);
         tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
@@ -1306,6 +1324,9 @@ abstract contract BaseTVSTest is Test, PectraAddress {
 
         uint256 maxFeePerWithdrawal = 0.1 ether;
         vm.deal(owner, maxFeePerWithdrawal);
+
+        // Mock a valid 32-byte fee read so the call reaches the pubkey length check
+        vm.mockCall(WITHDRAWAL_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
 
         vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 0));
         vm.prank(owner);
