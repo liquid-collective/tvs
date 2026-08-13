@@ -1062,6 +1062,14 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
 
+        // Mock the fee read so the populated request would otherwise be submittable
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
+
+        // Poison the populated request's submission calldata. The whole batch is validated up front, so this call
+        // must never happen; if it did, the revert would surface as RequestFailed() instead of InvalidEmptyArray().
+        bytes memory firstCallData = bytes.concat(populatedSrcPubkeys[0], targetPubkey);
+        vm.mockCallRevert(CONSOLIDATION_CONTRACT_ADDRESS, firstCallData, abi.encodePacked(""));
+
         // No consolidation request should be submitted for the populated request either
         vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
         vm.prank(owner);
@@ -1109,6 +1117,14 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         uint256 maxFeePerConsolidation = 0.1 ether;
         vm.deal(owner, maxFeePerConsolidation);
 
+        // Mock the fee read so the populated request would otherwise be submittable
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
+
+        // Poison the populated request's submission calldata. The whole batch is validated up front, so this call
+        // must never happen; if it did, the revert would surface as RequestFailed() instead of InvalidEmptyArray().
+        bytes memory firstCallData = bytes.concat(srcPubkeys[0], populatedTargetPubkey);
+        vm.mockCallRevert(CONSOLIDATION_CONTRACT_ADDRESS, firstCallData, abi.encodePacked(""));
+
         // No consolidation request should be submitted for the populated request either
         vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
         vm.prank(owner);
@@ -1137,6 +1153,182 @@ abstract contract BaseTVSTest is Test, PectraAddress {
         vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 47));
         vm.prank(owner);
         tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the batch-level validation covers every request, not just the first, and that no earlier
+     * request in the batch is submitted before a later invalid one is rejected.
+     */
+    function testConsolidateSubmitsNothingWhenLastOfThreeRequestsHasEmptyTarget() public {
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes[] memory srcPubkeysA = new bytes[](1);
+        srcPubkeysA[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345601"; // 48-byte
+
+        bytes[] memory srcPubkeysB = new bytes[](1);
+        srcPubkeysB[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345602"; // 48-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](3);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeysA, targetPubkey);
+        requests[1] = ITVS.ConsolidationRequest(srcPubkeysB, targetPubkey);
+        requests[2] = ITVS.ConsolidationRequest(srcPubkeysA, ""); // empty target pubkey
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock the fee read so both populated requests would otherwise be submittable
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(uint256(1)));
+
+        // Poison both populated requests: neither may be submitted before the invalid third request is rejected
+        vm.mockCallRevert(
+            CONSOLIDATION_CONTRACT_ADDRESS, bytes.concat(srcPubkeysA[0], targetPubkey), abi.encodePacked("")
+        );
+        vm.mockCallRevert(
+            CONSOLIDATION_CONTRACT_ADDRESS, bytes.concat(srcPubkeysB[0], targetPubkey), abi.encodePacked("")
+        );
+
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the batch-level validation also rejects an invalid request in the first position, so the
+     * check is not skipped for the leading element.
+     */
+    function testConsolidateFailsIfFirstRequestHasEmptySrcPubkeys() public {
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes[] memory emptySrcPubkeys; // length is zero(0)
+
+        bytes[] memory populatedSrcPubkeys = new bytes[](1);
+        populatedSrcPubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](2);
+        requests[0] = ITVS.ConsolidationRequest(emptySrcPubkeys, targetPubkey);
+        requests[1] = ITVS.ConsolidationRequest(populatedSrcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the batch-level validation also rejects an empty target public key in the first position.
+     */
+    function testConsolidateFailsIfFirstRequestHasEmptyTargetPubkey() public {
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](2);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, ""); // empty target pubkey
+        requests[1] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the empty-array check takes precedence over the sufficient-value check, so a malformed batch
+     * is rejected with {InvalidEmptyArray} rather than being masked by {InsufficientValueForFee}.
+     */
+    function testConsolidateFailsWithEmptyArrayBeforeInsufficientValue() public {
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](2);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+        requests[1] = ITVS.ConsolidationRequest(srcPubkeys, ""); // empty target pubkey
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Mock the fee read so that the value sent covers only one of the two operations
+        vm.mockCall(CONSOLIDATION_CONTRACT_ADDRESS, abi.encodePacked(""), abi.encodePacked(maxFeePerConsolidation));
+
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that a zero-length source public key inside a non-empty array is rejected by the length check
+     * rather than the empty-array guard, so the two errors stay distinguishable.
+     */
+    function testConsolidateFailsWithLengthErrorForZeroLengthSrcPubkeyElement() public {
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] = ""; // zero-length element inside a non-empty array
+
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 0));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that a zero-length public key inside a non-empty array is rejected by the length check rather
+     * than the empty-array guard, so the two errors stay distinguishable.
+     */
+    function testWithdrawFailsWithLengthErrorForZeroLengthPubkeyElement() public {
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] = ""; // zero-length element inside a non-empty array
+
+        uint64[] memory amounts = new uint64[](1);
+        amounts[0] = 1 ether;
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 0));
+        vm.prank(owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
+    }
+
+    /**
+     * @notice Tests that a non-empty pubkeys array paired with an empty amounts array reverts with
+     * {LengthMismatch}, so the empty-array guard does not swallow the mismatch in the reverse direction.
+     */
+    function testWithdrawFailsWithLengthMismatchWhenAmountsEmpty() public {
+        bytes[] memory pubkeys = new bytes[](1);
+        pubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        uint64[] memory amounts; // length is zero(0)
+
+        uint256 maxFeePerWithdrawal = 0.1 ether;
+        vm.deal(owner, maxFeePerWithdrawal);
+
+        vm.expectRevert(abi.encodeWithSignature("LengthMismatch(uint256,uint256)", 1, 0));
+        vm.prank(owner);
+        tvs.withdraw{ value: maxFeePerWithdrawal }(pubkeys, amounts, maxFeePerWithdrawal, owner);
     }
 
     /**
