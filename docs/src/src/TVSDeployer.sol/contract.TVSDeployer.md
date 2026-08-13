@@ -1,5 +1,5 @@
 # TVSDeployer
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/TVSDeployer.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/TVSDeployer.sol)
 
 **Title:**
 TVS Deployer
@@ -10,7 +10,7 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 Permissionless deployer for all TVS variants
 
 
-## State Variables
+## Constants
 ### WITHDRAWAL_CONTRACT_ADDRESS
 The address of the Pectra EL withdrawal contract
 
@@ -68,6 +68,8 @@ constructor(address _cloneImplementation, address _upgradeableTVSImplementation)
 
 Deploys a new TVSClone proxy and initializes it
 
+Emits a [TVSCloneDeployed](/src/TVSDeployer.sol/contract.TVSDeployer.md#tvsclonedeployed) event
+
 
 ```solidity
 function deployClone(address beneficiary, address owner) external returns (address tvs);
@@ -89,6 +91,8 @@ function deployClone(address beneficiary, address owner) external returns (addre
 ### deployImmutable
 
 Deploys a new TVSImmutable contract
+
+Emits a [TVSImmutableDeployed](/src/TVSDeployer.sol/contract.TVSDeployer.md#tvsimmutabledeployed) event
 
 
 ```solidity
@@ -112,6 +116,8 @@ function deployImmutable(address beneficiary, address owner) external returns (a
 
 Deploys a new TVSFlexibleImmutable contract
 
+Emits a [TVSFlexibleImmutableDeployed](/src/TVSDeployer.sol/contract.TVSDeployer.md#tvsflexibleimmutabledeployed) event
+
 
 ```solidity
 function deployFlexibleImmutable(address beneficiary, address owner) external returns (address tvs);
@@ -132,9 +138,11 @@ function deployFlexibleImmutable(address beneficiary, address owner) external re
 
 ### deployUpgradeable
 
-Deploys a new TVSUpgradeable (Beacon Proxy) and initializes it
+Deploys a new TVSUpgradeable (beacon proxy) and initializes it
 
-The new beacon will be deployed with the sender as the owner
+Emits a [TVSUpgradeableDeployed](/src/TVSDeployer.sol/contract.TVSDeployer.md#tvsupgradeabledeployed) event
+
+If a new beacon is deployed, it is deployed with the sender as the owner
 
 
 ```solidity
@@ -146,7 +154,7 @@ function deployUpgradeable(address beneficiary, address owner, address beacon) e
 |----|----|-----------|
 |`beneficiary`|`address`|The address that will receive all ETH swept from the TVS|
 |`owner`|`address`|The address that will have ownership rights over the TVS|
-|`beacon`|`address`|The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed.|
+|`beacon`|`address`|The address of the UpgradeableBeacon contract. If zero address, a new beacon will be deployed|
 
 **Returns**
 

@@ -714,7 +714,7 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     /**
      * @notice Tests that the withdraw function emits an event when excess refunds fail.
      */
-    function testWithdrawmitsEventWhenExcessRefundsFail() public {
+    function testWithdrawEmitsEventWhenExcessRefundsFail() public {
         address WITHDRAWAL_CONTRACT_ADDRESS = 0x0c15F14308530b7CDB8460094BbB9cC28b9AaaAA;
 
         // Prepare mock data for withdrawal

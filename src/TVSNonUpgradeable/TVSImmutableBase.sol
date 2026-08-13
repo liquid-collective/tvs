@@ -11,10 +11,10 @@ import "../components/TVS.sol";
  */
 abstract contract TVSImmutableBase is TVS {
     /**
-     * @notice Constructor for the TVS Immutable contract
-     * @dev Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
+     * @notice Constructor for the TVS Immutable base contract
+     * @dev Initializes the contract with the Pectra withdrawal and consolidation EL contract addresses
      * @dev The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
-     * once here in the constructor.
+     *      once here in the constructor
      * @param withdrawalContractAddress The address of the withdrawal contract
      * @param consolidationContractAddress The address of the consolidation contract
      */

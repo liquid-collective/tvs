@@ -9,12 +9,11 @@ import { DeployPrepareForAbiInjection } from "scripts/DeployPrepareForAbiInjecti
 
 contract DeployUpgradeableBeacon is DeployPrepareForAbiInjection {
     function run() external {
-        
         address recentDeployment;
 
         try vm.getDeployment("UpgradeableBeacon") returns (address deployment) {
             recentDeployment = deployment;
-        } catch {}
+        } catch { }
 
         if (recentDeployment != address(0)) {
             console.log("No need to deploy anything, already deployed at: ", recentDeployment);
@@ -24,11 +23,11 @@ contract DeployUpgradeableBeacon is DeployPrepareForAbiInjection {
         // Load constructor parameters from environment variables
         address initialOwner = vm.envAddress("OWNER");
         address initialImplementation;
-        
-        if(vm.envExists("TVS_UPGRADEABLE_IMPLEMENTATION")){
+
+        if (vm.envExists("TVS_UPGRADEABLE_IMPLEMENTATION")) {
             initialImplementation = vm.envAddress("TVS_UPGRADEABLE_IMPLEMENTATION");
-        }else{
-            initialImplementation = vm.getDeployment("TVSUpgradeable") ;
+        } else {
+            initialImplementation = vm.getDeployment("TVSUpgradeable");
         }
 
         // Start broadcasting transactions
@@ -41,6 +40,5 @@ contract DeployUpgradeableBeacon is DeployPrepareForAbiInjection {
         vm.stopBroadcast();
 
         prepareForAbiInjection();
-
     }
 }

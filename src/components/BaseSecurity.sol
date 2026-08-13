@@ -8,16 +8,16 @@ import "openzeppelin-contracts-upgradeable/contracts/proxy/utils/Initializable.s
 /**
  * @title BaseSecurity
  * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
- * @dev This abstract contract provides a foundational setup for security features,
- *      including ownership management and reentrancy protection. It is designed to
- *      be inherited by both upgradeable and non-upgradeable contracts.
- *
  * @notice This contract uses OpenZeppelin's upgradeable libraries to ensure compatibility
  *         with upgradeable contracts. The use of upgradeable libraries is safe here because
  *         the `_setupSecurity` function is marked as `initializer`, which ensures that it
  *         can only be called once during the initialization phase of an upgradeable contract.
  *         For non-upgradeable contracts, this function can still be used during deployment
  *         without any issues, as it does not rely on proxy-specific behavior.
+ *
+ * @dev This abstract contract provides a foundational setup for security features,
+ *      including ownership management and reentrancy protection. It is designed to
+ *      be inherited by both upgradeable and non-upgradeable contracts.
  *
  * @dev Rationale for using upgradeable contracts:
  *      - Upgradeable contracts require initialization instead of constructors due to the
@@ -40,28 +40,31 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
     error OwnershipCannotBeRenounced();
 
     /**
-     * @notice Error thrown when transferOwnership is called directly.
-     * @dev Ownership transfers must go through the secure transfer() function, which enforces
-     *      all protocol invariants (updating the beneficiary, freezing the beacon, emitting
-     *      the Transferred event). Calling transferOwnership directly bypasses these invariants.
+     * @notice Error thrown when {transferOwnership} is called directly.
+     * @dev Ownership transfers must go through the secure {transfer} function, which enforces
+     *      all protocol invariants, including the beneficiary update and the {Transferred} event.
+     *      Upgradeable variants also freeze the beacon. Calling {transferOwnership} directly
+     *      bypasses these invariants.
      */
     error UseTransferFunction();
 
     /**
-     * @notice Overrides the renounceOwnership function from OwnableUpgradeable to prevent ownership renouncement
-     * @dev This function reverts unconditionally to prevent ownership renouncement by mistake
-     * @dev Reverts with {OwnershipCannotBeRenounced}
-     * @dev Only callable by the contract owner
+     * @notice Overrides the {renounceOwnership} function from OwnableUpgradeable to prevent ownership renouncement.
+     * @dev This function reverts unconditionally to prevent ownership renouncement by mistake.
+     * @dev Reverts with {OwnershipCannotBeRenounced}.
+     * @dev Only callable by the contract owner.
      */
     function renounceOwnership() public view override onlyOwner {
         revert OwnershipCannotBeRenounced();
     }
 
     /**
-     * @notice Overrides transferOwnership to prevent direct ownership transfers that bypass protocol invariants.
-     * @dev Direct calls to transferOwnership skip the beneficiary update, and Transferred event
-     *      enforced by the transfer() function. All ownership transfers must go through transfer().
-     * @dev Reverts with {UseTransferFunction}
+     * @notice Overrides {transferOwnership} to prevent direct ownership transfers that bypass protocol invariants.
+     * @dev Direct calls to {transferOwnership} skip the beneficiary update and the {Transferred} event
+     *      enforced by the {transfer} function. Upgradeable variants also skip the beacon freeze.
+     *      All ownership transfers must go through {transfer}.
+     * @dev Reverts with {UseTransferFunction}.
+     * @dev Only callable by the contract owner.
      */
     function transferOwnership(address) public view override onlyOwner {
         revert UseTransferFunction();
@@ -69,6 +72,7 @@ abstract contract BaseSecurity is Initializable, OwnableUpgradeable, ReentrancyG
 
     /**
      * @notice Sets up the contract by initializing Ownable and ReentrancyGuard features.
+     * @dev Can only be called once, as it is marked with the `initializer` modifier.
      * @param _owner The address to set as the owner of the contract.
      */
     function _setupSecurity(address _owner) internal initializer {

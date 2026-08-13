@@ -17,8 +17,8 @@ contract TVSFlexibleImmutable is ITVSFlexibleImmutable, TVSImmutable {
     /**
      * @notice Constructor for the TVSFlexibleImmutable contract
      * @dev Initializes the contract with all required parameters
-     * @dev The withdrawal and consolidation addresses are pectra EL contract addresses, and are stored as immutable
-     *      state variables. They can only be set once here in the constructor.
+     * @dev The withdrawal and consolidation addresses are Pectra EL contract addresses, and are stored as immutable
+     *      state variables. They can only be set once here in the constructor
      * @param beneficiary The default address that will receive all ETH swept from the TVS contract
      * @param owner The address that will have ownership rights over the TVS
      * @param withdrawalContractAddress The address of the withdrawal contract

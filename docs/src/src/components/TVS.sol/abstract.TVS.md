@@ -1,5 +1,5 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/83e38ad02ffffb0bac3de9ed3b5bc74e76e66343/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/components/TVS.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
@@ -13,7 +13,7 @@ Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundati
 Implementation of the TVS
 
 
-## State Variables
+## Constants
 ### WITHDRAWAL_CONTRACT_ADDRESS
 The address of the Pectra EL withdrawal contract.
 
@@ -37,12 +37,12 @@ address public immutable CONSOLIDATION_CONTRACT_ADDRESS
 
 Constructor for the TVS contract
 
-Initializes the contract with Pectra withdrawal and consolidation EL contract addresses.
+Initializes the contract with the Pectra withdrawal and consolidation EL contract addresses
 
 The withdrawal and consolidation addresses are stored as immutable state variables. They can only be set
-once here in the constructor.
+once here in the constructor
 
-All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set,
+All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set
 and available to the proxy
 
 
@@ -59,7 +59,7 @@ constructor(address withdrawalContractAddress, address consolidationContractAddr
 
 ### receive
 
-Fallback function to receive funds.
+Receive function to accept ETH transfers.
 
 
 ```solidity
@@ -68,7 +68,7 @@ receive() external payable;
 
 ### withdraw
 
-Adds a withdrawal request to the pectra EL withdrawal contract for a specified validator.
+Adds a withdrawal request to the Pectra EL withdrawal contract for the specified validators.
 
 Only the owner can call this function.
 
@@ -76,7 +76,7 @@ Only the owner can call this function.
 ```solidity
 function withdraw(
     bytes[] calldata pubkeys,
-    uint64[] calldata amount,
+    uint64[] calldata amounts,
     uint256 maxFeePerWithdrawal,
     address excessFeeRecipient
 )
@@ -90,14 +90,14 @@ function withdraw(
 |Name|Type|Description|
 |----|----|-----------|
 |`pubkeys`|`bytes[]`|The public keys of the validators to withdraw from.|
-|`amount`|`uint64[]`|The amount in gwei to withdraw from each validator. Zero indicates a full withdrawal (validator exit).|
+|`amounts`|`uint64[]`|The amount in gwei to withdraw from each validator, in the same order as `pubkeys`. Zero indicates a full withdrawal (validator exit).|
 |`maxFeePerWithdrawal`|`uint256`|The maximum fee allowed per withdrawal.|
 |`excessFeeRecipient`|`address`|The address to which excess fees will be sent.|
 
 
 ### consolidate
 
-Adds a consolidation request to the pectra EL consolidation contract for the given source validators.
+Adds a consolidation request to the Pectra EL consolidation contract for the given source validators.
 
 Only the owner can call this function.
 
@@ -126,18 +126,18 @@ function consolidate(
 
 Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary or a specified address.
 
-Only the owner can specify a custom beneficiary for the sweep
+Only the owner can specify a custom beneficiary for the sweep.
 
 
 ```solidity
-function sweep(address recipient, uint256 amount) external nonReentrant;
+function sweep(address beneficiary, uint256 amount) external nonReentrant;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`recipient`|`address`||
-|`amount`|`uint256`|Amount of funds to sweep, if zero, sweeps all funds on contract|
+|`beneficiary`|`address`|Address to which funds will be swept. If zero address, sweeps to the beneficiary address set on the contract.|
+|`amount`|`uint256`|Amount of funds to sweep. If zero, sweeps all funds on the contract.|
 
 
 ### sweepToBeneficiaryContract
@@ -145,7 +145,7 @@ function sweep(address recipient, uint256 amount) external nonReentrant;
 Sweeps a specific amount, or all ETH on the TVS to the TVS beneficiary contract or a specified
 beneficiary contract address.
 
-Only the owner can specify a custom beneficiary for the sweep
+Only the owner can specify a custom beneficiary for the sweep.
 
 
 ```solidity
@@ -155,8 +155,8 @@ function sweepToBeneficiaryContract(address beneficiary, uint256 amount) externa
 
 |Name|Type|Description|
 |----|----|-----------|
-|`beneficiary`|`address`|Address for the contract to which funds will be swept, if zero address, sweeps to the beneficiary address set on the contract|
-|`amount`|`uint256`| Amount of funds to sweep, if zero, sweeps all funds on contract.|
+|`beneficiary`|`address`|Address of the contract to which funds will be swept. If zero address, sweeps to the beneficiary address set on the contract.|
+|`amount`|`uint256`|Amount of funds to sweep. If zero, sweeps all funds on the contract.|
 
 
 ### setBeneficiary
@@ -195,7 +195,7 @@ function getBeneficiary() public view returns (address);
 
 Internal function to transfer the TVS to a new beneficiary and owner.
 
-This function is used to transfer the TVS to a new beneficiary and owner.
+Emits a {Transferred} event.
 
 
 ```solidity
@@ -213,6 +213,8 @@ function _transfer(address _beneficiary, address _owner) internal;
 
 Internal function to set the beneficiary address.
 
+Emits a {BeneficiaryUpdated} event.
+
 
 ```solidity
 function _setBeneficiary(address _newBeneficiary) internal;
@@ -226,7 +228,9 @@ function _setBeneficiary(address _newBeneficiary) internal;
 
 ### _refundExcessFee
 
-Internal function to refund the excess fee for pectra related operations.
+Internal function to refund the excess fee for Pectra-related operations.
+
+Emits an {UnsentExcessFee} event if the refund could not be sent.
 
 
 ```solidity
@@ -248,19 +252,19 @@ function _refundExcessFee(
 
 ### _validateAndReturnFee
 
-Internal function to validate the fee. Used for pectra related operations.
+Internal function to validate the fee. Used for Pectra-related operations.
 
 Reverts if the fee is higher than the maximum allowed fee, or if the fee read fails.
 
 
 ```solidity
-function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee);
+function _validateAndReturnFee(address _feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee);
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`feeContract`|`address`|The address of the fee contract.|
+|`_feeContract`|`address`|The address of the fee contract.|
 |`_maxAllowedFee`|`uint256`|The maximum allowed fee.|
 
 **Returns**
@@ -272,7 +276,7 @@ function _validateAndReturnFee(address feeContract, uint256 _maxAllowedFee) inte
 
 ### _validateSufficientValueForFee
 
-Internal function to validate the caller sent sufficient value for fee. Used for pectra related
+Internal function to validate the caller sent sufficient value for the fee. Used for Pectra-related
 operations.
 
 
@@ -283,28 +287,32 @@ function _validateSufficientValueForFee(uint256 _value, uint256 _totalFee) inter
 
 |Name|Type|Description|
 |----|----|-----------|
-|`_value`|`uint256`|The value.|
+|`_value`|`uint256`|The value sent by the caller.|
 |`_totalFee`|`uint256`|The total fee.|
 
 
 ### _validatePubkeyLength
 
-Internal function to validate that a public key is exactly 48 bytes in length
+Internal function to validate that a public key is exactly 48 bytes in length.
 
 
 ```solidity
-function _validatePubkeyLength(bytes memory pubkey) internal pure;
+function _validatePubkeyLength(bytes memory _pubkey) internal pure;
 ```
 **Parameters**
 
 |Name|Type|Description|
 |----|----|-----------|
-|`pubkey`|`bytes`|The public key to validate|
+|`_pubkey`|`bytes`|The public key to validate.|
 
 
 ### _sweep
 
-Internal function to sweep the TVS.
+Internal function to resolve the destination and amount of a sweep.
+
+Only the owner can specify a custom beneficiary for the sweep.
+
+Emits a {Swept} event.
 
 
 ```solidity
