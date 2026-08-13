@@ -240,7 +240,7 @@ abstract contract TVS is ITVS, BaseSecurity {
      * @notice Internal function to validate that a public key is exactly 48 bytes in length.
      * @param _pubkey The public key to validate.
      */
-    function _validatePubkeyLength(bytes memory _pubkey) internal pure {
+    function _validatePubkeyLength(bytes calldata _pubkey) internal pure {
         if (_pubkey.length != 48) {
             revert InvalidPubkeyLength(_pubkey.length);
         }
