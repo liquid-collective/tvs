@@ -15,7 +15,7 @@ error InvalidImplementation();
 
 /**
  * @title TVS Deployer
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice Permissionless deployer for all TVS variants
  */
 contract TVSDeployer {

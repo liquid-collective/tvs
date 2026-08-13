@@ -1,5 +1,5 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/3c7308137aaf51079c5881c944f3f47ae5a7cb85/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/a6cacb3e931fe961fd5cf60c34d769c2e74da592/src/components/TVS.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
@@ -8,7 +8,7 @@
 Transferable Validator Set (TVS - v1)
 
 **Author:**
-Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
 
 Implementation of the TVS
 

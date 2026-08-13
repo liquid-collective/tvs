@@ -1,11 +1,11 @@
 # ITVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/3c7308137aaf51079c5881c944f3f47ae5a7cb85/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/a6cacb3e931fe961fd5cf60c34d769c2e74da592/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol)
 
 **Title:**
 ITVSFlexibleImmutable Interface
 
 **Author:**
-Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
 
 Interface for the TVSFlexibleImmutable contract
 

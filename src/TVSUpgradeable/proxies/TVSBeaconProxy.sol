@@ -5,7 +5,7 @@ import "../state/proxy/Beacon.sol";
 
 /**
  * @title TVSBeaconProxy
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice This is a lightweight beacon proxy that resolves its implementation from an upgradeable beacon contract
  * @dev It uses the beacon contract to fetch the implementation address and delegate the call
  * @dev The beacon address is read from the EIP-1967 beacon slot managed by the {Beacon} library

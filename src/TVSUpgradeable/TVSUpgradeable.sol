@@ -9,7 +9,7 @@ import "openzeppelin-contracts/contracts/proxy/beacon/IBeacon.sol";
 
 /**
  * @title Upgradeable TVS (v1)
- * @author Originally authored by Alluvial Finance, Inc; contributed to The Liquid Foundation
+ * @author Originally authored by Galaxy Blockchain Infrastructure LLC; contributed to The Liquid Foundation
  * @notice Upgradeable implementation of the TVS
  * @dev This contract provides an upgradeable version of the TVS using a beacon proxy pattern
  */
