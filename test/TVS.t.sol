@@ -1069,6 +1069,77 @@ abstract contract BaseTVSTest is Test, PectraAddress {
     }
 
     /**
+     * @notice Tests that the consolidate function reverts when a request carries an empty target public key.
+     */
+    function testConsolidateFailsIfTargetPubkeyEmpty() public {
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes memory targetPubkey = ""; // length is zero(0)
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Call the consolidate function
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that the consolidate function reverts the whole batch when a single request carries an empty
+     * target public key, rather than silently submitting the other requests.
+     */
+    function testConsolidateFailsIfAnyRequestHasEmptyTargetPubkey() public {
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes memory populatedTargetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](2);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, populatedTargetPubkey);
+        requests[1] = ITVS.ConsolidationRequest(srcPubkeys, ""); // empty target pubkey
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // No consolidation request should be submitted for the populated request either
+        vm.expectRevert(abi.encodeWithSignature("InvalidEmptyArray()"));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
+     * @notice Tests that a target public key that is neither empty nor 48 bytes still reverts with
+     * {InvalidPubkeyLength}, so the new empty-target guard does not mask the length check.
+     */
+    function testConsolidateStillFailsWithLengthErrorForShortTargetPubkey() public {
+        bytes[] memory srcPubkeys = new bytes[](1);
+        srcPubkeys[0] =
+        hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef12345678"; // 48-byte
+
+        bytes memory targetPubkey =
+            hex"1234567890abcdef1234567890abcde67895645f1234567890abcdef1234567890abcdef1234567890abcdef123456"; // 47-byte
+
+        ITVS.ConsolidationRequest[] memory requests = new ITVS.ConsolidationRequest[](1);
+        requests[0] = ITVS.ConsolidationRequest(srcPubkeys, targetPubkey);
+
+        uint256 maxFeePerConsolidation = 0.1 ether;
+        vm.deal(owner, maxFeePerConsolidation);
+
+        // Call the consolidate function
+        vm.expectRevert(abi.encodeWithSignature("InvalidPubkeyLength(uint256)", 47));
+        vm.prank(owner);
+        tvs.consolidate{ value: maxFeePerConsolidation }(requests, maxFeePerConsolidation, owner);
+    }
+
+    /**
      * @notice Tests that the transfer function fails if called by a non-owner.
      */
     function testTransferFailsIfNotOwner() public {

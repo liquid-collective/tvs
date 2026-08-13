@@ -203,7 +203,8 @@ interface ITVS {
      * @notice Adds a consolidation request to the Pectra EL consolidation contract for the given source validators.
      * @dev Only the owner can call this function.
      * @dev Both source and target validators (pubkeys) must be from the same TVS (this TVS).
-     * @dev Reverts with {InvalidEmptyArray} if `requests` is empty, or if any request has no source pubkeys.
+     * @dev Reverts with {InvalidEmptyArray} if `requests` is empty, or if any request has no source pubkeys or an
+     * empty target pubkey.
      * @dev The excess fee is the difference between the maximum fee and the actual fee paid.
      * @dev Emits an {UnsentExcessFee} event if the excess fee is not sent.
      * @param requests An array of consolidation requests.
