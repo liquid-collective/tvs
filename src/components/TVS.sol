@@ -214,7 +214,7 @@ abstract contract TVS is ITVS, BaseSecurity {
     function _validateAndReturnFee(address _feeContract, uint256 _maxAllowedFee) internal view returns (uint256 _fee) {
         // Read current fee from the contract
         (bool readOK, bytes memory feeData) = _feeContract.staticcall("");
-        if (!readOK) {
+        if (!readOK || feeData.length != 32) {
             revert FeeReadFailed();
         }
         _fee = abi.decode(feeData, (uint256));
