@@ -129,7 +129,7 @@ audits/                              # Certora & Quantstamp audit reports
 ### Installation
 
 ```bash
-git clone <repo-url>
+git clone --recurse-submodules https://github.com/liquid-collective/tvs.git
 cd tvs
 forge install
 ```
