@@ -1,5 +1,5 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/f546bad8c547a073ff1d0af0687e478a4dedbebc/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/3c7308137aaf51079c5881c944f3f47ae5a7cb85/src/components/TVS.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
@@ -43,7 +43,6 @@ The withdrawal and consolidation addresses are stored as immutable state variabl
 once here in the constructor
 
 All implementation versions of TVS **MUST** have this constructor, to ensure the correct addresses are set
-and available to the proxy
 
 
 ```solidity
