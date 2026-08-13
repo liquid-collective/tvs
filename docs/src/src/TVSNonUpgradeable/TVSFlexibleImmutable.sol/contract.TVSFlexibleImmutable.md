@@ -1,5 +1,5 @@
 # TVSFlexibleImmutable
-[Git Source](https://github.com/liquid-collective/tvs/blob/a6cacb3e931fe961fd5cf60c34d769c2e74da592/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/96c19775021894fde7393def044436b34bb7c971/src/TVSNonUpgradeable/TVSFlexibleImmutable.sol)
 
 **Inherits:**
 [ITVSFlexibleImmutable](/src/TVSNonUpgradeable/interfaces/ITVSFlexibleImmutable.sol/interface.ITVSFlexibleImmutable.md), [TVSImmutable](/src/TVSNonUpgradeable/TVSImmutable.sol/contract.TVSImmutable.md)

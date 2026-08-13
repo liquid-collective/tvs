@@ -58,6 +58,10 @@ abstract contract TVS is ITVS, BaseSecurity {
         nonReentrant
         onlyOwner
     {
+        if (pubkeys.length == 0) {
+            revert InvalidEmptyArray();
+        }
+
         if (pubkeys.length != amounts.length) {
             revert LengthMismatch(pubkeys.length, amounts.length);
         }
@@ -99,12 +103,19 @@ abstract contract TVS is ITVS, BaseSecurity {
         nonReentrant
         onlyOwner
     {
+        if (requests.length == 0) {
+            revert InvalidEmptyArray();
+        }
+
         // Check if fee exceeds maximum allowed, otherwise get fee
         uint256 fee = _validateAndReturnFee(CONSOLIDATION_CONTRACT_ADDRESS, maxFeePerConsolidation);
 
         // Calculate total number of consolidation operations
         uint256 totalNumOfConsolidationOperations = 0;
         for (uint256 i = 0; i < requests.length; i++) {
+            if (requests[i].srcPubkeys.length == 0 || requests[i].targetPubkey.length == 0) {
+                revert InvalidEmptyArray();
+            }
             totalNumOfConsolidationOperations += requests[i].srcPubkeys.length;
         }
 

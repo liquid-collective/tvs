@@ -1,5 +1,5 @@
 # TVS
-[Git Source](https://github.com/liquid-collective/tvs/blob/a6cacb3e931fe961fd5cf60c34d769c2e74da592/src/components/TVS.sol)
+[Git Source](https://github.com/liquid-collective/tvs/blob/96c19775021894fde7393def044436b34bb7c971/src/components/TVS.sol)
 
 **Inherits:**
 [ITVS](/src/interfaces/ITVS.sol/interface.ITVS.md), [BaseSecurity](/src/components/BaseSecurity.sol/abstract.BaseSecurity.md)
@@ -296,7 +296,7 @@ Internal function to validate that a public key is exactly 48 bytes in length.
 
 
 ```solidity
-function _validatePubkeyLength(bytes memory _pubkey) internal pure;
+function _validatePubkeyLength(bytes calldata _pubkey) internal pure;
 ```
 **Parameters**
 
